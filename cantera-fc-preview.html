@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8" />
+<title>Cantera FC — Vista previa</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        pitch: "#122A1E",
+        pitchdeep: "#0B1B13",
+        chalk: "#F4F0E4",
+        clay: "#BE6A2E",
+        gold: "#E7B23D",
+        ink: "#0E140F",
+      },
+      fontFamily: {
+        display: ['Anton', 'sans-serif'],
+        body: ['Work Sans', 'sans-serif'],
+        mono: ['IBM Plex Mono', 'monospace'],
+      }
+    }
+  }
+}
+</script>
+<style>
+  html{scroll-behavior:smooth}
+  body{background:#F4F0E4}
+  .text-outline{-webkit-text-stroke:1.5px #F4F0E4;color:transparent}
+  .grass-lines{background-image:repeating-linear-gradient(90deg, rgba(244,240,228,0.05) 0px, rgba(244,240,228,0.05) 2px, transparent 2px, transparent 64px)}
+</style>
+</head>
+<body class="font-body">
+
+<header class="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-pitchdeep/90 backdrop-blur">
+  <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+    <a href="#top" class="flex items-center gap-2">
+      <svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="13" stroke="#E7B23D" stroke-width="1.5" fill="none"/><path d="M14 5 L18 9 L16.5 14 L11.5 14 L10 9 Z" fill="#E7B23D"/></svg>
+      <span class="font-display text-xl tracking-wide text-chalk">CANTERA<span class="text-gold">FC</span></span>
+    </a>
+    <ul class="hidden md:flex items-center gap-8">
+      <li><a href="#categorias" class="text-sm font-medium text-chalk/80 hover:text-gold">Categorías</a></li>
+      <li><a href="#metodo" class="text-sm font-medium text-chalk/80 hover:text-gold">Método</a></li>
+      <li><a href="#instalaciones" class="text-sm font-medium text-chalk/80 hover:text-gold">Instalaciones</a></li>
+      <li><a href="#testimonios" class="text-sm font-medium text-chalk/80 hover:text-gold">Testimonios</a></li>
+    </ul>
+    <a href="#prueba" class="rounded-sm bg-gold px-4 py-2 text-sm font-semibold text-ink hover:bg-chalk">Agenda tu prueba</a>
+  </nav>
+</header>
+
+<section id="top" class="relative overflow-hidden bg-pitch pt-32 pb-16 text-chalk">
+  <div class="pointer-events-none absolute inset-0 grass-lines"></div>
+  <div class="pointer-events-none absolute -right-24 top-24 h-96 w-96 rounded-full border border-white/10"></div>
+  <div class="relative mx-auto max-w-6xl px-6">
+    <p class="font-mono text-xs uppercase tracking-[0.3em] text-gold">Escuela de fútbol · México</p>
+    <h1 class="mt-6 font-display text-6xl sm:text-7xl md:text-8xl leading-[0.9] tracking-tight">
+      DESDE LA<br/>PRIMERA <span class="text-outline">PATADA</span><br/>HASTA EL ÚLTIMO SILBATAZO
+    </h1>
+    <div class="mt-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+      <p class="max-w-md text-lg text-chalk/80">Formamos jugadores de <strong class="text-gold">5 años a adultos</strong>, con un método por categorías, canchas propias y entrenadores certificados por la FMF.</p>
+      <div class="flex flex-shrink-0 gap-3">
+        <a href="#prueba" class="rounded-sm bg-gold px-6 py-3 text-center text-sm font-semibold text-ink hover:brightness-95">Agenda tu prueba gratis</a>
+        <a href="#categorias" class="rounded-sm border border-chalk/30 px-6 py-3 text-center text-sm font-semibold hover:border-gold hover:text-gold">Ver categorías</a>
+      </div>
+    </div>
+    <dl class="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-6 border-t border-white/15 pt-8">
+      <div><dd class="font-mono text-3xl sm:text-4xl text-gold">5–99</dd><dd class="mt-1 font-mono text-[11px] uppercase tracking-widest text-chalk/60">Años en cancha</dd></div>
+      <div><dd class="font-mono text-3xl sm:text-4xl text-gold">6</dd><dd class="mt-1 font-mono text-[11px] uppercase tracking-widest text-chalk/60">Categorías</dd></div>
+      <div><dd class="font-mono text-3xl sm:text-4xl text-gold">18</dd><dd class="mt-1 font-mono text-[11px] uppercase tracking-widest text-chalk/60">Entrenadores cert.</dd></div>
+      <div><dd class="font-mono text-3xl sm:text-4xl text-gold">12</dd><dd class="mt-1 font-mono text-[11px] uppercase tracking-widest text-chalk/60">Años de cantera</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section id="categorias" class="bg-chalk py-24">
+  <div class="mx-auto max-w-6xl px-6">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div>
+        <p class="font-mono text-xs uppercase tracking-[0.3em] text-clay">Alineación de categorías</p>
+        <h2 class="mt-3 font-display text-4xl sm:text-5xl text-ink">Una categoría para cada edad</h2>
+      </div>
+      <p class="max-w-sm text-sm text-ink/60">Igual que en la cantera de cualquier club formador: cada jugador entrena con su generación, al ritmo que le corresponde.</p>
+    </div>
+    <div class="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-ink/10 rounded-sm overflow-hidden">
+      <div class="group bg-chalk hover:bg-pitch p-6 flex flex-col justify-between transition">
+        <div class="flex items-baseline justify-between"><span class="font-mono text-sm text-clay group-hover:text-gold">Mar / Jue</span><span class="font-display text-2xl text-ink group-hover:text-chalk">SUB-8</span></div>
+        <div class="mt-8"><p class="text-sm font-semibold text-ink group-hover:text-gold">5 – 8 años</p><p class="mt-2 text-sm text-ink/70 group-hover:text-chalk/80">Motricidad, gusto por el balón y primeros partidos</p></div>
+      </div>
+      <div class="group bg-chalk hover:bg-pitch p-6 flex flex-col justify-between transition">
+        <div class="flex items-baseline justify-between"><span class="font-mono text-sm text-clay group-hover:text-gold">Lun / Mié / Vie</span><span class="font-display text-2xl text-ink group-hover:text-chalk">SUB-10</span></div>
+        <div class="mt-8"><p class="text-sm font-semibold text-ink group-hover:text-gold">9 – 10 años</p><p class="mt-2 text-sm text-ink/70 group-hover:text-chalk/80">Técnica individual y fundamentos tácticos</p></div>
+      </div>
+      <div class="group bg-chalk hover:bg-pitch p-6 flex flex-col justify-between transition">
+        <div class="flex items-baseline justify-between"><span class="font-mono text-sm text-clay group-hover:text-gold">Lun / Mié / Vie</span><span class="font-display text-2xl text-ink group-hover:text-chalk">SUB-12</span></div>
+        <div class="mt-8"><p class="text-sm font-semibold text-ink group-hover:text-gold">11 – 12 años</p><p class="mt-2 text-sm text-ink/70 group-hover:text-chalk/80">Posiciones, lectura de juego y primeros torneos</p></div>
+      </div>
+      <div class="group bg-chalk hover:bg-pitch p-6 flex flex-col justify-between transition">
+        <div class="flex items-baseline justify-between"><span class="font-mono text-sm text-clay group-hover:text-gold">Lun a Vie</span><span class="font-display text-2xl text-ink group-hover:text-chalk">SUB-14</span></div>
+        <div class="mt-8"><p class="text-sm font-semibold text-ink group-hover:text-gold">13 – 14 años</p><p class="mt-2 text-sm text-ink/70 group-hover:text-chalk/80">Táctica colectiva y preparación física</p></div>
+      </div>
+      <div class="group bg-chalk hover:bg-pitch p-6 flex flex-col justify-between transition">
+        <div class="flex items-baseline justify-between"><span class="font-mono text-sm text-clay group-hover:text-gold">Lun a Vie</span><span class="font-display text-2xl text-ink group-hover:text-chalk">SUB-17</span></div>
+        <div class="mt-8"><p class="text-sm font-semibold text-ink group-hover:text-gold">15 – 17 años</p><p class="mt-2 text-sm text-ink/70 group-hover:text-chalk/80">Competencia formal y proyección a ligas mayores</p></div>
+      </div>
+      <div class="group bg-chalk hover:bg-pitch p-6 flex flex-col justify-between transition">
+        <div class="flex items-baseline justify-between"><span class="font-mono text-sm text-clay group-hover:text-gold">Mar / Jue / Sáb</span><span class="font-display text-2xl text-ink group-hover:text-chalk">LIBRE</span></div>
+        <div class="mt-8"><p class="text-sm font-semibold text-ink group-hover:text-gold">18+ años</p><p class="mt-2 text-sm text-ink/70 group-hover:text-chalk/80">Liga de adultos, recreativa y competitiva</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="metodo" class="bg-pitchdeep py-24 text-chalk">
+  <div class="mx-auto max-w-6xl px-6">
+    <p class="font-mono text-xs uppercase tracking-[0.3em] text-gold">Método</p>
+    <h2 class="mt-3 max-w-xl font-display text-4xl sm:text-5xl">Formar jugadores, no solo llenar horarios</h2>
+    <div class="mt-14 grid grid-cols-1 sm:grid-cols-2 gap-10">
+      <div class="flex gap-5 border-t border-white/15 pt-6"><span class="font-mono text-sm text-clay">01</span><div><h3 class="font-display text-xl tracking-wide">Entrenadores certificados</h3><p class="mt-2 max-w-sm text-sm text-chalk/70">Todo el cuerpo técnico cuenta con licencia FMF y capacitación específica para trabajar con niños, adolescentes y adultos.</p></div></div>
+      <div class="flex gap-5 border-t border-white/15 pt-6"><span class="font-mono text-sm text-clay">02</span><div><h3 class="font-display text-xl tracking-wide">Progresión por edades</h3><p class="mt-2 max-w-sm text-sm text-chalk/70">El plan de cada categoría se construye sobre la anterior: de la motricidad básica a la táctica de competencia.</p></div></div>
+      <div class="flex gap-5 border-t border-white/15 pt-6"><span class="font-mono text-sm text-clay">03</span><div><h3 class="font-display text-xl tracking-wide">Partidos todo el año</h3><p class="mt-2 max-w-sm text-sm text-chalk/70">Calendario de amistosos y torneos internos para que cada categoría compita, no solo entrene.</p></div></div>
+      <div class="flex gap-5 border-t border-white/15 pt-6"><span class="font-mono text-sm text-clay">04</span><div><h3 class="font-display text-xl tracking-wide">Comunidad de padres</h3><p class="mt-2 max-w-sm text-sm text-chalk/70">Reportes de avance cada mes y una app para ver horarios, asistencias y resultados desde el celular.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="testimonios" class="bg-pitch py-24 text-chalk">
+  <div class="mx-auto max-w-6xl px-6">
+    <p class="font-mono text-xs uppercase tracking-[0.3em] text-gold">Testimonios</p>
+    <h2 class="mt-3 max-w-xl font-display text-4xl sm:text-5xl">Lo que dicen en la banca</h2>
+    <div class="mt-14 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <blockquote class="border-t border-white/20 pt-6"><p class="text-base leading-relaxed text-chalk/90">"Mi hijo entró a los 6 años sin saber ni pegarle bien al balón. Hoy, dos años después, es de los que más corre y ya no quiere faltar a un entrenamiento."</p><footer class="mt-6 font-mono text-xs uppercase tracking-widest text-clay">Mamá de jugador, Sub-8</footer></blockquote>
+      <blockquote class="border-t border-white/20 pt-6"><p class="text-base leading-relaxed text-chalk/90">"Lo que más valoro es que cada entrenador conoce a los chavos por nombre y nos manda reporte real de cómo van."</p><footer class="mt-6 font-mono text-xs uppercase tracking-widest text-clay">Papá de jugador, Sub-12</footer></blockquote>
+      <blockquote class="border-t border-white/20 pt-6"><p class="text-base leading-relaxed text-chalk/90">"Entré a la Libre para hacer ejercicio con los amigos y terminé jugando el torneo más competitivo que he tenido en años."</p><footer class="mt-6 font-mono text-xs uppercase tracking-widest text-clay">Jugador, categoría Libre</footer></blockquote>
+    </div>
+  </div>
+</section>
+
+<section id="prueba" class="bg-clay py-24 text-chalk">
+  <div class="mx-auto max-w-6xl px-6 grid grid-cols-1 md:grid-cols-2 gap-12">
+    <div>
+      <p class="font-mono text-xs uppercase tracking-[0.3em] text-ink/70">Prueba gratuita</p>
+      <h2 class="mt-3 font-display text-4xl sm:text-5xl">La primera práctica es nuestra invitación</h2>
+      <p class="mt-4 max-w-md text-sm text-chalk/90">Deja los datos de tu jugador (o los tuyos, si vienes a la Libre) y te contactamos para agendar tu categoría en menos de 24 horas.</p>
+    </div>
+    <form class="bg-chalk text-ink rounded-sm p-8 flex flex-col gap-4">
+      <label class="flex flex-col gap-1 text-sm font-medium">Nombre del jugador<input class="rounded-sm border border-ink/20 bg-transparent px-3 py-2 text-sm" /></label>
+      <label class="flex flex-col gap-1 text-sm font-medium">Edad<input type="number" class="rounded-sm border border-ink/20 bg-transparent px-3 py-2 text-sm" /></label>
+      <label class="flex flex-col gap-1 text-sm font-medium">Teléfono (WhatsApp)<input class="rounded-sm border border-ink/20 bg-transparent px-3 py-2 text-sm" /></label>
+      <button type="button" class="mt-2 rounded-sm bg-ink px-6 py-3 text-sm font-semibold text-chalk hover:bg-pitch">Quiero mi prueba gratis</button>
+    </form>
+  </div>
+</section>
+
+<footer class="bg-pitchdeep py-14 text-chalk">
+  <div class="mx-auto max-w-6xl px-6 flex flex-col sm:flex-row sm:justify-between gap-10">
+    <div><span class="font-display text-2xl">CANTERA<span class="text-gold">FC</span></span><p class="mt-3 max-w-xs text-sm text-chalk/60">Escuela de fútbol para niños, jóvenes y adultos. Categorías desde los 5 años.</p></div>
+    <div class="grid grid-cols-2 sm:flex sm:gap-16 gap-10">
+      <div><p class="font-mono text-xs uppercase tracking-widest text-gold">Contacto</p><ul class="mt-3 space-y-1 text-sm text-chalk/70"><li>WhatsApp 81 0000 0000</li><li>hola@canterafc.mx</li></ul></div>
+      <div><p class="font-mono text-xs uppercase tracking-widest text-gold">Cancha</p><ul class="mt-3 space-y-1 text-sm text-chalk/70"><li>Guadalupe, Nuevo León</li><li>Lun a sáb, 4–9 pm</li></ul></div>
+    </div>
+  </div>
+  <div class="mx-auto max-w-6xl px-6 mt-10 pt-6 border-t border-white/10"><p class="font-mono text-xs text-chalk/40">© 2026 Cantera FC. Todos los derechos reservados.</p></div>
+</footer>
+
+</body>
+</html>

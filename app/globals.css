@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #F3F3EF;
+  color: #0A0A0A;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+::selection {
+  background-color: #B6FF3B;
+  color: #000000;
+}
+
+:focus-visible {
+  outline: 3px solid #B6FF3B;
+  outline-offset: 3px;
+}
+
+.text-outline {
+  -webkit-text-stroke: 1.5px #F3F3EF;
+  color: transparent;
+}
+
+.scoreboard-num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
