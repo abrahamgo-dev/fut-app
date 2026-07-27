@@ -1,4 +1,16 @@
-export default function Footer() {
+type FooterProps = {
+  zoneLabel?: string;
+  scheduleNote?: string;
+  contactWhatsapp?: string;
+  contactEmail?: string;
+};
+
+export default function Footer({
+  zoneLabel = "México",
+  scheduleNote = "Lun a sáb",
+  contactWhatsapp = "81 0000 0000",
+  contactEmail = "hola@oncefc.mx",
+}: FooterProps) {
   return (
     <footer className="bg-coal-deep py-14 text-bone">
       <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 sm:flex-row sm:justify-between">
@@ -15,22 +27,22 @@ export default function Footer() {
           <div>
             <p className="font-mono text-xs uppercase tracking-widest text-volt">Contacto</p>
             <ul className="mt-3 space-y-1 font-body text-sm text-bone/70">
-              <li>WhatsApp 81 0000 0000</li>
-              <li>hola@oncefc.mx</li>
+              <li>WhatsApp {contactWhatsapp}</li>
+              <li>{contactEmail}</li>
             </ul>
           </div>
           <div>
             <p className="font-mono text-xs uppercase tracking-widest text-volt">Cancha</p>
             <ul className="mt-3 space-y-1 font-body text-sm text-bone/70">
-              <li>Guadalupe, Nuevo León</li>
-              <li>Lun a sáb, 4–9 pm</li>
+              <li>{zoneLabel}</li>
+              <li>{scheduleNote}</li>
             </ul>
           </div>
         </div>
       </div>
 
       <div className="mx-auto mt-10 max-w-6xl border-t border-bone/10 px-6 pt-6">
-        <p className="font-mono text-xs text-bone/40">
+        <p className="font-mono text-xs text-bone/60">
           © {new Date().getFullYear()} Once FC. Todos los derechos reservados.
         </p>
       </div>

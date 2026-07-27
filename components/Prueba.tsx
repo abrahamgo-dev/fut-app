@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export default function Prueba() {
+export default function Prueba({ cityName }: { cityName?: string }) {
   const [sent, setSent] = useState(false);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -16,13 +16,14 @@ export default function Prueba() {
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 md:grid-cols-2">
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-coal-deep/70">
-            Sesión gratuita
+            Sesión gratuita{cityName ? ` · ${cityName}` : ""}
           </p>
           <h2 className="mt-3 font-display text-4xl sm:text-5xl">
             Tu primer entrenamiento va por nosotros
           </h2>
           <p className="mt-4 max-w-md font-body text-sm text-coal-deep/80">
-            Déjanos tus datos y te contactamos en menos de 24 horas para agendar tu nivel.
+            Déjanos tus datos y te contactamos en menos de 24 horas por WhatsApp para agendar tu
+            nivel y darte la ubicación exacta de la cancha.
           </p>
         </div>
 
@@ -31,8 +32,9 @@ export default function Prueba() {
           className="flex flex-col gap-4 rounded-sm bg-bone p-8 text-ink"
         >
           {sent ? (
-            <p className="font-body text-sm">
-              Listo, recibimos tus datos. Un coach de Once FC te escribe pronto.
+            <p role="status" className="font-body text-sm">
+              Listo, recibimos tus datos. Un coach de Once FC te escribe por WhatsApp con la
+              ubicación exacta de la cancha y los horarios disponibles.
             </p>
           ) : (
             <>

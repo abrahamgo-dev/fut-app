@@ -88,23 +88,21 @@ export default function RootLayout({
 }) {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "SportsActivityLocation",
+    "@type": "SportsOrganization",
     name: "Once FC",
     description:
-      "Club de entrenamiento de fútbol para adultos en México, con niveles de iniciación a competitivo.",
+      "Club de entrenamiento de fútbol para adultos en México, con niveles de iniciación a competitivo, presente en varias ciudades.",
     url: siteUrl,
     sport: "Soccer",
-    address: {
-      "@type": "PostalAddress",
-      addressCountry: "MX",
-      addressRegion: "Nuevo León",
-    },
     areaServed: "MX",
   };
 
   return (
     <html lang="es-MX" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <body className="font-body antialiased">
+        <a href="#main" className="skip-link">
+          Saltar al contenido principal
+        </a>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

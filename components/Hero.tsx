@@ -1,11 +1,22 @@
-const stats = [
+const defaultStats = [
   { value: "18+", label: "EDAD PARA JUGAR" },
   { value: "3", label: "NIVELES DE JUEGO" },
   { value: "18", label: "ENTRENADORES CERT." },
   { value: "8", label: "AÑOS DE ONCE FC" },
 ];
 
-export default function Hero() {
+type HeroProps = {
+  cityLabel?: string;
+  levelsCount?: number;
+};
+
+export default function Hero({ cityLabel = "México", levelsCount }: HeroProps) {
+  const stats = levelsCount
+    ? defaultStats.map((stat) =>
+        stat.label === "NIVELES DE JUEGO" ? { ...stat, value: String(levelsCount) } : stat
+      )
+    : defaultStats;
+
   return (
     <section
       id="top"
@@ -17,15 +28,15 @@ export default function Hero() {
 
       <div className="relative mx-auto max-w-6xl px-6">
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-volt">
-          Club de entrenamiento · México
+          Club de entrenamiento · {cityLabel}
         </p>
 
         <h1 className="mt-6 font-display text-[13vw] leading-[0.9] tracking-tight sm:text-7xl md:text-8xl">
           FÚTBOL PARA
           <br />
-          LOS QUE YA NO
+          ADULTOS QUE
           <br />
-          SON <span className="text-outline">NIÑOS</span>
+          SIGUEN EN <span className="text-outline">SERIO</span>
         </h1>
 
         <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">

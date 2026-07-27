@@ -1,4 +1,6 @@
-const testimonials = [
+import type { Testimonial } from "@/data/cities";
+
+const defaultTestimonials: Testimonial[] = [
   {
     quote:
       "Dejé de jugar como 10 años por la chamba. Volver a entrenar dos veces por semana me regresó la condición... y las ganas.",
@@ -16,7 +18,11 @@ const testimonials = [
   },
 ];
 
-export default function Testimonials() {
+export default function Testimonials({
+  testimonials = defaultTestimonials,
+}: {
+  testimonials?: Testimonial[];
+}) {
   return (
     <section id="testimonios" className="bg-coal py-24 text-bone">
       <div className="mx-auto max-w-6xl px-6">

@@ -1,4 +1,4 @@
-export default function Nav() {
+export default function Nav({ cityName }: { cityName?: string }) {
   const links = [
     { href: "#niveles", label: "Niveles" },
     { href: "#metodo", label: "Método" },
@@ -17,6 +17,11 @@ export default function Nav() {
           <span className="font-display text-xl tracking-wide text-bone">
             ONCE<span className="text-volt">FC</span>
           </span>
+          {cityName ? (
+            <span className="ml-1 font-mono text-xs uppercase tracking-widest text-bone/50">
+              {cityName}
+            </span>
+          ) : null}
         </a>
 
         <ul className="hidden items-center gap-8 md:flex">
@@ -30,10 +35,20 @@ export default function Nav() {
               </a>
             </li>
           ))}
+          {cityName ? (
+            <li>
+              <a
+                href="/ciudades"
+                className="font-body text-sm font-medium text-bone/80 transition hover:text-volt"
+              >
+                Cambiar ciudad
+              </a>
+            </li>
+          ) : null}
         </ul>
 
         <a
-          href="#prueba"
+          href={cityName ? "#prueba" : "/ciudades"}
           className="rounded-sm bg-volt px-4 py-2 font-body text-sm font-semibold text-coal-deep transition hover:bg-bone"
         >
           Reserva tu sesión
