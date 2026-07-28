@@ -64,7 +64,6 @@ export default function CiudadPage({ params }: Props) {
       <Footer
         zoneLabel={city.zoneLabel}
         scheduleNote={city.scheduleNote}
-        contactWhatsapp={city.contactWhatsapp}
         contactEmail={city.contactEmail}
       />
     </main>

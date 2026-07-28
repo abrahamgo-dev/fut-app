@@ -1,24 +1,14 @@
 type FooterProps = {
   zoneLabel?: string;
   scheduleNote?: string;
-  /** Raw 10-digit Mexican mobile number, no spaces (e.g. "8110191519"). */
-  contactWhatsapp?: string;
   contactEmail?: string;
 };
-
-function formatMxPhone(raw: string): string {
-  const digits = raw.replace(/\D/g, "");
-  if (digits.length !== 10) return raw;
-  return `${digits.slice(0, 2)} ${digits.slice(2, 6)} ${digits.slice(6)}`;
-}
 
 export default function Footer({
   zoneLabel = "México",
   scheduleNote = "Lun a sáb",
-  contactWhatsapp = "8110191519",
   contactEmail = "hola@once-fc.com",
 }: FooterProps) {
-  const waDigits = contactWhatsapp.replace(/\D/g, "");
 
   return (
     <footer className="bg-coal-deep py-14 text-bone">
@@ -36,16 +26,6 @@ export default function Footer({
           <div>
             <p className="font-mono text-xs uppercase tracking-widest text-volt">Contacto</p>
             <ul className="mt-3 space-y-1 font-body text-sm text-bone/70">
-              <li>
-                <a
-                  href={`https://wa.me/52${waDigits}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-volt"
-                >
-                  WhatsApp {formatMxPhone(contactWhatsapp)}
-                </a>
-              </li>
               <li>{contactEmail}</li>
             </ul>
           </div>
