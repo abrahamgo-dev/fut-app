@@ -60,7 +60,7 @@ export default function CiudadPage({ params }: Props) {
       <Hero cityLabel={`${city.name}, ${city.state}`} levelsCount={city.levels.length} />
       <Categories levels={city.levels} />
       <Method />
-      <Prueba cityName={city.name} />
+      <Prueba cityName={city.name} levels={city.levels} />
       <Footer
         zoneLabel={city.zoneLabel}
         scheduleNote={city.scheduleNote}

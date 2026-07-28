@@ -46,6 +46,8 @@ const defaultLevels: Level[] = [
   },
 ];
 
+const TIME_SLOTS = ["7:00 am", "12:00 pm", "5:00 pm", "7:00 pm"];
+
 export default function Categories({ levels = defaultLevels }: { levels?: Level[] }) {
   return (
     <section id="niveles" className="bg-bone py-24">
@@ -65,38 +67,73 @@ export default function Categories({ levels = defaultLevels }: { levels?: Level[
           </p>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-sm bg-ink/10 sm:grid-cols-2 lg:grid-cols-3">
-          {levels.map((level) => (
-            <div
-              key={level.code}
-              className="group flex flex-col justify-between bg-bone p-6 transition hover:bg-coal"
-            >
-              <div className="flex items-baseline justify-between">
-                <span className="font-mono scoreboard-num text-sm text-ink/60 group-hover:text-volt">
-                  {level.days}
-                </span>
-                <span className="font-display text-2xl text-ink group-hover:text-bone">
-                  {level.code}
-                </span>
-              </div>
-              <div className="mt-8">
-                <p className="font-body text-sm font-semibold text-ink group-hover:text-volt">
-                  {level.title}
-                </p>
-                <p className="mt-2 font-body text-sm text-ink/70 group-hover:text-bone/80">
-                  {level.focus}
-                </p>
-                <p className="mt-3 flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-ink/70 group-hover:text-bone/70">
-                  {level.time}
-                  {level.limited ? (
-                    <span className="rounded-sm bg-volt-dim px-2 py-0.5 text-[10px] font-semibold normal-case tracking-normal text-coal-deep">
-                      Cupo limitado
+        <p className="mt-10 font-mono text-xs uppercase tracking-widest text-ink/40 sm:hidden">
+          Desliza para ver el horario completo →
+        </p>
+
+        <div className="mt-4 overflow-x-auto sm:mt-12">
+          <table className="w-full min-w-[720px] border-collapse">
+            <caption className="sr-only">Horario semanal por nivel</caption>
+            <thead>
+              <tr>
+                <th scope="col" className="w-1/3 border-b border-ink/15 pb-4 text-left">
+                  <span className="font-mono text-xs uppercase tracking-widest text-ink/50">
+                    Nivel
+                  </span>
+                </th>
+                {TIME_SLOTS.map((slot) => (
+                  <th
+                    key={slot}
+                    scope="col"
+                    className="border-b border-ink/15 pb-4 text-center"
+                  >
+                    <span className="font-mono text-xs uppercase tracking-widest text-ink/50">
+                      {slot}
                     </span>
-                  ) : null}
-                </p>
-              </div>
-            </div>
-          ))}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {levels.map((level) => (
+                <tr key={level.code} className="group">
+                  <th scope="row" className="border-b border-ink/10 py-5 pr-6 text-left align-top">
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-mono text-xs text-volt-dim">{level.code}</span>
+                      <span className="font-display text-lg text-ink">{level.title}</span>
+                    </div>
+                    <p className="mt-1 max-w-xs font-body text-sm font-normal text-ink/60">
+                      {level.focus}
+                    </p>
+                  </th>
+                  {TIME_SLOTS.map((slot) => (
+                    <td key={slot} className="border-b border-ink/10 py-5 text-center align-top">
+                      {level.time === slot ? (
+                        <div className="flex flex-col items-center gap-1.5">
+                          <span
+                            className={`h-2.5 w-2.5 rounded-full ${
+                              level.limited ? "bg-volt-dim" : "bg-volt"
+                            }`}
+                            aria-hidden="true"
+                          />
+                          <span className="font-mono text-[11px] uppercase tracking-widest text-ink/60">
+                            {level.days}
+                          </span>
+                          {level.limited ? (
+                            <span className="rounded-sm bg-volt-dim px-2 py-0.5 text-[10px] font-semibold text-coal-deep">
+                              Cupo limitado
+                            </span>
+                          ) : null}
+                        </div>
+                      ) : (
+                        <span className="sr-only">No disponible</span>
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </section>

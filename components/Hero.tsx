@@ -1,23 +1,19 @@
 import Image from "next/image";
-
-const defaultStats = [
-  { value: "18+", label: "EDAD PARA JUGAR" },
-  { value: "3", label: "NIVELES DE JUEGO" },
-  { value: "18", label: "ENTRENADORES CERT." },
-  { value: "8", label: "AÑOS DE ONCE FC" },
-];
+import { getActiveCities } from "@/data/cities";
 
 type HeroProps = {
   cityLabel?: string;
   levelsCount?: number;
 };
 
-export default function Hero({ cityLabel = "México", levelsCount }: HeroProps) {
-  const stats = levelsCount
-    ? defaultStats.map((stat) =>
-        stat.label === "NIVELES DE JUEGO" ? { ...stat, value: String(levelsCount) } : stat
-      )
-    : defaultStats;
+export default function Hero({ cityLabel = "México", levelsCount = 6 }: HeroProps) {
+  const citiesCount = getActiveCities().length;
+
+  const stats = [
+    { value: "18+", label: "EDAD PARA JUGAR" },
+    { value: String(levelsCount), label: "NIVELES DE JUEGO" },
+    { value: String(citiesCount), label: "CIUDADES" },
+  ];
 
   return (
     <section
@@ -74,7 +70,7 @@ export default function Hero({ cityLabel = "México", levelsCount }: HeroProps) 
           </div>
         </div>
 
-        <dl className="mt-16 grid grid-cols-2 gap-6 border-t border-bone/15 pt-8 sm:grid-cols-4">
+        <dl className="mt-16 grid grid-cols-3 gap-6 border-t border-bone/15 pt-8">
           {stats.map((stat) => (
             <div key={stat.label}>
               <dt className="sr-only">{stat.label}</dt>

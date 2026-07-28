@@ -1,8 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import type { Level } from "@/data/cities";
 
-export default function Prueba({ cityName }: { cityName?: string }) {
+function scheduleLabel(level: Level): string {
+  const base = `${level.title} — ${level.time} (${level.days})`;
+  return level.limited ? `${base} · Cupo limitado` : base;
+}
+
+export default function Prueba({ cityName, levels = [] }: { cityName?: string; levels?: Level[] }) {
   const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -19,6 +25,7 @@ export default function Prueba({ cityName }: { cityName?: string }) {
           name: form.get("name"),
           age: form.get("age"),
           phone: form.get("phone"),
+          preferredSchedule: form.get("preferredSchedule"),
           cityName,
         }),
       });
@@ -86,6 +93,26 @@ export default function Prueba({ cityName }: { cityName?: string }) {
                   className="rounded-sm border border-ink/20 bg-transparent px-3 py-2 font-body text-sm outline-none focus-visible:border-coal-deep"
                 />
               </label>
+              {levels.length > 0 ? (
+                <label className="flex flex-col gap-1 text-sm font-medium">
+                  Horario preferido
+                  <select
+                    required
+                    name="preferredSchedule"
+                    defaultValue=""
+                    className="rounded-sm border border-ink/20 bg-transparent px-3 py-2 font-body text-sm outline-none focus-visible:border-coal-deep"
+                  >
+                    <option value="" disabled>
+                      Elige un horario disponible
+                    </option>
+                    {levels.map((level) => (
+                      <option key={level.code} value={scheduleLabel(level)}>
+                        {scheduleLabel(level)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              ) : null}
               {status === "error" ? (
                 <p role="alert" className="font-body text-sm text-red-700">
                   No se pudo enviar tu solicitud. Intenta de nuevo o escríbenos directo por
