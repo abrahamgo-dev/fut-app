@@ -25,7 +25,7 @@ export const cities: City[] = [
     name: "Monterrey",
     state: "Nuevo León",
     zoneLabel: "Guadalupe, Nuevo León",
-    scheduleNote: "7 am – 9 pm disponible (excepto viernes)",
+    scheduleNote: "7 am – 9 pm disponible (excepto viernes y domingo)",
     contactEmail: "monterrey@once-fc.com",
     levels: [
       {
@@ -57,11 +57,25 @@ export const cities: City[] = [
         time: "7:00 am",
       },
       {
+        code: "AM2",
+        title: "Madrugador",
+        focus: "Segunda sesión mañanera, ritmo suave antes de entrar a trabajar.",
+        days: "Lun / Mié",
+        time: "8:00 am",
+      },
+      {
         code: "GYM",
         title: "Fuerza & core",
         focus: "Acondicionamiento físico y prevención de lesiones.",
         days: "Lun / Mié",
         time: "6:00 pm",
+      },
+      {
+        code: "TARDE7",
+        title: "Cierre de tarde",
+        focus: "Último bloque de la tarde, ritmo alto para cerrar el día.",
+        days: "Mar / Jue",
+        time: "7:00 pm",
       },
       {
         code: "LIB",
@@ -78,7 +92,7 @@ export const cities: City[] = [
     name: "Guadalajara",
     state: "Jalisco",
     zoneLabel: "Zapopan, Jalisco",
-    scheduleNote: "7 am – 9 pm disponible (excepto viernes)",
+    scheduleNote: "7 am – 9 pm disponible (excepto viernes y domingo)",
     contactEmail: "guadalajara@once-fc.com",
     levels: [
       {
@@ -103,6 +117,27 @@ export const cities: City[] = [
         time: "7:00 am",
       },
       {
+        code: "AM2",
+        title: "Madrugador",
+        focus: "Segunda sesión mañanera, ritmo suave antes de entrar a trabajar.",
+        days: "Lun / Mié",
+        time: "8:00 am",
+      },
+      {
+        code: "TARDE6",
+        title: "Táctica de tarde",
+        focus: "Trabajo táctico y de posesión a media tarde.",
+        days: "Mar / Jue",
+        time: "6:00 pm",
+      },
+      {
+        code: "TARDE7",
+        title: "Cierre de tarde",
+        focus: "Último bloque de la tarde, ritmo alto para cerrar el día.",
+        days: "Lun / Mié",
+        time: "7:00 pm",
+      },
+      {
         code: "LIB",
         title: "Liga libre",
         focus: "Partidos organizados, recreativos, solo por el gusto de jugar.",
@@ -117,7 +152,7 @@ export const cities: City[] = [
     name: "Ciudad de México",
     state: "CDMX",
     zoneLabel: "Del Valle, Ciudad de México",
-    scheduleNote: "7 am – 9 pm disponible (excepto viernes)",
+    scheduleNote: "7 am – 9 pm disponible (excepto viernes y domingo)",
     contactEmail: "cdmx@once-fc.com",
     levels: [
       {
@@ -149,6 +184,27 @@ export const cities: City[] = [
         time: "7:00 am",
       },
       {
+        code: "AM2",
+        title: "Madrugador",
+        focus: "Segunda sesión mañanera, ritmo suave antes de entrar a trabajar.",
+        days: "Lun / Mié",
+        time: "8:00 am",
+      },
+      {
+        code: "TARDE6",
+        title: "Táctica de tarde",
+        focus: "Trabajo táctico y de posesión a media tarde.",
+        days: "Mar / Jue",
+        time: "6:00 pm",
+      },
+      {
+        code: "TARDE7",
+        title: "Cierre de tarde",
+        focus: "Último bloque de la tarde, ritmo alto para cerrar el día.",
+        days: "Lun / Mié",
+        time: "7:00 pm",
+      },
+      {
         code: "LIB",
         title: "Liga libre",
         focus: "Partidos organizados, recreativos, solo por el gusto de jugar.",
@@ -163,7 +219,7 @@ export const cities: City[] = [
     name: "Tijuana",
     state: "Baja California",
     zoneLabel: "Zona Río, Tijuana",
-    scheduleNote: "7 am – 9 pm disponible (excepto viernes)",
+    scheduleNote: "7 am – 9 pm disponible (excepto viernes y domingo)",
     contactEmail: "tijuana@once-fc.com",
     levels: [
       {
@@ -188,6 +244,27 @@ export const cities: City[] = [
         time: "7:00 am",
       },
       {
+        code: "AM2",
+        title: "Madrugador",
+        focus: "Segunda sesión mañanera, ritmo suave antes de entrar a trabajar.",
+        days: "Lun / Mié",
+        time: "8:00 am",
+      },
+      {
+        code: "TARDE6",
+        title: "Táctica de tarde",
+        focus: "Trabajo táctico y de posesión a media tarde.",
+        days: "Mar / Jue",
+        time: "6:00 pm",
+      },
+      {
+        code: "TARDE7",
+        title: "Cierre de tarde",
+        focus: "Último bloque de la tarde, ritmo alto para cerrar el día.",
+        days: "Lun / Mié",
+        time: "7:00 pm",
+      },
+      {
         code: "LIB",
         title: "Liga libre",
         focus: "Partidos organizados, recreativos, solo por el gusto de jugar.",
@@ -202,7 +279,7 @@ export const cities: City[] = [
     name: "Saltillo",
     state: "Coahuila",
     zoneLabel: "Saltillo Centro, Coahuila",
-    scheduleNote: "7 am – 9 pm disponible (excepto viernes)",
+    scheduleNote: "7 am – 9 pm disponible (excepto viernes y domingo)",
     contactEmail: "saltillo@once-fc.com",
     levels: [
       {
@@ -225,6 +302,34 @@ export const cities: City[] = [
         focus: "Sesión de 7 a 8 am, antes de entrar a la oficina.",
         days: "Mar / Jue",
         time: "7:00 am",
+      },
+      {
+        code: "AM2",
+        title: "Madrugador",
+        focus: "Segunda sesión mañanera, ritmo suave antes de entrar a trabajar.",
+        days: "Lun / Mié",
+        time: "8:00 am",
+      },
+      {
+        code: "TARDE5",
+        title: "Intermedio tarde",
+        focus: "Táctica, posesión y ritmo real de juego, entre semana.",
+        days: "Mar / Jue",
+        time: "5:00 pm",
+      },
+      {
+        code: "TARDE6",
+        title: "Táctica de tarde",
+        focus: "Trabajo táctico y de posesión a media tarde.",
+        days: "Lun / Mié",
+        time: "6:00 pm",
+      },
+      {
+        code: "TARDE7",
+        title: "Cierre de tarde",
+        focus: "Último bloque de la tarde, ritmo alto para cerrar el día.",
+        days: "Mar / Jue",
+        time: "7:00 pm",
       },
       {
         code: "LIB",
