@@ -63,7 +63,7 @@ export default function Nav({
         <div className="flex items-center gap-3">
           <a
             href={cityName ? "#prueba" : "/ciudades"}
-            className="rounded-sm bg-volt px-4 py-2 font-body text-sm font-semibold text-coal-deep transition hover:bg-bone"
+            className="hidden rounded-sm bg-volt px-4 py-2 font-body text-sm font-semibold text-coal-deep transition hover:bg-bone md:inline-block"
           >
             Reserva tu sesión
           </a>
@@ -136,6 +136,14 @@ export default function Nav({
               ))}
             </ul>
           </div>
+
+          <a
+            href={cityName ? "#prueba" : "/ciudades"}
+            onClick={() => setOpen(false)}
+            className="mt-6 block rounded-sm bg-volt px-4 py-3 text-center font-body text-sm font-semibold text-coal-deep transition hover:bg-bone"
+          >
+            Reserva tu sesión
+          </a>
         </div>
       ) : null}
     </header>
