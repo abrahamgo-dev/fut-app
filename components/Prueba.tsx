@@ -4,8 +4,7 @@ import { useState } from "react";
 import type { Level } from "@/data/cities";
 
 function scheduleLabel(level: Level): string {
-  const base = `${level.title} — ${level.time} (${level.days})`;
-  return level.tentative ? `${base} · Meta, según demanda` : base;
+  return `${level.title} — ${level.time} (${level.days})`;
 }
 
 export default function Prueba({ cityName, levels = [] }: { cityName?: string; levels?: Level[] }) {
@@ -63,6 +62,26 @@ export default function Prueba({ cityName, levels = [] }: { cityName?: string; l
             </p>
           ) : (
             <>
+              {cityName ? (
+                <>
+                  <label className="flex flex-col gap-1 text-sm font-medium">
+                    Ciudad
+                    <input
+                      type="text"
+                      value={cityName}
+                      disabled
+                      readOnly
+                      className="rounded-sm border border-ink/20 bg-ink/5 px-3 py-2 font-body text-sm text-ink/70"
+                    />
+                  </label>
+                  <label className="flex items-start gap-2 text-sm font-medium">
+                    <input required type="checkbox" name="cityConfirmed" className="mt-1" />
+                    <span>
+                      Confirmo que quiero entrenar en <strong>{cityName}</strong>
+                    </span>
+                  </label>
+                </>
+              ) : null}
               <label className="flex flex-col gap-1 text-sm font-medium">
                 Tu nombre
                 <input
