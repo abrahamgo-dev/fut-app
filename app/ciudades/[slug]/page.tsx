@@ -57,7 +57,11 @@ export default function CiudadPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Nav cityName={city.name} citySlug={city.slug} />
-      <Hero cityLabel={`${city.name}, ${city.state}`} levelsCount={city.levels.length} />
+      <Hero
+        cityLabel={`${city.name}, ${city.state}`}
+        citySlug={city.slug}
+        levelsCount={city.levels.length}
+      />
       <Categories levels={city.levels} />
       <Method />
       <Prueba cityName={city.name} levels={city.levels} />

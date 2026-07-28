@@ -3,11 +3,13 @@ import { getActiveCities } from "@/data/cities";
 
 type HeroProps = {
   cityLabel?: string;
+  citySlug?: string;
   levelsCount?: number;
 };
 
-export default function Hero({ cityLabel = "México", levelsCount = 6 }: HeroProps) {
+export default function Hero({ cityLabel = "México", citySlug, levelsCount = 6 }: HeroProps) {
   const citiesCount = getActiveCities().length;
+  const reserveHref = citySlug ? "#prueba" : "#ciudades";
 
   const stats = [
     { value: "18+", label: "EDAD PARA JUGAR" },
@@ -50,13 +52,13 @@ export default function Hero({ cityLabel = "México", levelsCount = 6 }: HeroPro
         <div className="mt-10 flex max-w-3xl flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <p className="max-w-md font-body text-lg text-bone/80">
             Entrena, compite y mantente en forma en un club pensado para{" "}
-            <strong className="text-volt">adultos</strong>: horario de 7 am a 9 pm (excepto
-            viernes), entrenadores certificados y partidos todo el año.
+            <strong className="text-volt">adultos</strong>: horario de 7 am a 9 pm,
+            entrenadores certificados y partidos todo el año.
           </p>
 
           <div className="flex flex-shrink-0 gap-3">
             <a
-              href="#prueba"
+              href={reserveHref}
               className="rounded-sm bg-volt px-6 py-3 text-center font-body text-sm font-semibold text-coal-deep transition hover:brightness-95"
             >
               Reserva tu sesión gratis
