@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "Preguntas frecuentes",
   description:
-    "Precio, qué llevar a tu primera sesión, cómo funcionan los niveles y el cupo limitado del horario de 7 pm. Todo lo que debes saber antes de entrenar en Once FC.",
+    "Precio, qué llevar a tu primera sesión, cómo funcionan los niveles y por qué el horario de 7 pm está en meta. Todo lo que debes saber antes de entrenar en Once FC.",
 };
 
 const faqs = [
@@ -36,9 +36,9 @@ const faqs = [
       "Ambos. Además de las sesiones de entrenamiento, cada nivel tiene amistosos y torneos internos durante todo el año, así que compites, no solo practicas.",
   },
   {
-    question: "¿Por qué hay cupo limitado en el horario de las 7 pm?",
+    question: "¿Por qué el horario de las 7 pm no está confirmado?",
     answer:
-      "Es el horario de mayor demanda porque es justo después de la jornada laboral. Mantenemos cupo limitado en ese grupo para cuidar la calidad del entrenamiento, así que te recomendamos agendar con anticipación.",
+      "Nuestro horario confirmado va de la mañana a las 5 pm, sujeto a cancha y clima. Sabemos que las 7 pm es lo que más quieren quienes trabajan, así que lo abrimos como grupo formal en cuanto haya suficiente gente interesada. Puedes indicarlo como tu horario preferido al agendar tu sesión.",
   },
   {
     question: "¿En qué ciudades opera Once FC?",

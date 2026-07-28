@@ -3,10 +3,14 @@ export type Level = {
   title: string;
   focus: string;
   days: string;
-  /** Session start time — one of the four realistic slots: 7:00 am, 12:00 pm, 5:00 pm, 7:00 pm. */
+  /** Session start time — one of: 7:00 am, 12:00 pm, 5:00 pm, 7:00 pm. */
   time: string;
-  /** True for the 7:00 pm slot — highest demand, hardest to guarantee a spot. */
-  limited?: boolean;
+  /**
+   * True only for the 7:00 pm slot. Mornings through 5 pm are the reliable window
+   * (weather/field permitting); 7 pm is what adults actually want but isn't a
+   * confirmed running group yet — it opens once enough people request it.
+   */
+  tentative?: boolean;
 };
 
 export type City = {
@@ -29,7 +33,7 @@ export const cities: City[] = [
     name: "Monterrey",
     state: "Nuevo León",
     zoneLabel: "Guadalupe, Nuevo León",
-    scheduleNote: "Sesiones: 7 am · 12 pm · 5 pm · 7 pm (cupo limitado)",
+    scheduleNote: "7 am – 5 pm confirmado · 7 pm según demanda",
     contactWhatsapp: "8110191519",
     contactEmail: "monterrey@once-fc.com",
     levels: [
@@ -53,7 +57,7 @@ export const cities: City[] = [
         focus: "Alta intensidad y partidos contra otros clubes.",
         days: "Lun a Vie",
         time: "7:00 pm",
-        limited: true,
+        tentative: true,
       },
       {
         code: "AM",
@@ -84,7 +88,7 @@ export const cities: City[] = [
     name: "Guadalajara",
     state: "Jalisco",
     zoneLabel: "Zapopan, Jalisco",
-    scheduleNote: "Sesiones: 7 am · 12 pm · 5 pm · 7 pm (cupo limitado)",
+    scheduleNote: "7 am – 5 pm confirmado · 7 pm según demanda",
     contactWhatsapp: "8110191519",
     contactEmail: "guadalajara@once-fc.com",
     levels: [
@@ -101,7 +105,7 @@ export const cities: City[] = [
         focus: "Táctica, posesión y ritmo real de juego.",
         days: "Mar / Jue / Sáb",
         time: "7:00 pm",
-        limited: true,
+        tentative: true,
       },
       {
         code: "AM",
@@ -125,7 +129,7 @@ export const cities: City[] = [
     name: "Ciudad de México",
     state: "CDMX",
     zoneLabel: "Del Valle, Ciudad de México",
-    scheduleNote: "Sesiones: 7 am · 12 pm · 5 pm · 7 pm (cupo limitado)",
+    scheduleNote: "7 am – 5 pm confirmado · 7 pm según demanda",
     contactWhatsapp: "8110191519",
     contactEmail: "cdmx@once-fc.com",
     levels: [
@@ -149,7 +153,7 @@ export const cities: City[] = [
         focus: "Alta intensidad y partidos contra otros clubes.",
         days: "Lun a Vie",
         time: "7:00 pm",
-        limited: true,
+        tentative: true,
       },
       {
         code: "AM",

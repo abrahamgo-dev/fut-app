@@ -5,7 +5,7 @@ import type { Level } from "@/data/cities";
 
 function scheduleLabel(level: Level): string {
   const base = `${level.title} — ${level.time} (${level.days})`;
-  return level.limited ? `${base} · Cupo limitado` : base;
+  return level.tentative ? `${base} · Meta, según demanda` : base;
 }
 
 export default function Prueba({ cityName, levels = [] }: { cityName?: string; levels?: Level[] }) {
