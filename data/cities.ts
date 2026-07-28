@@ -20,8 +20,6 @@ export type City = {
   /** Public-facing area only — never the exact field address. */
   zoneLabel: string;
   scheduleNote: string;
-  /** Raw 10-digit Mexican mobile number, no spaces (e.g. "8110191519") — formatted for display and wa.me links in Footer. */
-  contactWhatsapp: string;
   contactEmail: string;
   levels: Level[];
   active: boolean;
@@ -34,7 +32,6 @@ export const cities: City[] = [
     state: "Nuevo León",
     zoneLabel: "Guadalupe, Nuevo León",
     scheduleNote: "7 am – 5 pm confirmado · 7 pm según demanda",
-    contactWhatsapp: "8110191519",
     contactEmail: "monterrey@once-fc.com",
     levels: [
       {
@@ -89,7 +86,6 @@ export const cities: City[] = [
     state: "Jalisco",
     zoneLabel: "Zapopan, Jalisco",
     scheduleNote: "7 am – 5 pm confirmado · 7 pm según demanda",
-    contactWhatsapp: "8110191519",
     contactEmail: "guadalajara@once-fc.com",
     levels: [
       {
@@ -130,7 +126,6 @@ export const cities: City[] = [
     state: "CDMX",
     zoneLabel: "Del Valle, Ciudad de México",
     scheduleNote: "7 am – 5 pm confirmado · 7 pm según demanda",
-    contactWhatsapp: "8110191519",
     contactEmail: "cdmx@once-fc.com",
     levels: [
       {
