@@ -2,7 +2,7 @@ export default function Nav({ cityName }: { cityName?: string }) {
   const links = [
     { href: "#niveles", label: "Niveles" },
     { href: "#metodo", label: "Método" },
-    { href: "#testimonios", label: "Testimonios" },
+    { href: "/preguntas-frecuentes", label: "Preguntas" },
   ];
 
   return (

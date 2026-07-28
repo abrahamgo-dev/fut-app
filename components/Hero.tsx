@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const defaultStats = [
   { value: "18+", label: "EDAD PARA JUGAR" },
   { value: "3", label: "NIVELES DE JUEGO" },
@@ -22,16 +24,26 @@ export default function Hero({ cityLabel = "México", levelsCount }: HeroProps) 
       id="top"
       className="relative overflow-hidden bg-coal pt-32 pb-16 text-bone"
     >
+      <Image
+        src="/hero-players.jpg"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-center grayscale"
+      />
+      <div
+        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-coal-deep from-30% via-coal-deep/90 to-coal-deep/70"
+        aria-hidden="true"
+      />
       <div className="pointer-events-none absolute inset-0 bg-grid-lines" aria-hidden="true" />
-      <div className="pointer-events-none absolute -right-24 top-24 h-96 w-96 rounded-full border border-bone/10" aria-hidden="true" />
-      <div className="pointer-events-none absolute -right-10 top-40 h-64 w-64 rounded-full border border-volt/20" aria-hidden="true" />
 
       <div className="relative mx-auto max-w-6xl px-6">
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-volt">
           Club de entrenamiento · {cityLabel}
         </p>
 
-        <h1 className="mt-6 font-display text-[13vw] leading-[0.9] tracking-tight sm:text-7xl md:text-8xl">
+        <h1 className="mt-6 max-w-3xl font-display text-[13vw] leading-[0.9] tracking-tight sm:text-7xl md:text-8xl">
           FÚTBOL PARA
           <br />
           ADULTOS QUE
@@ -39,7 +51,7 @@ export default function Hero({ cityLabel = "México", levelsCount }: HeroProps) 
           SIGUEN EN <span className="text-outline">SERIO</span>
         </h1>
 
-        <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mt-10 flex max-w-3xl flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <p className="max-w-md font-body text-lg text-bone/80">
             Entrena, compite y mantente en forma en un club pensado para{" "}
             <strong className="text-volt">adultos</strong>: horarios después del trabajo,

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Anton, Work_Sans, IBM_Plex_Mono } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 
 const display = Anton({
@@ -23,7 +24,7 @@ const mono = IBM_Plex_Mono({
   display: "swap",
 });
 
-const siteUrl = "https://www.oncefc.mx";
+const siteUrl = "https://once-fc.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -108,6 +109,9 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         {children}
+        {process.env.NEXT_PUBLIC_GA_ID ? (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        ) : null}
       </body>
     </html>
   );

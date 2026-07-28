@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://www.oncefc.mx/sitemap.xml",
+    sitemap: "https://once-fc.com/sitemap.xml",
   };
 }

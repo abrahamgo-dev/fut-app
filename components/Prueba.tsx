@@ -3,12 +3,31 @@
 import { useState } from "react";
 
 export default function Prueba({ cityName }: { cityName?: string }) {
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle");
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // TODO: connect to your real form handler (email service, CRM, etc.)
-    setSent(true);
+    setStatus("loading");
+
+    const form = new FormData(e.currentTarget);
+
+    try {
+      const res = await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.get("name"),
+          age: form.get("age"),
+          phone: form.get("phone"),
+          cityName,
+        }),
+      });
+
+      if (!res.ok) throw new Error("request failed");
+      setStatus("sent");
+    } catch {
+      setStatus("error");
+    }
   }
 
   return (
@@ -31,7 +50,7 @@ export default function Prueba({ cityName }: { cityName?: string }) {
           onSubmit={handleSubmit}
           className="flex flex-col gap-4 rounded-sm bg-bone p-8 text-ink"
         >
-          {sent ? (
+          {status === "sent" ? (
             <p role="status" className="font-body text-sm">
               Listo, recibimos tus datos. Un coach de Once FC te escribe por WhatsApp con la
               ubicación exacta de la cancha y los horarios disponibles.
@@ -67,11 +86,18 @@ export default function Prueba({ cityName }: { cityName?: string }) {
                   className="rounded-sm border border-ink/20 bg-transparent px-3 py-2 font-body text-sm outline-none focus-visible:border-coal-deep"
                 />
               </label>
+              {status === "error" ? (
+                <p role="alert" className="font-body text-sm text-red-700">
+                  No se pudo enviar tu solicitud. Intenta de nuevo o escríbenos directo por
+                  WhatsApp.
+                </p>
+              ) : null}
               <button
                 type="submit"
-                className="mt-2 rounded-sm bg-coal-deep px-6 py-3 font-body text-sm font-semibold text-bone transition hover:bg-coal"
+                disabled={status === "loading"}
+                className="mt-2 rounded-sm bg-coal-deep px-6 py-3 font-body text-sm font-semibold text-bone transition hover:bg-coal disabled:opacity-60"
               >
-                Quiero mi sesión gratis
+                {status === "loading" ? "Enviando..." : "Quiero mi sesión gratis"}
               </button>
             </>
           )}

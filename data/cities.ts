@@ -9,11 +9,6 @@ export type Level = {
   limited?: boolean;
 };
 
-export type Testimonial = {
-  quote: string;
-  name: string;
-};
-
 export type City = {
   slug: string;
   name: string;
@@ -21,10 +16,10 @@ export type City = {
   /** Public-facing area only — never the exact field address. */
   zoneLabel: string;
   scheduleNote: string;
+  /** Raw 10-digit Mexican mobile number, no spaces (e.g. "8110191519") — formatted for display and wa.me links in Footer. */
   contactWhatsapp: string;
   contactEmail: string;
   levels: Level[];
-  testimonials: Testimonial[];
   active: boolean;
 };
 
@@ -35,8 +30,8 @@ export const cities: City[] = [
     state: "Nuevo León",
     zoneLabel: "Guadalupe, Nuevo León",
     scheduleNote: "Sesiones: 7 am · 12 pm · 5 pm · 7 pm (cupo limitado)",
-    contactWhatsapp: "81 0000 0000",
-    contactEmail: "monterrey@oncefc.mx",
+    contactWhatsapp: "8110191519",
+    contactEmail: "monterrey@once-fc.com",
     levels: [
       {
         code: "N1",
@@ -82,23 +77,6 @@ export const cities: City[] = [
         time: "5:00 pm",
       },
     ],
-    testimonials: [
-      {
-        quote:
-          "Dejé de jugar como 10 años por la chamba. Volver a entrenar dos veces por semana me regresó la condición... y las ganas.",
-        name: "Jugador, nivel intermedio",
-      },
-      {
-        quote:
-          "Entro derechito de mi casa a las 7 de la mañana. Es lo único que me ha hecho sostener una rutina de ejercicio en años.",
-        name: "Jugador, grupo mañanero",
-      },
-      {
-        quote:
-          "No es una escuelita, se siente como un equipo de verdad: entrenamos táctica, jugamos partidos en serio y hay rivalidad sana con otros clubes.",
-        name: "Jugador, nivel competitivo",
-      },
-    ],
     active: true,
   },
   {
@@ -107,8 +85,8 @@ export const cities: City[] = [
     state: "Jalisco",
     zoneLabel: "Zapopan, Jalisco",
     scheduleNote: "Sesiones: 7 am · 12 pm · 5 pm · 7 pm (cupo limitado)",
-    contactWhatsapp: "33 0000 0000",
-    contactEmail: "guadalajara@oncefc.mx",
+    contactWhatsapp: "8110191519",
+    contactEmail: "guadalajara@once-fc.com",
     levels: [
       {
         code: "N1",
@@ -140,18 +118,6 @@ export const cities: City[] = [
         time: "5:00 pm",
       },
     ],
-    testimonials: [
-      {
-        quote:
-          "Buscaba algo más serio que la cascarita del domingo y esto es justo eso: entrenamiento real con gente que también compite.",
-        name: "Jugador, nivel intermedio",
-      },
-      {
-        quote:
-          "Llevo tres meses y ya siento la diferencia en la condición. Los entrenadores sí saben lo que hacen.",
-        name: "Jugador, nivel iniciación",
-      },
-    ],
     active: true,
   },
   {
@@ -160,8 +126,8 @@ export const cities: City[] = [
     state: "CDMX",
     zoneLabel: "Del Valle, Ciudad de México",
     scheduleNote: "Sesiones: 7 am · 12 pm · 5 pm · 7 pm (cupo limitado)",
-    contactWhatsapp: "55 0000 0000",
-    contactEmail: "cdmx@oncefc.mx",
+    contactWhatsapp: "8110191519",
+    contactEmail: "cdmx@once-fc.com",
     levels: [
       {
         code: "N1",
@@ -198,18 +164,6 @@ export const cities: City[] = [
         focus: "Partidos organizados, recreativos, solo por el gusto de jugar.",
         days: "Sáb",
         time: "5:00 pm",
-      },
-    ],
-    testimonials: [
-      {
-        quote:
-          "Entre el tráfico y la chamba había dejado el fútbol por completo. Aquí encontré un horario que sí puedo sostener.",
-        name: "Jugador, nivel intermedio",
-      },
-      {
-        quote:
-          "Se siente como cuando jugabas en la prepa, pero con entrenadores que de verdad saben de táctica.",
-        name: "Jugador, nivel competitivo",
       },
     ],
     active: true,

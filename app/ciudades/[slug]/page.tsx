@@ -4,7 +4,6 @@ import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
 import Method from "@/components/Method";
-import Testimonials from "@/components/Testimonials";
 import Prueba from "@/components/Prueba";
 import Footer from "@/components/Footer";
 import { cities, getCityBySlug } from "@/data/cities";
@@ -61,7 +60,6 @@ export default function CiudadPage({ params }: Props) {
       <Hero cityLabel={`${city.name}, ${city.state}`} levelsCount={city.levels.length} />
       <Categories levels={city.levels} />
       <Method />
-      <Testimonials testimonials={city.testimonials} />
       <Prueba cityName={city.name} />
       <Footer
         zoneLabel={city.zoneLabel}
