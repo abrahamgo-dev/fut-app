@@ -21,7 +21,7 @@ export function generateMetadata({ params }: Props): Metadata {
   if (!city) return {};
 
   const title = `Once FC ${city.name} — Club de entrenamiento de fútbol para adultos`;
-  const description = `Entrena fútbol en ${city.name}: niveles de iniciación a competitivo, entrenadores certificados y partidos todo el año. Zona: ${city.zoneLabel}.`;
+  const description = `Entrena fútbol en ${city.name}: niveles de iniciación a competitivo, coaches con experiencia y partidos todo el año. Zona: ${city.zoneLabel}.`;
 
   return {
     title,

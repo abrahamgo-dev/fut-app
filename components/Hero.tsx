@@ -53,7 +53,7 @@ export default function Hero({ cityLabel = "México", citySlug, levelsCount = 6 
           <p className="max-w-md font-body text-lg text-bone/80">
             Entrena, compite y mantente en forma en un club pensado para{" "}
             <strong className="text-volt">adultos</strong>: horario de 7 am a 9 pm,
-            entrenadores certificados y partidos todo el año.
+            coaches con experiencia y partidos todo el año.
           </p>
 
           <div className="flex flex-shrink-0 gap-3">

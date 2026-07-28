@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     template: "%s | Once FC",
   },
   description:
-    "Once FC es un club de entrenamiento de fútbol para adultos en México. Niveles de iniciación a competitivo, sesiones antes del trabajo, entrenadores certificados y partidos todo el año. Agenda tu sesión gratuita.",
+    "Once FC es un club de entrenamiento de fútbol para adultos en México. Niveles de iniciación a competitivo, sesiones antes del trabajo, coaches con experiencia y partidos todo el año. Agenda tu sesión gratuita.",
   keywords: [
     "futbol para adultos",
     "club de futbol adultos",
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     siteName: "Once FC",
     title: "Once FC — Club de entrenamiento de fútbol para adultos en México",
     description:
-      "Niveles de iniciación a competitivo, sesiones antes del trabajo y entrenadores certificados. Agenda tu sesión gratuita.",
+      "Niveles de iniciación a competitivo, sesiones antes del trabajo y coaches con experiencia. Agenda tu sesión gratuita.",
     images: [
       {
         url: "/og-cover.svg",

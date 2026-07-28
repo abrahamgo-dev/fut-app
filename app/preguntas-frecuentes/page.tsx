@@ -13,7 +13,7 @@ const faqs = [
   {
     question: "¿Necesito experiencia previa para entrenar?",
     answer:
-      "No. Empiezas en el nivel que corresponda a tu condición actual, desde Iniciación (sin presión) hasta Competitivo. Nuestros entrenadores certificados evalúan tu nivel en la primera sesión.",
+      "No. Empiezas en el nivel que corresponda a tu condición actual, desde Iniciación (sin presión) hasta Competitivo. Un coach evalúa tu nivel en la primera sesión.",
   },
   {
     question: "¿Cuánto cuesta entrenar en Once FC?",
