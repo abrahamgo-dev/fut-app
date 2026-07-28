@@ -80,7 +80,7 @@ export default function Categories({ levels = defaultLevels }: { levels?: Level[
           Desliza para ver el horario completo →
         </p>
 
-        <div className="mt-4 overflow-x-auto sm:mt-12">
+        <div className="mt-4 overflow-x-auto [contain:layout] sm:mt-12">
           <table className="w-full min-w-[600px] border-collapse">
             <caption className="sr-only">Horario confirmado por nivel</caption>
             <thead>
