@@ -24,7 +24,6 @@ export default function Prueba({ cityName, levels = [] }: { cityName?: string; l
         body: JSON.stringify({
           name: form.get("name"),
           age: form.get("age"),
-          phone: form.get("phone"),
           preferredSchedule: form.get("preferredSchedule"),
           cityName,
         }),
@@ -48,8 +47,8 @@ export default function Prueba({ cityName, levels = [] }: { cityName?: string; l
             Tu primer entrenamiento va por nosotros
           </h2>
           <p className="mt-4 max-w-md font-body text-sm text-coal-deep/80">
-            Déjanos tus datos y te contactamos en menos de 24 horas por WhatsApp para agendar tu
-            nivel y darte la ubicación exacta de la cancha.
+            Déjanos tus datos y te contactamos en menos de 24 horas para agendar tu nivel y darte
+            la ubicación exacta de la cancha.
           </p>
         </div>
 
@@ -59,8 +58,8 @@ export default function Prueba({ cityName, levels = [] }: { cityName?: string; l
         >
           {status === "sent" ? (
             <p role="status" className="font-body text-sm">
-              Listo, recibimos tus datos. Un coach de Once FC te escribe por WhatsApp con la
-              ubicación exacta de la cancha y los horarios disponibles.
+              Listo, recibimos tus datos. Un coach de Once FC te contacta pronto con la ubicación
+              exacta de la cancha y los horarios disponibles.
             </p>
           ) : (
             <>
@@ -81,15 +80,6 @@ export default function Prueba({ cityName, levels = [] }: { cityName?: string; l
                   min={18}
                   max={70}
                   name="age"
-                  className="rounded-sm border border-ink/20 bg-transparent px-3 py-2 font-body text-sm outline-none focus-visible:border-coal-deep"
-                />
-              </label>
-              <label className="flex flex-col gap-1 text-sm font-medium">
-                Teléfono (WhatsApp)
-                <input
-                  required
-                  type="tel"
-                  name="phone"
                   className="rounded-sm border border-ink/20 bg-transparent px-3 py-2 font-body text-sm outline-none focus-visible:border-coal-deep"
                 />
               </label>
