@@ -50,8 +50,8 @@ export default function Hero({ cityLabel = "México", levelsCount = 6 }: HeroPro
         <div className="mt-10 flex max-w-3xl flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <p className="max-w-md font-body text-lg text-bone/80">
             Entrena, compite y mantente en forma en un club pensado para{" "}
-            <strong className="text-volt">adultos</strong>: horario matutino confirmado,
-            entrenadores certificados y partidos todo el año.
+            <strong className="text-volt">adultos</strong>: horario de 7 am a 9 pm (excepto
+            viernes), entrenadores certificados y partidos todo el año.
           </p>
 
           <div className="flex flex-shrink-0 gap-3">
