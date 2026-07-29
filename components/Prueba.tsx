@@ -23,6 +23,7 @@ export default function Prueba({ cityName, levels = [] }: { cityName?: string; l
         body: JSON.stringify({
           name: form.get("name"),
           age: form.get("age"),
+          phone: form.get("phone"),
           preferredSchedule: form.get("preferredSchedule"),
           cityName,
         }),
@@ -99,6 +100,17 @@ export default function Prueba({ cityName, levels = [] }: { cityName?: string; l
                   min={18}
                   max={70}
                   name="age"
+                  className="rounded-sm border border-ink/20 bg-transparent px-3 py-2 font-body text-sm outline-none focus-visible:border-coal-deep"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-sm font-medium">
+                Teléfono
+                <input
+                  required
+                  type="tel"
+                  name="phone"
+                  autoComplete="tel"
+                  placeholder="10 dígitos"
                   className="rounded-sm border border-ink/20 bg-transparent px-3 py-2 font-body text-sm outline-none focus-visible:border-coal-deep"
                 />
               </label>
