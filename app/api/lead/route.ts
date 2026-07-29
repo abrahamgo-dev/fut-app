@@ -14,11 +14,12 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const name = typeof body?.name === "string" ? body.name.trim() : "";
   const age = typeof body?.age === "string" || typeof body?.age === "number" ? String(body.age).trim() : "";
+  const phone = typeof body?.phone === "string" ? body.phone.trim() : "";
   const cityName = typeof body?.cityName === "string" ? body.cityName.trim() : "";
   const preferredSchedule =
     typeof body?.preferredSchedule === "string" ? body.preferredSchedule.trim() : "";
 
-  if (!name || !age) {
+  if (!name || !age || !phone) {
     return NextResponse.json({ error: "Faltan datos requeridos." }, { status: 400 });
   }
 
@@ -47,6 +48,7 @@ export async function POST(request: Request) {
       <h2>Nueva solicitud de sesión gratuita</h2>
       <p><strong>Nombre:</strong> ${escapeHtml(name)}</p>
       <p><strong>Edad:</strong> ${escapeHtml(age)}</p>
+      <p><strong>Teléfono:</strong> ${escapeHtml(phone)}</p>
       ${cityName ? `<p><strong>Ciudad:</strong> ${escapeHtml(cityName)}</p>` : ""}
       ${preferredSchedule ? `<p><strong>Horario preferido:</strong> ${escapeHtml(preferredSchedule)}</p>` : ""}
     `,
