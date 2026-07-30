@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import { getActiveCities } from "@/data/cities";
 
@@ -8,6 +11,7 @@ type HeroProps = {
 };
 
 export default function Hero({ cityLabel = "México", citySlug, levelsCount = 6 }: HeroProps) {
+  const [imageLoaded, setImageLoaded] = useState(false);
   const citiesCount = getActiveCities().length;
   const reserveHref = citySlug ? "#prueba" : "#ciudades";
 
@@ -22,13 +26,21 @@ export default function Hero({ cityLabel = "México", citySlug, levelsCount = 6 
       id="top"
       className="relative overflow-hidden bg-coal pt-32 pb-16 text-bone"
     >
+      {!imageLoaded ? (
+        <div className="absolute inset-0 animate-pulse bg-coal-deep" aria-hidden="true">
+          <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.4s_infinite] bg-gradient-to-r from-transparent via-bone/10 to-transparent" />
+        </div>
+      ) : null}
       <Image
         src="/hero-players.jpg"
         alt=""
         fill
         priority
         sizes="100vw"
-        className="object-cover object-center"
+        onLoad={() => setImageLoaded(true)}
+        className={`object-cover object-center transition-opacity duration-700 ease-out ${
+          imageLoaded ? "opacity-100" : "opacity-0"
+        }`}
       />
       <div
         className="pointer-events-none absolute inset-0 bg-gradient-to-r from-coal-deep from-10% via-coal-deep/75 to-coal-deep/40"
