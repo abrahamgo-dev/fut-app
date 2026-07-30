@@ -143,9 +143,23 @@ export default function Prueba({ cityName, levels = [] }: { cityName?: string; l
               <button
                 type="submit"
                 disabled={status === "loading"}
-                className="mt-2 rounded-sm bg-coal-deep px-6 py-3 font-body text-sm font-semibold text-bone transition hover:bg-coal disabled:opacity-60"
+                className="relative mt-2 flex items-center justify-center gap-3 overflow-hidden rounded-sm bg-coal-deep px-6 py-3 font-body text-sm font-semibold text-bone transition hover:bg-coal disabled:cursor-wait disabled:opacity-90"
               >
-                {status === "loading" ? "Enviando..." : "Quiero mi sesión gratis"}
+                {status === "loading" ? (
+                  <>
+                    <span
+                      aria-hidden="true"
+                      className="h-4 w-4 animate-spin rounded-full border-2 border-bone/30 border-t-volt"
+                    />
+                    <span className="animate-pulse">Enviando...</span>
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-0 -translate-x-full animate-[shimmer_1.4s_infinite] bg-gradient-to-r from-transparent via-bone/10 to-transparent"
+                    />
+                  </>
+                ) : (
+                  "Quiero mi sesión gratis"
+                )}
               </button>
             </>
           )}
