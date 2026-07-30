@@ -28,10 +28,10 @@ export default function Hero({ cityLabel = "México", citySlug, levelsCount = 6 
         fill
         priority
         sizes="100vw"
-        className="object-cover object-center grayscale"
+        className="object-cover object-center"
       />
       <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-coal-deep from-30% via-coal-deep/90 to-coal-deep/70"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-coal-deep from-10% via-coal-deep/75 to-coal-deep/40"
         aria-hidden="true"
       />
       <div className="pointer-events-none absolute inset-0 bg-grid-lines" aria-hidden="true" />

@@ -65,3 +65,9 @@ body {
   left: 1rem;
   top: 1rem;
 }
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
