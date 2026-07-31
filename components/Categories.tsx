@@ -6,22 +6,21 @@ const defaultLevels: Level[] = [
     title: "Iniciación",
     focus: "Vuelve a moverse: técnica base y forma física, sin presión.",
     days: "Mar / Jue",
-    time: "12:00 pm",
+    time: "4:00 pm",
   },
   {
     code: "N2",
     title: "Intermedio",
     focus: "Táctica, posesión y ritmo real de juego.",
-    days: "Lun / Mié / Vie",
+    days: "Lun / Mié",
     time: "5:00 pm",
   },
   {
     code: "N3",
     title: "Competitivo",
     focus: "Alta intensidad y partidos contra otros clubes.",
-    days: "Lun a Vie",
-    time: "7:00 pm",
-    tentative: true,
+    days: "Lun a Jue",
+    time: "8:00 pm",
   },
   {
     code: "AM",
@@ -35,7 +34,7 @@ const defaultLevels: Level[] = [
     title: "Fuerza & core",
     focus: "Acondicionamiento físico y prevención de lesiones.",
     days: "Lun / Mié",
-    time: "12:00 pm",
+    time: "6:00 pm",
   },
   {
     code: "LIB",
@@ -46,12 +45,18 @@ const defaultLevels: Level[] = [
   },
 ];
 
-const CONFIRMED_SLOTS = ["7:00 am", "12:00 pm", "5:00 pm"];
+const AVAILABLE_SLOTS = [
+  "7:00 am",
+  "8:00 am",
+  "4:00 pm",
+  "5:00 pm",
+  "6:00 pm",
+  "7:00 pm",
+  "8:00 pm",
+  "9:00 pm",
+];
 
 export default function Categories({ levels = defaultLevels }: { levels?: Level[] }) {
-  const confirmedLevels = levels.filter((level) => !level.tentative);
-  const goalLevels = levels.filter((level) => level.tentative);
-
   return (
     <section id="niveles" className="bg-bone py-24">
       <div className="mx-auto max-w-6xl px-6">
@@ -71,18 +76,17 @@ export default function Categories({ levels = defaultLevels }: { levels?: Level[
         </div>
 
         <p className="mt-6 max-w-2xl font-body text-sm text-ink/60">
-          De mañana a 5 pm es nuestro horario confirmado (sujeto a cancha y clima). El horario
-          nocturno de 7 pm es la meta: el más pedido por quienes trabajan, pero el más difícil de
-          garantizar por ahora.
+          Entrenamos de 7 am a 9 pm, de lunes a sábado (no hay sesiones los viernes), sujeto a
+          cancha y clima.
         </p>
 
         <p className="mt-10 font-mono text-xs uppercase tracking-widest text-ink/40 sm:hidden">
           Desliza para ver el horario completo →
         </p>
 
-        <div className="mt-4 overflow-x-auto sm:mt-12">
+        <div className="mt-4 overflow-x-auto [contain:layout] sm:mt-12">
           <table className="w-full min-w-[600px] border-collapse">
-            <caption className="sr-only">Horario confirmado por nivel</caption>
+            <caption className="sr-only">Horario disponible por nivel</caption>
             <thead>
               <tr>
                 <th scope="col" className="w-1/3 border-b border-ink/15 pb-4 text-left">
@@ -90,7 +94,7 @@ export default function Categories({ levels = defaultLevels }: { levels?: Level[
                     Nivel
                   </span>
                 </th>
-                {CONFIRMED_SLOTS.map((slot) => (
+                {AVAILABLE_SLOTS.map((slot) => (
                   <th
                     key={slot}
                     scope="col"
@@ -104,7 +108,7 @@ export default function Categories({ levels = defaultLevels }: { levels?: Level[
               </tr>
             </thead>
             <tbody>
-              {confirmedLevels.map((level) => (
+              {levels.map((level) => (
                 <tr key={level.code}>
                   <th scope="row" className="border-b border-ink/10 py-5 pr-6 text-left align-top">
                     <div className="flex items-baseline gap-2">
@@ -115,7 +119,7 @@ export default function Categories({ levels = defaultLevels }: { levels?: Level[
                       {level.focus}
                     </p>
                   </th>
-                  {CONFIRMED_SLOTS.map((slot) => (
+                  {AVAILABLE_SLOTS.map((slot) => (
                     <td key={slot} className="border-b border-ink/10 py-5 text-center align-top">
                       {level.time === slot ? (
                         <div className="flex flex-col items-center gap-1.5">
@@ -134,32 +138,6 @@ export default function Categories({ levels = defaultLevels }: { levels?: Level[
             </tbody>
           </table>
         </div>
-
-        {goalLevels.map((level) => (
-          <div
-            key={level.code}
-            className="mt-10 flex flex-col gap-4 rounded-sm border border-dashed border-ink/25 p-6 sm:flex-row sm:items-center sm:justify-between"
-          >
-            <div>
-              <p className="font-mono text-xs uppercase tracking-widest text-ink/50">
-                Meta · según demanda
-              </p>
-              <p className="mt-2 font-display text-xl text-ink">
-                {level.title} · 7:00 pm <span className="text-ink/50">({level.days})</span>
-              </p>
-              <p className="mt-1 max-w-md font-body text-sm text-ink/60">
-                {level.focus} Lo abrimos en cuanto haya suficiente gente interesada en este
-                horario.
-              </p>
-            </div>
-            <a
-              href="#prueba"
-              className="flex-shrink-0 rounded-sm border border-ink/20 px-5 py-2.5 text-center font-body text-sm font-semibold text-ink transition hover:border-volt-dim hover:text-volt-dim"
-            >
-              Quiero este horario
-            </a>
-          </div>
-        ))}
       </div>
     </section>
   );

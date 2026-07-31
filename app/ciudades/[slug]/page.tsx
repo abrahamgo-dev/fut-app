@@ -22,7 +22,7 @@ export function generateMetadata({ params }: Props): Metadata {
   if (!city) return {};
 
   const title = `Once FC ${city.name} — Club de entrenamiento de fútbol para adultos`;
-  const description = `Entrena fútbol en ${city.name}: niveles de iniciación a competitivo, entrenadores certificados y partidos todo el año. Zona: ${city.zoneLabel}.`;
+  const description = `Entrena fútbol en ${city.name}: niveles de iniciación a competitivo, coaches con experiencia y partidos todo el año. Zona: ${city.zoneLabel}.`;
 
   return {
     title,
@@ -57,8 +57,12 @@ export default function CiudadPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Nav cityName={city.name} />
-      <Hero cityLabel={`${city.name}, ${city.state}`} levelsCount={city.levels.length} />
+      <Nav cityName={city.name} citySlug={city.slug} />
+      <Hero
+        cityLabel={`${city.name}, ${city.state}`}
+        citySlug={city.slug}
+        levelsCount={city.levels.length}
+      />
       <Categories levels={city.levels} />
       <Method />
       <Showcase />
@@ -66,7 +70,6 @@ export default function CiudadPage({ params }: Props) {
       <Footer
         zoneLabel={city.zoneLabel}
         scheduleNote={city.scheduleNote}
-        contactWhatsapp={city.contactWhatsapp}
         contactEmail={city.contactEmail}
       />
     </main>

@@ -4,8 +4,7 @@ import { useState } from "react";
 import type { Level } from "@/data/cities";
 
 function scheduleLabel(level: Level): string {
-  const base = `${level.title} — ${level.time} (${level.days})`;
-  return level.tentative ? `${base} · Meta, según demanda` : base;
+  return `${level.title} — ${level.time} (${level.days})`;
 }
 
 export default function Prueba({ cityName, levels = [] }: { cityName?: string; levels?: Level[] }) {
@@ -24,6 +23,7 @@ export default function Prueba({ cityName, levels = [] }: { cityName?: string; l
         body: JSON.stringify({
           name: form.get("name"),
           age: form.get("age"),
+          phone: form.get("phone"),
           preferredSchedule: form.get("preferredSchedule"),
           cityName,
         }),
@@ -63,6 +63,26 @@ export default function Prueba({ cityName, levels = [] }: { cityName?: string; l
             </p>
           ) : (
             <>
+              {cityName ? (
+                <>
+                  <label className="flex flex-col gap-1 text-sm font-medium">
+                    Ciudad
+                    <input
+                      type="text"
+                      value={cityName}
+                      disabled
+                      readOnly
+                      className="rounded-sm border border-ink/20 bg-ink/5 px-3 py-2 font-body text-sm text-ink/70"
+                    />
+                  </label>
+                  <label className="flex items-start gap-2 text-sm font-medium">
+                    <input required type="checkbox" name="cityConfirmed" className="mt-1" />
+                    <span>
+                      Confirmo que quiero entrenar en <strong>{cityName}</strong>
+                    </span>
+                  </label>
+                </>
+              ) : null}
               <label className="flex flex-col gap-1 text-sm font-medium">
                 Tu nombre
                 <input
@@ -80,6 +100,17 @@ export default function Prueba({ cityName, levels = [] }: { cityName?: string; l
                   min={18}
                   max={70}
                   name="age"
+                  className="rounded-sm border border-ink/20 bg-transparent px-3 py-2 font-body text-sm outline-none focus-visible:border-coal-deep"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-sm font-medium">
+                Teléfono
+                <input
+                  required
+                  type="tel"
+                  name="phone"
+                  autoComplete="tel"
+                  placeholder="10 dígitos"
                   className="rounded-sm border border-ink/20 bg-transparent px-3 py-2 font-body text-sm outline-none focus-visible:border-coal-deep"
                 />
               </label>
@@ -112,9 +143,23 @@ export default function Prueba({ cityName, levels = [] }: { cityName?: string; l
               <button
                 type="submit"
                 disabled={status === "loading"}
-                className="mt-2 rounded-sm bg-coal-deep px-6 py-3 font-body text-sm font-semibold text-bone transition hover:bg-coal disabled:opacity-60"
+                className="relative mt-2 flex items-center justify-center gap-3 overflow-hidden rounded-sm bg-coal-deep px-6 py-3 font-body text-sm font-semibold text-bone transition hover:bg-coal disabled:cursor-wait disabled:opacity-90"
               >
-                {status === "loading" ? "Enviando..." : "Quiero mi sesión gratis"}
+                {status === "loading" ? (
+                  <>
+                    <span
+                      aria-hidden="true"
+                      className="h-4 w-4 animate-spin rounded-full border-2 border-bone/30 border-t-volt"
+                    />
+                    <span className="animate-pulse">Enviando...</span>
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-0 -translate-x-full animate-[shimmer_1.4s_infinite] bg-gradient-to-r from-transparent via-bone/10 to-transparent"
+                    />
+                  </>
+                ) : (
+                  "Quiero mi sesión gratis"
+                )}
               </button>
             </>
           )}

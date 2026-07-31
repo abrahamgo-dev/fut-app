@@ -1,8 +1,8 @@
 const pillars = [
   {
     n: "01",
-    title: "Entrenadores certificados",
-    body: "Todo el cuerpo técnico cuenta con licencia FMF y experiencia trabajando con jugadores adultos, no solo con niños.",
+    title: "Coaches con experiencia",
+    body: "Un grupo pequeño de entrenadores con experiencia trabajando con jugadores adultos, no solo con niños.",
   },
   {
     n: "02",

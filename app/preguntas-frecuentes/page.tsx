@@ -6,14 +6,14 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "Preguntas frecuentes",
   description:
-    "Precio, qué llevar a tu primera sesión, cómo funcionan los niveles y por qué el horario de 7 pm está en meta. Todo lo que debes saber antes de entrenar en Once FC.",
+    "Precio, qué llevar a tu primera sesión, cómo funcionan los niveles y qué horarios tenemos disponibles. Todo lo que debes saber antes de entrenar en Once FC.",
 };
 
 const faqs = [
   {
     question: "¿Necesito experiencia previa para entrenar?",
     answer:
-      "No. Empiezas en el nivel que corresponda a tu condición actual, desde Iniciación (sin presión) hasta Competitivo. Nuestros entrenadores certificados evalúan tu nivel en la primera sesión.",
+      "No. Empiezas en el nivel que corresponda a tu condición actual, desde Iniciación (sin presión) hasta Competitivo. Un coach evalúa tu nivel en la primera sesión.",
   },
   {
     question: "¿Cuánto cuesta entrenar en Once FC?",
@@ -36,9 +36,9 @@ const faqs = [
       "Ambos. Además de las sesiones de entrenamiento, cada nivel tiene amistosos y torneos internos durante todo el año, así que compites, no solo practicas.",
   },
   {
-    question: "¿Por qué el horario de las 7 pm no está confirmado?",
+    question: "¿Qué horarios tienen disponibles?",
     answer:
-      "Nuestro horario confirmado va de la mañana a las 5 pm, sujeto a cancha y clima. Sabemos que las 7 pm es lo que más quieren quienes trabajan, así que lo abrimos como grupo formal en cuanto haya suficiente gente interesada. Puedes indicarlo como tu horario preferido al agendar tu sesión.",
+      "Entrenamos de 7 am a 9 pm, con sesiones a las 7 y 8 am y a las 4, 5, 6, 7, 8 y 9 pm, de lunes a sábado — no hay sesiones los viernes. Elige tu horario preferido al agendar tu sesión gratuita y un coach lo confirma según el nivel y la ciudad.",
   },
   {
     question: "¿En qué ciudades opera Once FC?",
