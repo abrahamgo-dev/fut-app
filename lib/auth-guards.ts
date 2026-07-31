@@ -6,7 +6,7 @@ import { auth } from "@/auth";
 export async function requireSession(): Promise<Session> {
   const session = await auth();
   if (!session?.user) {
-    redirect("/api/auth/signin?callbackUrl=/panel");
+    redirect("/login?callbackUrl=/panel");
   }
   return session;
 }

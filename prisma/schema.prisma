@@ -25,6 +25,8 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  /// Short public bio, shown on the "Entrenadores" / "Próximas sesiones" cards for TRAINER-role users.
+  bio           String?   @db.Text
   role          Role      @default(USER)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -34,6 +36,7 @@ model User {
   trainerAvailability TrainerAvailability[] @relation("TrainerAvailability")
   bookingsAsUser      Booking[]             @relation("BookingUser")
   bookingsAsTrainer   Booking[]             @relation("BookingTrainer")
+  sesiones            Sesion[]              @relation("SesionTrainer")
 }
 
 model Account {
@@ -88,6 +91,47 @@ model TrainerAvailability {
 
   @@index([trainerId])
   @@index([citySlug])
+}
+
+// A physical training venue. citySlug matches City.slug in data/cities.ts —
+// cities are static TS data, not a DB table, so there's intentionally no FK here.
+model Sede {
+  id        String   @id @default(cuid())
+  name      String
+  citySlug  String
+  address   String
+  image     String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sesiones Sesion[]
+
+  @@index([citySlug])
+}
+
+// An upcoming, publicly-listed training session/event: one sede + one trainer
+// at a given time. Shown on the marketing site as "Próximas sesiones".
+model Sesion {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  @db.Text
+  levelLabel  String?
+  capacity    Int?
+  startsAt    DateTime
+  durationMinutes Int  @default(60)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sedeId    String
+  sede      Sede   @relation(fields: [sedeId], references: [id], onDelete: Cascade)
+  trainerId String
+  trainer   User   @relation("SesionTrainer", fields: [trainerId], references: [id], onDelete: Cascade)
+
+  @@index([sedeId])
+  @@index([trainerId])
+  @@index([startsAt])
 }
 
 model Booking {

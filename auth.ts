@@ -23,6 +23,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   session: { strategy: "database" },
+  pages: {
+    signIn: "/login",
+    error: "/login",
+  },
   callbacks: {
     async session({ session, user }) {
       const dbUser = user as unknown as { id: string; role: Role };

@@ -5,6 +5,7 @@ import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
 import Method from "@/components/Method";
 import Showcase from "@/components/Showcase";
+// import ProximasSesiones from "@/components/ProximasSesiones"; // re-enable when ready to launch
 import Prueba from "@/components/Prueba";
 import Footer from "@/components/Footer";
 import { cities, getCityBySlug } from "@/data/cities";
@@ -12,6 +13,8 @@ import { cities, getCityBySlug } from "@/data/cities";
 type Props = {
   params: { slug: string };
 };
+
+export const revalidate = 60;
 
 export function generateStaticParams() {
   return cities.filter((c) => c.active).map((c) => ({ slug: c.slug }));
@@ -65,6 +68,7 @@ export default function CiudadPage({ params }: Props) {
       />
       <Categories levels={city.levels} />
       <Method />
+      {/* <ProximasSesiones citySlug={city.slug} /> — re-enable when ready to launch */}
       <Showcase />
       <Prueba cityName={city.name} levels={city.levels} />
       <Footer

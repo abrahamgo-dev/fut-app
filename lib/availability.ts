@@ -14,7 +14,7 @@ export type AvailableSlot = {
 // this zone is ever added.
 const APP_TIMEZONE_OFFSET_MINUTES = -6 * 60;
 
-function localToUtc(date: Date, hhmm: string): Date {
+export function localToUtc(date: Date, hhmm: string): Date {
   const [hours, minutes] = hhmm.split(":").map(Number);
   const utcMidnight = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
   return new Date(

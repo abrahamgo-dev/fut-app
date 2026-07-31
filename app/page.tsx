@@ -4,12 +4,17 @@ import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
 import Method from "@/components/Method";
 import Showcase from "@/components/Showcase";
+// import ProximasSesiones from "@/components/ProximasSesiones"; // re-enable when ready to launch
 import Footer from "@/components/Footer";
 import CityPicker from "@/components/CityPicker";
 import { getActiveCities } from "@/data/cities";
 
+export const revalidate = 60;
+
+const FEATURED_CITY_SLUGS = ["monterrey", "guadalajara", "cdmx"];
+
 export default function Home() {
-  const cities = getActiveCities();
+  const cities = getActiveCities().filter((city) => FEATURED_CITY_SLUGS.includes(city.slug));
 
   return (
     <main id="main">
@@ -17,6 +22,7 @@ export default function Home() {
       <Hero />
       <Categories />
       <Method />
+      {/* <ProximasSesiones /> — re-enable when ready to launch */}
       <Showcase />
 
       <section id="ciudades" className="bg-coal py-24 text-bone">

@@ -54,11 +54,11 @@ export default function Hero({ cityLabel = "México", citySlug, levelsCount = 6 
         </p>
 
         <h1 className="mt-6 max-w-3xl font-display text-[13vw] leading-[0.9] tracking-tight sm:text-7xl md:text-8xl">
-          FÚTBOL PARA
+          ENTRENA
           <br />
-          ADULTOS QUE
+          MEJORA
           <br />
-          SIGUEN EN <span className="text-outline">SERIO</span>
+          DISFRUTA <span className="text-outline">EL FÚTBOL</span>
         </h1>
 
         <div className="mt-10 flex max-w-3xl flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
