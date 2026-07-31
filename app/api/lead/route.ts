@@ -1,5 +1,14 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { prisma } from "@/lib/prisma";
+
+// Same phone number claiming another free session within this window gets
+// silently skipped (no re-notification) — see prisma/schema.prisma Lead model.
+const DUPLICATE_PHONE_WINDOW_DAYS = 90;
+// More than this many submissions from one IP in 24h gets flagged for review,
+// but still notified — shared IPs (offices, family wifi) are common enough
+// that hard-blocking on IP alone would reject real leads.
+const IP_RATE_LIMIT_PER_DAY = 3;
 
 function escapeHtml(value: string): string {
   return value
@@ -8,6 +17,16 @@ function escapeHtml(value: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+function normalizePhone(phone: string): string {
+  return phone.replace(/\D/g, "").slice(-10);
+}
+
+function getClientIp(request: Request): string | null {
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  if (forwardedFor) return forwardedFor.split(",")[0].trim();
+  return request.headers.get("x-real-ip");
 }
 
 export async function POST(request: Request) {
@@ -21,6 +40,48 @@ export async function POST(request: Request) {
 
   if (!name || !age || !phone) {
     return NextResponse.json({ error: "Faltan datos requeridos." }, { status: 400 });
+  }
+
+  const phoneNormalized = normalizePhone(phone);
+  const ipAddress = getClientIp(request);
+
+  const [duplicatePhone, recentFromIp] = await Promise.all([
+    phoneNormalized.length === 10
+      ? prisma.lead.findFirst({
+          where: {
+            phoneNormalized,
+            createdAt: { gte: new Date(Date.now() - DUPLICATE_PHONE_WINDOW_DAYS * 86_400_000) },
+          },
+        })
+      : null,
+    ipAddress
+      ? prisma.lead.count({
+          where: { ipAddress, createdAt: { gte: new Date(Date.now() - 86_400_000) } },
+        })
+      : 0,
+  ]);
+
+  const isDuplicatePhone = Boolean(duplicatePhone);
+  const isRateLimitedIp = recentFromIp >= IP_RATE_LIMIT_PER_DAY;
+
+  await prisma.lead.create({
+    data: {
+      name,
+      age,
+      phone,
+      phoneNormalized,
+      cityName: cityName || null,
+      preferredSchedule: preferredSchedule || null,
+      ipAddress,
+      isDuplicatePhone,
+      isRateLimitedIp,
+    },
+  });
+
+  // Same phone already claimed a free session recently: pretend it worked
+  // (no error shown to the visitor) but skip notifying the coach again.
+  if (isDuplicatePhone) {
+    return NextResponse.json({ ok: true });
   }
 
   const to = process.env.LEAD_NOTIFICATION_EMAIL;
@@ -43,7 +104,7 @@ export async function POST(request: Request) {
     // Once you verify your own domain in Resend, switch this to e.g. leads@once-fc.com.
     from: "Once FC <onboarding@resend.dev>",
     to: [to],
-    subject: `Nuevo lead${cityName ? ` — ${cityName}` : ""}: ${name}`,
+    subject: `${isRateLimitedIp ? "[Revisar] " : ""}Nuevo lead${cityName ? ` — ${cityName}` : ""}: ${name}`,
     html: `
       <h2>Nueva solicitud de sesión gratuita</h2>
       <p><strong>Nombre:</strong> ${escapeHtml(name)}</p>
@@ -51,6 +112,7 @@ export async function POST(request: Request) {
       <p><strong>Teléfono:</strong> ${escapeHtml(phone)}</p>
       ${cityName ? `<p><strong>Ciudad:</strong> ${escapeHtml(cityName)}</p>` : ""}
       ${preferredSchedule ? `<p><strong>Horario preferido:</strong> ${escapeHtml(preferredSchedule)}</p>` : ""}
+      ${isRateLimitedIp ? `<p><em>Varias solicitudes desde la misma red en las últimas 24 horas — revisar antes de confirmar.</em></p>` : ""}
     `,
   });
 
