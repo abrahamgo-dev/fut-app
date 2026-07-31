@@ -1,11 +1,13 @@
 import { prisma } from "@/lib/prisma";
 
 export default async function AdminDashboardPage() {
-  const [userCount, trainerCount, upcomingBookingCount, sedeCount, upcomingSesionCount] =
+  const [userCount, trainerCount, upcomingReservaCount, sedeCount, upcomingSesionCount] =
     await Promise.all([
       prisma.user.count(),
       prisma.user.count({ where: { role: "TRAINER" } }),
-      prisma.booking.count({ where: { status: "CONFIRMED", startsAt: { gte: new Date() } } }),
+      prisma.reserva.count({
+        where: { status: { in: ["PENDING", "PAID"] }, sesion: { startsAt: { gte: new Date() } } },
+      }),
       prisma.sede.count({ where: { active: true } }),
       prisma.sesion.count({ where: { active: true, startsAt: { gte: new Date() } } }),
     ]);
@@ -13,7 +15,7 @@ export default async function AdminDashboardPage() {
   const stats = [
     { label: "Usuarios", value: userCount },
     { label: "Entrenadores", value: trainerCount },
-    { label: "Reservas próximas", value: upcomingBookingCount },
+    { label: "Reservas próximas", value: upcomingReservaCount },
     { label: "Sedes activas", value: sedeCount },
     { label: "Sesiones próximas", value: upcomingSesionCount },
   ];

@@ -7,7 +7,7 @@ import { requireRole } from "@/lib/auth-guards";
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 export async function createAvailabilityRule(formData: FormData) {
-  const session = await requireRole(["TRAINER", "ADMIN"]);
+  const session = await requireRole(["ADMIN"]);
 
   const citySlug = String(formData.get("citySlug") ?? "");
   const dayOfWeek = Number(formData.get("dayOfWeek"));
@@ -44,7 +44,7 @@ export async function createAvailabilityRule(formData: FormData) {
 }
 
 export async function deleteAvailabilityRule(ruleId: string) {
-  const session = await requireRole(["TRAINER", "ADMIN"]);
+  const session = await requireRole(["ADMIN"]);
 
   await prisma.trainerAvailability.deleteMany({
     where: { id: ruleId, trainerId: session.user.id },

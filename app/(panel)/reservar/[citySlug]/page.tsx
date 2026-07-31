@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { requireSession } from "@/lib/auth-guards";
 import { prisma } from "@/lib/prisma";
 import { getCityBySlug } from "@/data/cities";
+import EventsCalendar from "@/components/EventsCalendar";
 
 export default async function ReservarCiudadPage({
   params,
@@ -13,32 +14,37 @@ export default async function ReservarCiudadPage({
   const city = getCityBySlug(params.citySlug);
   if (!city) notFound();
 
-  const rules = await prisma.trainerAvailability.findMany({
-    where: { citySlug: city.slug },
-    include: { trainer: { select: { id: true, name: true, email: true } } },
-    distinct: ["trainerId"],
+  const sesiones = await prisma.sesion.findMany({
+    where: { active: true, startsAt: { gte: new Date() }, sede: { citySlug: city.slug } },
+    include: { sede: { select: { name: true } }, trainer: { select: { name: true, email: true } } },
+    orderBy: { startsAt: "asc" },
+    take: 200,
   });
+
+  const events = sesiones.map((sesion) => ({
+    id: sesion.id,
+    title: sesion.title,
+    startsAt: sesion.startsAt.toISOString(),
+    levelLabel: sesion.levelLabel,
+    sedeName: sesion.sede.name,
+    trainerName: sesion.trainer.name ?? sesion.trainer.email ?? "Entrenador Once FC",
+  }));
 
   return (
     <div className="space-y-6">
-      <h1 className="font-display text-2xl text-bone">Entrenadores en {city.name}</h1>
-      {rules.length === 0 ? (
+      <div>
+        <h1 className="font-display text-2xl text-bone">Sesiones en {city.name}</h1>
+        <p className="mt-1 text-sm text-bone/60">
+          Elige un día con sesiones marcadas para ver el detalle y apartar tu lugar.
+        </p>
+      </div>
+
+      {events.length === 0 ? (
         <p className="text-sm text-bone/60">
-          Todavía no hay entrenadores con horarios disponibles en esta ciudad.
+          Todavía no hay sesiones publicadas en {city.name}. Vuelve pronto.
         </p>
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2">
-          {rules.map((rule) => (
-            <li key={rule.trainer.id}>
-              <a
-                href={`/reservar/${city.slug}/${rule.trainer.id}`}
-                className="block rounded-sm border border-bone/10 px-4 py-3 text-bone transition hover:border-volt hover:text-volt"
-              >
-                {rule.trainer.name ?? rule.trainer.email}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <EventsCalendar events={events} />
       )}
     </div>
   );

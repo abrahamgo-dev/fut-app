@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Anton, Work_Sans, IBM_Plex_Mono } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 
 const display = Anton({
@@ -108,7 +109,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {children}
+        <SessionProvider>{children}</SessionProvider>
         {process.env.NEXT_PUBLIC_GA_ID ? (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
         ) : null}

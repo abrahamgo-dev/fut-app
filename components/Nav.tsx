@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import CityDropdown from "@/components/CityDropdown";
 import { getActiveCities } from "@/data/cities";
 
@@ -14,6 +15,10 @@ export default function Nav({
 }) {
   const [open, setOpen] = useState(false);
   const cities = getActiveCities();
+  const { data: session, status } = useSession();
+  const isAuthenticated = status === "authenticated" && !!session?.user;
+  const userLabel = session?.user?.name ?? session?.user?.email ?? "";
+  const userInitial = userLabel.slice(0, 1).toUpperCase() || "?";
 
   const links = [
     { href: "#niveles", label: "Niveles" },
@@ -61,6 +66,28 @@ export default function Nav({
         </ul>
 
         <div className="flex items-center gap-3">
+          {isAuthenticated ? (
+            <a
+              href="/panel/cuenta"
+              aria-label="Mi cuenta"
+              className="hidden h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-bone/10 font-mono text-xs font-semibold text-bone transition hover:ring-2 hover:ring-volt md:flex"
+            >
+              {session?.user?.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={session.user.image} alt="" className="h-full w-full object-cover" />
+              ) : (
+                userInitial
+              )}
+            </a>
+          ) : (
+            <a
+              href="/login"
+              className="hidden font-body text-sm font-medium text-bone/80 transition hover:text-volt md:inline-block"
+            >
+              Iniciar sesión
+            </a>
+          )}
+
           <a
             href={cityName ? "#prueba" : "/ciudades"}
             className="hidden rounded-sm bg-volt px-4 py-2 font-body text-sm font-semibold text-coal-deep transition hover:bg-bone md:inline-block"
@@ -144,6 +171,31 @@ export default function Nav({
           >
             Reserva tu sesión
           </a>
+          {isAuthenticated ? (
+            <a
+              href="/panel/cuenta"
+              onClick={() => setOpen(false)}
+              className="mt-3 flex items-center justify-center gap-2 rounded-sm border border-bone/20 px-4 py-3 text-center font-body text-sm font-semibold text-bone/80 transition hover:border-volt hover:text-volt"
+            >
+              <span className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-bone/10 font-mono text-[10px] font-semibold text-bone">
+                {session?.user?.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={session.user.image} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  userInitial
+                )}
+              </span>
+              Mi cuenta
+            </a>
+          ) : (
+            <a
+              href="/login"
+              onClick={() => setOpen(false)}
+              className="mt-3 block rounded-sm border border-bone/20 px-4 py-3 text-center font-body text-sm font-semibold text-bone/80 transition hover:border-volt hover:text-volt"
+            >
+              Iniciar sesión
+            </a>
+          )}
         </div>
       ) : null}
     </header>

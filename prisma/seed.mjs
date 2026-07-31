@@ -97,17 +97,17 @@ const TRAINERS = [
   },
 ];
 
-// { sedeKey, trainerKey, daysFromNow, time, title, levelLabel, capacity }
+// { sedeKey, trainerKey, daysFromNow, time, title, levelLabel, capacity, price (MXN) }
 const SESIONES = [
-  { sede: "mty", trainer: "diego", days: 1, time: "07:00", title: "Sesión mañanero", levelLabel: "Mañanero", capacity: 14 },
-  { sede: "mty", trainer: "emiliano", days: 3, time: "19:00", title: "Cierre de tarde competitivo", levelLabel: "Competitivo", capacity: 18 },
-  { sede: "mty", trainer: "renata", days: 6, time: "17:00", title: "Liga libre de fin de semana", levelLabel: "Liga libre", capacity: 20 },
-  { sede: "gdl", trainer: "valeria", days: 2, time: "16:00", title: "Iniciación técnica base", levelLabel: "Iniciación", capacity: 12 },
-  { sede: "gdl", trainer: "hector", days: 4, time: "20:00", title: "Intermedio · táctica y posesión", levelLabel: "Intermedio", capacity: 16 },
-  { sede: "cdmx", trainer: "diego", days: 2, time: "17:00", title: "Intermedio Del Valle", levelLabel: "Intermedio", capacity: 16 },
-  { sede: "cdmx", trainer: "renata", days: 5, time: "20:00", title: "Cierre de tarde competitivo", levelLabel: "Competitivo", capacity: 18 },
-  { sede: "tij", trainer: "emiliano", days: 3, time: "19:00", title: "Táctica de tarde", levelLabel: "Intermedio", capacity: 14 },
-  { sede: "sal", trainer: "hector", days: 4, time: "18:00", title: "Táctica de tarde Saltillo", levelLabel: "Intermedio", capacity: 14 },
+  { sede: "mty", trainer: "diego", days: 1, time: "07:00", title: "Sesión mañanero", levelLabel: "Mañanero", capacity: 14, price: 120 },
+  { sede: "mty", trainer: "emiliano", days: 3, time: "19:00", title: "Cierre de tarde competitivo", levelLabel: "Competitivo", capacity: 18, price: 200 },
+  { sede: "mty", trainer: "renata", days: 6, time: "17:00", title: "Liga libre de fin de semana", levelLabel: "Liga libre", capacity: 20, price: 150 },
+  { sede: "gdl", trainer: "valeria", days: 2, time: "16:00", title: "Iniciación técnica base", levelLabel: "Iniciación", capacity: 12, price: 100 },
+  { sede: "gdl", trainer: "hector", days: 4, time: "20:00", title: "Intermedio · táctica y posesión", levelLabel: "Intermedio", capacity: 16, price: 150 },
+  { sede: "cdmx", trainer: "diego", days: 2, time: "17:00", title: "Intermedio Del Valle", levelLabel: "Intermedio", capacity: 16, price: 150 },
+  { sede: "cdmx", trainer: "renata", days: 5, time: "20:00", title: "Cierre de tarde competitivo", levelLabel: "Competitivo", capacity: 18, price: 200 },
+  { sede: "tij", trainer: "emiliano", days: 3, time: "19:00", title: "Táctica de tarde", levelLabel: "Intermedio", capacity: 14, price: 150 },
+  { sede: "sal", trainer: "hector", days: 4, time: "18:00", title: "Táctica de tarde Saltillo", levelLabel: "Intermedio", capacity: 14, price: 150 },
 ];
 
 async function main() {
@@ -138,6 +138,7 @@ async function main() {
         title: sesion.title,
         levelLabel: sesion.levelLabel,
         capacity: sesion.capacity,
+        priceCents: Math.round(sesion.price * 100),
         startsAt: atLocalTime(sesion.days, sesion.time),
         sedeId: sedeByKey[sesion.sede].id,
         trainerId: trainerByKey[sesion.trainer].id,

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getCityBySlug } from "@/data/cities";
 
@@ -62,55 +63,60 @@ export default async function ProximasSesiones({
             const trainerName = sesion.trainer.name ?? "Entrenador Once FC";
 
             return (
-              <li
-                key={sesion.id}
-                className="flex flex-wrap items-center gap-5 px-5 py-5 sm:px-6"
-              >
-                <div className="flex w-14 flex-shrink-0 flex-col items-center rounded-sm bg-ink py-2 text-bone">
-                  <span className="font-mono text-[10px] uppercase tracking-widest text-volt">
-                    {WEEKDAY_FORMAT.format(sesion.startsAt)}
-                  </span>
-                  <span className="font-mono scoreboard-num text-xl">
-                    {DAY_NUM_FORMAT.format(sesion.startsAt)}
-                  </span>
-                  <span className="font-mono text-[10px] uppercase text-bone/50">
-                    {MONTH_FORMAT.format(sesion.startsAt)}
-                  </span>
-                </div>
+              <li key={sesion.id}>
+                <Link
+                  href={`/eventos/${sesion.id}`}
+                  className="flex flex-wrap items-center gap-5 px-5 py-5 transition hover:bg-ink/5 sm:px-6"
+                >
+                  <div className="flex w-14 flex-shrink-0 flex-col items-center rounded-sm bg-ink py-2 text-bone">
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-volt">
+                      {WEEKDAY_FORMAT.format(sesion.startsAt)}
+                    </span>
+                    <span className="font-mono scoreboard-num text-xl">
+                      {DAY_NUM_FORMAT.format(sesion.startsAt)}
+                    </span>
+                    <span className="font-mono text-[10px] uppercase text-bone/50">
+                      {MONTH_FORMAT.format(sesion.startsAt)}
+                    </span>
+                  </div>
 
-                <div className="h-11 w-11 flex-shrink-0 overflow-hidden rounded-full bg-ink/5">
-                  {sesion.trainer.image ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={sesion.trainer.image}
-                      alt={trainerName}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center font-mono text-xs uppercase text-ink/30">
-                      {trainerName.slice(0, 1)}
-                    </div>
-                  )}
-                </div>
+                  <div className="h-11 w-11 flex-shrink-0 overflow-hidden rounded-full bg-ink/5">
+                    {sesion.trainer.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={sesion.trainer.image}
+                        alt={trainerName}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center font-mono text-xs uppercase text-ink/30">
+                        {trainerName.slice(0, 1)}
+                      </div>
+                    )}
+                  </div>
 
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-ink">
-                    {sesion.title}
-                    {sesion.levelLabel ? (
-                      <span className="ml-2 rounded-sm border border-volt-dim/50 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-volt-dim">
-                        {sesion.levelLabel}
-                      </span>
-                    ) : null}
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-ink">
+                      {sesion.title}
+                      {sesion.levelLabel ? (
+                        <span className="ml-2 rounded-sm border border-volt-dim/50 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-volt-dim">
+                          {sesion.levelLabel}
+                        </span>
+                      ) : null}
+                    </p>
+                    <p className="truncate text-xs text-ink/50">
+                      {trainerName} · {sesion.sede.name}
+                      {city ? `, ${city.name}` : ""}
+                    </p>
+                  </div>
+
+                  <p className="flex-shrink-0 font-mono text-sm text-ink/70">
+                    {TIME_FORMAT.format(sesion.startsAt)}
                   </p>
-                  <p className="truncate text-xs text-ink/50">
-                    {trainerName} · {sesion.sede.name}
-                    {city ? `, ${city.name}` : ""}
-                  </p>
-                </div>
-
-                <p className="flex-shrink-0 font-mono text-sm text-ink/70">
-                  {TIME_FORMAT.format(sesion.startsAt)}
-                </p>
+                  <span className="flex-shrink-0 font-mono text-sm text-ink/30" aria-hidden="true">
+                    →
+                  </span>
+                </Link>
               </li>
             );
           })}

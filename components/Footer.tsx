@@ -1,3 +1,7 @@
+"use client";
+
+import { useSession } from "next-auth/react";
+
 type FooterProps = {
   zoneLabel?: string;
   scheduleNote?: string;
@@ -9,6 +13,8 @@ export default function Footer({
   scheduleNote = "Lun a sáb",
   contactEmail = "hola@once-fc.com",
 }: FooterProps) {
+  const { status } = useSession();
+  const isAuthenticated = status === "authenticated";
 
   return (
     <footer className="bg-coal-deep py-14 text-bone">
@@ -47,6 +53,11 @@ export default function Footer({
               <li>
                 <a href="/ciudades" className="hover:text-volt">
                   Todas las ciudades
+                </a>
+              </li>
+              <li>
+                <a href={isAuthenticated ? "/panel/cuenta" : "/login"} className="hover:text-volt">
+                  {isAuthenticated ? "Mi cuenta" : "Iniciar sesión"}
                 </a>
               </li>
             </ul>

@@ -5,7 +5,7 @@ import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
 import Method from "@/components/Method";
 import Showcase from "@/components/Showcase";
-// import ProximasSesiones from "@/components/ProximasSesiones"; // re-enable when ready to launch
+import ProximasSesiones from "@/components/ProximasSesiones";
 import Prueba from "@/components/Prueba";
 import Footer from "@/components/Footer";
 import { cities, getCityBySlug } from "@/data/cities";
@@ -68,7 +68,7 @@ export default function CiudadPage({ params }: Props) {
       />
       <Categories levels={city.levels} />
       <Method />
-      {/* <ProximasSesiones citySlug={city.slug} /> — re-enable when ready to launch */}
+      <ProximasSesiones citySlug={city.slug} />
       <Showcase />
       <Prueba cityName={city.name} levels={city.levels} />
       <Footer

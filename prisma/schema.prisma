@@ -19,6 +19,13 @@ enum BookingStatus {
   CANCELLED
 }
 
+enum ReservaStatus {
+  PENDING
+  PAID
+  CANCELLED
+  EXPIRED
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -37,6 +44,7 @@ model User {
   bookingsAsUser      Booking[]             @relation("BookingUser")
   bookingsAsTrainer   Booking[]             @relation("BookingTrainer")
   sesiones            Sesion[]              @relation("SesionTrainer")
+  reservas            Reserva[]             @relation("ReservaUser")
 }
 
 model Account {
@@ -118,6 +126,8 @@ model Sesion {
   description String?  @db.Text
   levelLabel  String?
   capacity    Int?
+  /// Price in cents (MXN). Null or 0 means free for now — no Stripe checkout is offered.
+  priceCents  Int?
   startsAt    DateTime
   durationMinutes Int  @default(60)
   active      Boolean  @default(true)
@@ -128,10 +138,30 @@ model Sesion {
   sede      Sede   @relation(fields: [sedeId], references: [id], onDelete: Cascade)
   trainerId String
   trainer   User   @relation("SesionTrainer", fields: [trainerId], references: [id], onDelete: Cascade)
+  reservas  Reserva[]
 
   @@index([sedeId])
   @@index([trainerId])
   @@index([startsAt])
+}
+
+// A user's paid (or pending-payment) spot in a Sesion. Created right before
+// redirecting to Stripe Checkout; the webhook is the source of truth for
+// flipping it to PAID once payment actually completes.
+model Reserva {
+  id                      String        @id @default(cuid())
+  userId                  String
+  user                    User          @relation("ReservaUser", fields: [userId], references: [id], onDelete: Cascade)
+  sesionId                String
+  sesion                  Sesion        @relation(fields: [sesionId], references: [id], onDelete: Cascade)
+  status                  ReservaStatus @default(PENDING)
+  amountCents             Int
+  stripeCheckoutSessionId String?       @unique
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
+
+  @@index([sesionId])
+  @@index([userId])
 }
 
 model Booking {

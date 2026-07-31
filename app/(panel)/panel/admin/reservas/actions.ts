@@ -4,12 +4,14 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/auth-guards";
 
-export async function cancelBookingAsAdmin(bookingId: string) {
+export async function cancelReservaAsAdmin(reservaId: string) {
   await requireRole(["ADMIN"]);
 
-  await prisma.booking.updateMany({
-    where: { id: bookingId, status: "CONFIRMED" },
-    data: { status: "CANCELLED", cancelledAt: new Date() },
+  // Marks our record as cancelled — doesn't issue a Stripe refund automatically.
+  // Do that from the Stripe dashboard if the reserva was PAID.
+  await prisma.reserva.updateMany({
+    where: { id: reservaId, status: { in: ["PENDING", "PAID"] } },
+    data: { status: "CANCELLED" },
   });
 
   revalidatePath("/panel/admin/reservas");

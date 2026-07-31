@@ -4,7 +4,7 @@ import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
 import Method from "@/components/Method";
 import Showcase from "@/components/Showcase";
-// import ProximasSesiones from "@/components/ProximasSesiones"; // re-enable when ready to launch
+import ProximasSesiones from "@/components/ProximasSesiones";
 import Footer from "@/components/Footer";
 import CityPicker from "@/components/CityPicker";
 import { getActiveCities } from "@/data/cities";
@@ -22,7 +22,7 @@ export default function Home() {
       <Hero />
       <Categories />
       <Method />
-      {/* <ProximasSesiones /> — re-enable when ready to launch */}
+      <ProximasSesiones />
       <Showcase />
 
       <section id="ciudades" className="bg-coal py-24 text-bone">

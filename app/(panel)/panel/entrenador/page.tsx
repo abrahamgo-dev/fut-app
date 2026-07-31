@@ -1,66 +1,67 @@
 import { requireRole } from "@/lib/auth-guards";
 import { prisma } from "@/lib/prisma";
 import { getCityBySlug } from "@/data/cities";
-import { cancelBookingAsTrainer } from "./actions";
+
+const DATE_FORMAT = new Intl.DateTimeFormat("es-MX", {
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+  timeZone: "America/Mexico_City",
+});
+const TIME_FORMAT = new Intl.DateTimeFormat("es-MX", {
+  hour: "numeric",
+  minute: "2-digit",
+  hour12: true,
+  timeZone: "America/Mexico_City",
+});
 
 export default async function TrainerDashboardPage() {
   const session = await requireRole(["TRAINER", "ADMIN"]);
 
-  const bookings = await prisma.booking.findMany({
-    where: { trainerId: session.user.id, status: "CONFIRMED", startsAt: { gte: new Date() } },
-    include: { user: { select: { name: true, email: true } } },
+  const sesiones = await prisma.sesion.findMany({
+    where: { trainerId: session.user.id, active: true, startsAt: { gte: new Date() } },
+    include: { sede: { select: { name: true, citySlug: true } } },
     orderBy: { startsAt: "asc" },
   });
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
+      <div>
         <h1 className="font-display text-2xl text-bone">Panel de entrenador</h1>
-        <a
-          href="/panel/entrenador/disponibilidad"
-          className="rounded-sm bg-volt px-4 py-2 text-sm font-semibold text-coal-deep transition hover:bg-bone"
-        >
-          Configurar disponibilidad
-        </a>
+        <p className="mt-1 text-sm text-bone/60">
+          Tus próximas sesiones asignadas. El club define horario y sede — aquí solo las
+          consultas.
+        </p>
       </div>
 
       <section>
         <h2 className="mb-4 font-display text-lg text-bone">Próximas sesiones</h2>
-        {bookings.length === 0 ? (
-          <p className="text-sm text-bone/60">No tienes sesiones reservadas todavía.</p>
+        {sesiones.length === 0 ? (
+          <p className="text-sm text-bone/60">No tienes sesiones asignadas todavía.</p>
         ) : (
           <ul className="divide-y divide-bone/10 rounded-sm border border-bone/10">
-            {bookings.map((booking) => (
+            {sesiones.map((sesion) => (
               <li
-                key={booking.id}
+                key={sesion.id}
                 className="flex flex-wrap items-center justify-between gap-4 px-4 py-3"
               >
                 <div>
                   <p className="text-sm font-medium text-bone">
-                    {booking.user.name ?? booking.user.email}
+                    {sesion.title}
+                    {sesion.levelLabel ? (
+                      <span className="ml-2 font-mono text-[10px] uppercase tracking-widest text-volt-dim">
+                        {sesion.levelLabel}
+                      </span>
+                    ) : null}
                   </p>
                   <p className="text-xs text-bone/50">
-                    {getCityBySlug(booking.citySlug)?.name ?? booking.citySlug} ·{" "}
-                    {booking.startsAt.toLocaleString("es-MX", {
-                      dateStyle: "medium",
-                      timeStyle: "short",
-                      timeZone: "America/Mexico_City",
-                    })}
+                    {sesion.sede.name}
+                    {getCityBySlug(sesion.sede.citySlug)
+                      ? `, ${getCityBySlug(sesion.sede.citySlug)?.name}`
+                      : ""}{" "}
+                    · {DATE_FORMAT.format(sesion.startsAt)} · {TIME_FORMAT.format(sesion.startsAt)}
                   </p>
                 </div>
-                <form
-                  action={async () => {
-                    "use server";
-                    await cancelBookingAsTrainer(booking.id);
-                  }}
-                >
-                  <button
-                    type="submit"
-                    className="rounded-sm border border-bone/20 px-3 py-1.5 text-xs font-medium text-bone/70 transition hover:border-red-400 hover:text-red-400"
-                  >
-                    Cancelar
-                  </button>
-                </form>
               </li>
             ))}
           </ul>

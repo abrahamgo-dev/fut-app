@@ -6,7 +6,10 @@ import { createAvailabilityRule, deleteAvailabilityRule } from "./actions";
 const DAY_LABELS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
 export default async function TrainerAvailabilityPage() {
-  const session = await requireRole(["TRAINER", "ADMIN"]);
+  // Trainers don't have write access to their own availability for now — the
+  // club (admin) assigns them to sesiones directly, regardless of this. Kept
+  // admin-only in case it's needed again later.
+  const session = await requireRole(["ADMIN"]);
 
   const rules = await prisma.trainerAvailability.findMany({
     where: { trainerId: session.user.id },
