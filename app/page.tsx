@@ -3,6 +3,7 @@ import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
 import Method from "@/components/Method";
+import Showcase from "@/components/Showcase";
 import Footer from "@/components/Footer";
 import CityPicker from "@/components/CityPicker";
 import { getActiveCities } from "@/data/cities";
@@ -16,6 +17,7 @@ export default function Home() {
       <Hero />
       <Categories />
       <Method />
+      <Showcase />
 
       <section id="ciudades" className="bg-coal py-24 text-bone">
         <div className="mx-auto max-w-6xl px-6">

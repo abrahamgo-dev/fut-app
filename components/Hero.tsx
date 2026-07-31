@@ -21,12 +21,12 @@ export default function Hero({ cityLabel = "México", levelsCount = 6 }: HeroPro
       className="relative overflow-hidden bg-coal pt-32 pb-16 text-bone"
     >
       <Image
-        src="/hero-players.jpg"
+        src="/sven-kucinic-Z0KjmjxUsKs-unsplash.jpg"
         alt=""
         fill
         priority
         sizes="100vw"
-        className="object-cover object-center grayscale"
+        className="object-cover object-[75%_15%] grayscale"
       />
       <div
         className="pointer-events-none absolute inset-0 bg-gradient-to-r from-coal-deep from-30% via-coal-deep/90 to-coal-deep/70"
