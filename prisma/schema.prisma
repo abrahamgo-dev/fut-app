@@ -134,6 +134,22 @@ model Sesion {
   @@index([startsAt])
 }
 
+// A submission from the public "sesión gratuita" lead form (see components/Prueba.tsx
+// and app/api/lead/route.ts). Kept independent of email delivery so admins can review
+// leads in the panel even if the notification email fails to send.
+model LeadMessage {
+  id                String   @id @default(cuid())
+  name              String
+  age               String
+  phone             String
+  cityName          String?
+  preferredSchedule String?
+  read              Boolean  @default(false)
+  createdAt         DateTime @default(now())
+
+  @@index([createdAt])
+}
+
 model Booking {
   id          String        @id @default(cuid())
   userId      String

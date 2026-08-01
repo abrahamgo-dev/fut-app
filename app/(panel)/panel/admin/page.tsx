@@ -1,14 +1,21 @@
 import { prisma } from "@/lib/prisma";
 
 export default async function AdminDashboardPage() {
-  const [userCount, trainerCount, upcomingBookingCount, sedeCount, upcomingSesionCount] =
-    await Promise.all([
-      prisma.user.count(),
-      prisma.user.count({ where: { role: "TRAINER" } }),
-      prisma.booking.count({ where: { status: "CONFIRMED", startsAt: { gte: new Date() } } }),
-      prisma.sede.count({ where: { active: true } }),
-      prisma.sesion.count({ where: { active: true, startsAt: { gte: new Date() } } }),
-    ]);
+  const [
+    userCount,
+    trainerCount,
+    upcomingBookingCount,
+    sedeCount,
+    upcomingSesionCount,
+    unreadMessageCount,
+  ] = await Promise.all([
+    prisma.user.count(),
+    prisma.user.count({ where: { role: "TRAINER" } }),
+    prisma.booking.count({ where: { status: "CONFIRMED", startsAt: { gte: new Date() } } }),
+    prisma.sede.count({ where: { active: true } }),
+    prisma.sesion.count({ where: { active: true, startsAt: { gte: new Date() } } }),
+    prisma.leadMessage.count({ where: { read: false } }),
+  ]);
 
   const stats = [
     { label: "Usuarios", value: userCount },
@@ -16,6 +23,7 @@ export default async function AdminDashboardPage() {
     { label: "Reservas próximas", value: upcomingBookingCount },
     { label: "Sedes activas", value: sedeCount },
     { label: "Sesiones próximas", value: upcomingSesionCount },
+    { label: "Mensajes sin leer", value: unreadMessageCount },
   ];
 
   return (
@@ -61,6 +69,12 @@ export default async function AdminDashboardPage() {
           className="rounded-sm border border-bone/20 px-4 py-2 text-sm font-medium text-bone/80 transition hover:border-volt hover:text-volt"
         >
           Ver reservas
+        </a>
+        <a
+          href="/panel/admin/mensajes"
+          className="rounded-sm border border-bone/20 px-4 py-2 text-sm font-medium text-bone/80 transition hover:border-volt hover:text-volt"
+        >
+          Ver mensajes
         </a>
       </div>
     </div>
