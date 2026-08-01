@@ -8,7 +8,6 @@ import ProximasSesiones from "@/components/ProximasSesiones";
 import Prueba from "@/components/Prueba";
 import Footer from "@/components/Footer";
 import { cities, getCityBySlug } from "@/data/cities";
-import { prisma } from "@/lib/prisma";
 import { PRELAUNCH_MODE } from "@/lib/launchFlags";
 
 type Props = {
@@ -25,8 +24,13 @@ export function generateMetadata({ params }: Props): Metadata {
   const city = getCityBySlug(params.slug);
   if (!city) return {};
 
-  const title = `Once FC ${city.name} — Reserva sesiones de entrenamiento`;
-  const description = `Reserva sesiones de entrenamiento de fútbol en ${city.name}, en canchas de calidad y con coaches con experiencia.`;
+  const comingSoon = city.status === "comingSoon";
+  const title = comingSoon
+    ? `Once FC ${city.name} — Próximamente`
+    : `Once FC ${city.name} — Reserva sesiones de entrenamiento`;
+  const description = comingSoon
+    ? `Muy pronto en ${city.name}: sesiones de entrenamiento de fútbol para adultos en canchas de calidad. Déjanos tus datos para avisarte cuando abramos.`
+    : `Reserva sesiones de entrenamiento de fútbol en ${city.name}, en canchas de calidad y con coaches con experiencia.`;
 
   return {
     title,
@@ -36,17 +40,19 @@ export function generateMetadata({ params }: Props): Metadata {
   };
 }
 
-export default async function CiudadPage({ params }: Props) {
+export default function CiudadPage({ params }: Props) {
   const city = getCityBySlug(params.slug);
   if (!city) notFound();
 
-  const sedesCount = await prisma.sede.count({ where: { active: true, citySlug: city.slug } });
+  const comingSoon = city.status === "comingSoon";
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SportsActivityLocation",
     name: `Once FC ${city.name}`,
-    description: `Sesiones de entrenamiento de fútbol para adultos en canchas de calidad en ${city.name}, México.`,
+    description: comingSoon
+      ? `Próximamente: sesiones de entrenamiento de fútbol para adultos en ${city.name}, México.`
+      : `Sesiones de entrenamiento de fútbol para adultos en canchas de calidad en ${city.name}, México.`,
     sport: "Soccer",
     address: {
       "@type": "PostalAddress",
@@ -67,12 +73,12 @@ export default async function CiudadPage({ params }: Props) {
       <Hero
         cityLabel={`${city.name}, ${city.state}`}
         citySlug={city.slug}
-        sedesCount={sedesCount}
+        comingSoon={comingSoon}
       />
-      {!PRELAUNCH_MODE ? <ProximasSesiones citySlug={city.slug} /> : null}
+      {!PRELAUNCH_MODE && !comingSoon ? <ProximasSesiones citySlug={city.slug} /> : null}
       <Method />
       <Showcase cityName={city.name} />
-      <Prueba cityName={city.name} />
+      <Prueba cityName={city.name} comingSoon={comingSoon} />
       <Footer
         cityLabel={city.name}
         scheduleNote={city.scheduleNote}

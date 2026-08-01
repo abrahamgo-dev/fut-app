@@ -10,6 +10,7 @@ export type CalendarEvent = {
   levelLabel: string | null;
   sedeName: string;
   trainerName: string;
+  isReserved?: boolean;
 };
 
 const WEEKDAY_LABELS = ["LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB", "DOM"];
@@ -30,24 +31,16 @@ function colorFor(level: string | null) {
   return LEVEL_COLORS[level] ?? DEFAULT_COLOR;
 }
 
-function cellStyle(dayEvents: CalendarEvent[], isSelected: boolean): React.CSSProperties {
+function cellStyle(
+  dayEvents: CalendarEvent[],
+  isSelected: boolean,
+): React.CSSProperties {
   if (dayEvents.length === 0) return {};
 
-  const rgbs = Array.from(new Set(dayEvents.map((e) => colorFor(e.levelLabel).rgb)));
-  const fillAlpha = isSelected ? 0.42 : 0.28;
-
-  const background =
-    rgbs.length === 1
-      ? `rgba(${rgbs[0]}, ${fillAlpha})`
-      : `linear-gradient(90deg, ${rgbs
-          .map((rgb, i) => {
-            const step = 100 / rgbs.length;
-            return `rgba(${rgb}, ${fillAlpha}) ${i * step}%, rgba(${rgb}, ${fillAlpha}) ${(i + 1) * step}%`;
-          })
-          .join(", ")})`;
-
-  const shadows = [`inset 0 0 0 1px rgba(${rgbs[0]}, 0.6)`];
-  if (isSelected) shadows.push("0 0 0 2px #B6FF3B");
+  const fillAlpha = isSelected ? 0.48 : 0.24;
+  const background = `rgba(182, 255, 59, ${fillAlpha})`;
+  const shadows = ["inset 0 0 0 1px rgba(182, 255, 59, 0.75)"];
+  if (isSelected) shadows.push("0 0 0 2px rgba(182, 255, 59, 0.7)");
 
   return { background, boxShadow: shadows.join(", ") };
 }
@@ -82,7 +75,11 @@ function localDayKey(date: Date) {
   return LOCAL_DAY_KEY_FORMAT.format(date); // already "YYYY-MM-DD"
 }
 
-export default function EventsCalendar({ events }: { events: CalendarEvent[] }) {
+export default function EventsCalendar({
+  events,
+}: {
+  events: CalendarEvent[];
+}) {
   const eventsByDay = useMemo(() => {
     const map = new Map<string, CalendarEvent[]>();
     for (const event of events) {
@@ -105,15 +102,29 @@ export default function EventsCalendar({ events }: { events: CalendarEvent[] }) 
     return { year, month: month - 1, selectedKey: firstKey };
   }, [eventsByDay, todayKey]);
 
-  const [cursor, setCursor] = useState({ year: initial.year, month: initial.month });
+  const fallbackCursor = useMemo(() => ({ year: 2026, month: 7 }), []);
+  const initialCursor =
+    initial.year && initial.month >= 0 ? initial : fallbackCursor;
+
+  const [cursor, setCursor] = useState({
+    year: initialCursor.year,
+    month: initialCursor.month,
+  });
   const [selectedKey, setSelectedKey] = useState(initial.selectedKey);
 
   const monthAnchor = new Date(Date.UTC(cursor.year, cursor.month, 1));
   const firstWeekday = monthAnchor.getUTCDay(); // 0=Sun..6=Sat
   const leading = (firstWeekday + 6) % 7; // Monday-start offset
-  const daysInMonth = new Date(Date.UTC(cursor.year, cursor.month + 1, 0)).getUTCDate();
+  const daysInMonth = new Date(
+    Date.UTC(cursor.year, cursor.month + 1, 0),
+  ).getUTCDate();
 
-  const cells: { year: number; month: number; day: number; inMonth: boolean }[] = [];
+  const cells: {
+    year: number;
+    month: number;
+    day: number;
+    inMonth: boolean;
+  }[] = [];
   const prevMonth = new Date(Date.UTC(cursor.year, cursor.month, 0));
   const daysInPrevMonth = prevMonth.getUTCDate();
   for (let i = leading - 1; i >= 0; i--) {
@@ -210,14 +221,21 @@ export default function EventsCalendar({ events }: { events: CalendarEvent[] }) 
               } ${dayEvents.length === 0 ? "cursor-default hover:bg-bone/5" : "cursor-pointer hover:brightness-125"}`}
             >
               <span
-                className={`flex h-6 w-6 items-center justify-center rounded-full font-mono text-xs ${
-                  isToday ? "bg-bone text-coal-deep" : ""
+                className={`flex h-7 w-7 items-center justify-center rounded-full font-mono text-xs font-semibold ${
+                  dayEvents.length > 0
+                    ? "bg-coal-deep text-volt ring-1 ring-volt/70"
+                    : isToday
+                      ? "bg-bone text-coal-deep"
+                      : ""
                 }`}
               >
                 {cell.day}
               </span>
-              {dayEvents.length > 1 ? (
-                <span className="font-mono text-[10px] text-bone/70">{dayEvents.length}</span>
+              {dayEvents.length > 0 ? (
+                <span className="rounded-full border border-volt/60 bg-coal-deep/85 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-volt">
+                  {dayEvents.length}{" "}
+                  {dayEvents.length === 1 ? "sesión" : "sesiones"}
+                </span>
               ) : null}
             </button>
           );
@@ -227,7 +245,10 @@ export default function EventsCalendar({ events }: { events: CalendarEvent[] }) 
       {activeLevels.length > 0 ? (
         <div className="flex flex-wrap gap-x-4 gap-y-2 border-t border-bone/10 px-5 py-4">
           {activeLevels.map((level) => (
-            <span key={level} className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-bone/50">
+            <span
+              key={level}
+              className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-bone/50"
+            >
               <span
                 className="h-2.5 w-2.5 rounded-[2px]"
                 style={{ backgroundColor: `rgb(${colorFor(level).rgb})` }}
@@ -240,7 +261,9 @@ export default function EventsCalendar({ events }: { events: CalendarEvent[] }) 
 
       <div className="border-t border-bone/10 px-5 py-5">
         {selectedEvents.length === 0 ? (
-          <p className="text-sm text-bone/50">No hay sesiones este día.</p>
+          <p className="text-sm text-bone/50">
+            No hay entrenamientos este día.
+          </p>
         ) : (
           <ul className="space-y-3">
             {selectedEvents.map((event) => {
@@ -256,12 +279,19 @@ export default function EventsCalendar({ events }: { events: CalendarEvent[] }) 
                     className="flex flex-wrap items-center justify-between gap-4 rounded-sm border border-l-4 border-bone/10 px-5 py-4 transition hover:brightness-125"
                   >
                     <div className="min-w-0">
-                      <p className="truncate font-display text-lg text-bone">{event.title}</p>
+                      <p className="truncate font-display text-lg text-bone">
+                        {event.title}
+                      </p>
                       <p className="mt-1 truncate text-sm text-bone/60">
                         {event.trainerName} · {event.sedeName}
                       </p>
                     </div>
                     <div className="flex flex-shrink-0 items-center gap-3">
+                      {event.isReserved ? (
+                        <span className="rounded-sm border border-volt/60 bg-volt/15 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-volt">
+                          Reservado
+                        </span>
+                      ) : null}
                       {event.levelLabel ? (
                         <span
                           className="rounded-sm px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest"

@@ -2,24 +2,46 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { getActiveCities } from "@/data/cities";
+import { getLiveCities } from "@/data/cities";
 import { PRELAUNCH_MODE } from "@/lib/launchFlags";
 
 type HeroProps = {
   cityLabel?: string;
   citySlug?: string;
-  sedesCount?: number;
+  /** True on city pages for cities we don't actually operate in yet (kept up
+   * for SEO/geo reach) — copy shifts from "book now" to "coming soon". */
+  comingSoon?: boolean;
 };
 
-export default function Hero({ cityLabel = "México", citySlug, sedesCount = 5 }: HeroProps) {
+// Staggered slide+fade entrance for the text column — each element animates in
+// slightly after the previous one via animationDelay, respecting
+// prefers-reduced-motion (handled globally in globals.css).
+function reveal(delayMs: number): {
+  className: string;
+  style: React.CSSProperties;
+} {
+  return {
+    className: "opacity-0 animate-[slide-fade-in_0.7s_ease-out_forwards]",
+    style: { animationDelay: `${delayMs}ms` },
+  };
+}
+
+export default function Hero({
+  cityLabel = "México",
+  citySlug,
+  comingSoon = false,
+}: HeroProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
-  const citiesCount = getActiveCities().length;
+  const citiesCount = getLiveCities().length;
   const reserveHref = citySlug ? "#prueba" : "#ciudades";
 
   const stats = [
     { value: "18+", label: "EDAD PARA JUGAR" },
-    { value: String(sedesCount), label: "SEDES DE CALIDAD" },
-    { value: String(citiesCount), label: "CIUDADES" },
+    { value: "FLEXIBLE", label: "SIN MEMBRESÍA FIJA" },
+    {
+      value: String(citiesCount),
+      label: citiesCount === 1 ? "CIUDAD" : "CIUDADES",
+    },
   ];
 
   return (
@@ -28,18 +50,21 @@ export default function Hero({ cityLabel = "México", citySlug, sedesCount = 5 }
       className="relative overflow-hidden bg-coal pt-32 pb-16 text-bone"
     >
       {!imageLoaded ? (
-        <div className="absolute inset-0 animate-pulse bg-coal-deep" aria-hidden="true">
+        <div
+          className="absolute inset-0 animate-pulse bg-coal-deep"
+          aria-hidden="true"
+        >
           <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.4s_infinite] bg-gradient-to-r from-transparent via-bone/10 to-transparent" />
         </div>
       ) : null}
       <Image
-        src="/sven-kucinic-Z0KjmjxUsKs-unsplash.jpg"
+        src="/pexels-franco-monsalvo-252430633-38092600.jpg"
         alt=""
         fill
         priority
         sizes="100vw"
         onLoad={() => setImageLoaded(true)}
-        className={`object-cover object-[75%_15%] transition-opacity duration-700 ease-out ${
+        className={`object-cover object-[center_38%] transition-opacity duration-700 ease-out ${
           imageLoaded ? "opacity-100" : "opacity-0"
         }`}
       />
@@ -47,14 +72,33 @@ export default function Hero({ cityLabel = "México", citySlug, sedesCount = 5 }
         className="pointer-events-none absolute inset-0 bg-gradient-to-r from-coal-deep from-10% via-coal-deep/75 to-coal-deep/40"
         aria-hidden="true"
       />
-      <div className="pointer-events-none absolute inset-0 bg-grid-lines" aria-hidden="true" />
+      <div
+        className="pointer-events-none absolute inset-0 bg-grid-lines"
+        aria-hidden="true"
+      />
+      {/* Faded brand mark watermark — kept subtle (low opacity + screen blend
+          so the black background disappears) rather than a loud logo stamp. */}
+      <Image
+        src="/once-fc-mark.png"
+        alt=""
+        aria-hidden="true"
+        width={620}
+        height={600}
+        className="pointer-events-none absolute -right-16 top-1/2 hidden w-[26rem] -translate-y-1/2 opacity-[0.12] mix-blend-screen sm:block md:w-[34rem] lg:w-[40rem]"
+      />
 
       <div className="relative mx-auto max-w-6xl px-6">
-        <p className="font-mono text-xs uppercase tracking-[0.3em] text-volt">
-          Sesiones de entrenamiento · {cityLabel}
+        <p
+          className={`font-mono text-xs uppercase tracking-[0.3em] text-volt ${reveal(0).className}`}
+          style={reveal(0).style}
+        >
+          {comingSoon ? "Próximamente" : "Entrenamientos"} · {cityLabel}
         </p>
 
-        <h1 className="mt-6 max-w-3xl font-display text-[13vw] leading-[0.9] tracking-tight sm:text-7xl md:text-8xl">
+        <h1
+          className={`mt-6 max-w-3xl font-display text-[13vw] leading-[0.9] tracking-tight sm:text-7xl md:text-8xl ${reveal(120).className}`}
+          style={reveal(120).style}
+        >
           ENTRENA
           <br />
           MEJORA
@@ -62,12 +106,26 @@ export default function Hero({ cityLabel = "México", citySlug, sedesCount = 5 }
           DISFRUTA <span className="text-outline">EL FÚTBOL</span>
         </h1>
 
-        <div className="mt-10 flex max-w-3xl flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+        <div
+          className={`mt-10 flex max-w-3xl flex-col gap-6 sm:flex-row sm:items-end sm:justify-between ${reveal(240).className}`}
+          style={reveal(240).style}
+        >
           <p className="max-w-md font-body text-lg text-bone/80">
-            Reserva sesiones de entrenamiento para{" "}
-            <strong className="text-volt">adultos</strong> en las mejores canchas de la
-            ciudad, con coaches de experiencia. Sin membresía fija: agenda cuando te
-            acomode.
+            {comingSoon ? (
+              <>
+                Muy pronto vas a poder reservar entrenamientos para{" "}
+                <strong className="text-volt">adultos</strong> en las mejores
+                canchas de {cityLabel}. Déjanos tus datos y te avisamos apenas
+                abramos.
+              </>
+            ) : (
+              <>
+                Reserva entrenamientos para{" "}
+                <strong className="text-volt">adultos</strong> en las mejores
+                canchas de la ciudad, con coaches de experiencia. Sin membresía
+                fija: agenda cuando te acomode.
+              </>
+            )}
           </p>
 
           <div className="flex flex-shrink-0 gap-3">
@@ -75,7 +133,9 @@ export default function Hero({ cityLabel = "México", citySlug, sedesCount = 5 }
               href={reserveHref}
               className="rounded-sm bg-volt px-6 py-3 text-center font-body text-sm font-semibold text-coal-deep transition hover:brightness-95"
             >
-              Reserva tu sesión gratis
+              {comingSoon
+                ? "Avísenme cuando abran"
+                : "Reserva tu entrenamiento gratis"}
             </a>
             {/* Points at the events list when it's live; pre-launch that
                 section is hidden (mock data), so this points at Método
@@ -84,12 +144,15 @@ export default function Hero({ cityLabel = "México", citySlug, sedesCount = 5 }
               href={PRELAUNCH_MODE ? "#metodo" : "#sesiones"}
               className="rounded-sm border border-bone/30 px-6 py-3 text-center font-body text-sm font-semibold text-bone transition hover:border-volt hover:text-volt"
             >
-              {PRELAUNCH_MODE ? "Cómo funciona" : "Ver sesiones"}
+              {PRELAUNCH_MODE ? "Cómo funciona" : "Ver entrenamientos"}
             </a>
           </div>
         </div>
 
-        <dl className="mt-16 grid grid-cols-3 gap-6 border-t border-bone/15 pt-8">
+        <dl
+          className={`mt-16 grid grid-cols-3 gap-6 border-t border-bone/15 pt-8 ${reveal(360).className}`}
+          style={reveal(360).style}
+        >
           {stats.map((stat) => (
             <div key={stat.label}>
               <dt className="sr-only">{stat.label}</dt>

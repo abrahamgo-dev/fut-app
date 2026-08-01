@@ -1,33 +1,173 @@
 import { requireSession } from "@/lib/auth-guards";
 import { prisma } from "@/lib/prisma";
-import { getCityBySlug } from "@/data/cities";
-import { cancelMyBooking } from "./actions";
 
 export default async function CuentaPage() {
   const session = await requireSession();
 
-  const [upcoming, past, reservas] = await Promise.all([
-    prisma.booking.findMany({
-      where: { userId: session.user.id, status: "CONFIRMED", startsAt: { gte: new Date() } },
-      include: { trainer: { select: { name: true, email: true } } },
+  const shouldCreateMockData = process.env.NODE_ENV !== "production";
+
+  async function ensureMockReservationsForCurrentUser(userId: string) {
+    const existingActiveReservations = await prisma.reserva.findMany({
+      where: {
+        userId,
+        status: "PAID",
+        sesion: { startsAt: { gte: new Date() } },
+      },
+      select: { sesionId: true },
+    });
+
+    const existingHistoryReservations = await prisma.reserva.findMany({
+      where: {
+        userId,
+        OR: [
+          { status: "PAID" },
+          { status: "CANCELLED" },
+          { status: "EXPIRED" },
+        ],
+        sesion: { startsAt: { lt: new Date() } },
+      },
+      select: { sesionId: true },
+    });
+
+    const DESIRED_ACTIVE_RESERVATIONS = 30;
+
+    if (
+      existingActiveReservations.length >= DESIRED_ACTIVE_RESERVATIONS &&
+      existingHistoryReservations.length >= 20
+    ) {
+      return;
+    }
+
+    const futureSessions = await prisma.sesion.findMany({
+      where: { startsAt: { gte: new Date() } },
       orderBy: { startsAt: "asc" },
-    }),
-    prisma.booking.findMany({
+      select: { id: true, priceCents: true },
+    });
+
+    const activeSessionIds = new Set(
+      existingActiveReservations.map((reservation) => reservation.sesionId),
+    );
+
+    // Stride through the whole range (instead of just taking the soonest N)
+    // so reservations land throughout August and September, not only in the
+    // first couple of weeks.
+    const reservationStride = Math.max(
+      1,
+      Math.floor(futureSessions.length / DESIRED_ACTIVE_RESERVATIONS),
+    );
+
+    for (
+      let index = 0;
+      index < futureSessions.length &&
+      activeSessionIds.size < DESIRED_ACTIVE_RESERVATIONS;
+      index += reservationStride
+    ) {
+      const sesion = futureSessions[index];
+      if (activeSessionIds.has(sesion.id)) continue;
+
+      await prisma.reserva.create({
+        data: {
+          userId,
+          sesionId: sesion.id,
+          status: "PAID",
+          amountCents: sesion.priceCents ?? 12000,
+        },
+      });
+      activeSessionIds.add(sesion.id);
+    }
+
+    const sedes = await prisma.sede.findMany({
+      select: { id: true },
+      orderBy: { createdAt: "asc" },
+    });
+    const trainers = await prisma.user.findMany({
+      where: { role: "TRAINER" },
+      select: { id: true },
+      orderBy: { createdAt: "asc" },
+    });
+
+    const historySessionIds = new Set(
+      existingHistoryReservations.map((reservation) => reservation.sesionId),
+    );
+    const historicalStatuses = ["PAID", "CANCELLED", "EXPIRED"];
+
+    for (let index = 0; index < 20; index += 1) {
+      const startsAt = new Date();
+      startsAt.setDate(startsAt.getDate() - (8 + index));
+      startsAt.setHours([7, 10, 17, 19][index % 4], 0, 0, 0);
+      const title = `Historial mock ${index + 1}`;
+
+      let sesionRecord = await prisma.sesion.findFirst({
+        where: { title, startsAt },
+        select: { id: true },
+      });
+
+      if (!sesionRecord) {
+        const sede = sedes[index % sedes.length];
+        const trainer = trainers[index % trainers.length];
+
+        if (!sede || !trainer) break;
+
+        sesionRecord = await prisma.sesion.create({
+          data: {
+            title,
+            levelLabel: "Historial",
+            capacity: 12,
+            priceCents: 9000 + index * 200,
+            startsAt,
+            sedeId: sede.id,
+            trainerId: trainer.id,
+          },
+        });
+      }
+
+      if (historySessionIds.has(sesionRecord.id)) continue;
+
+      await prisma.reserva.create({
+        data: {
+          userId,
+          sesionId: sesionRecord.id,
+          status: historicalStatuses[index % historicalStatuses.length],
+          amountCents: 9000 + index * 200,
+        },
+      });
+      historySessionIds.add(sesionRecord.id);
+    }
+  }
+
+  if (shouldCreateMockData) {
+    await ensureMockReservationsForCurrentUser(session.user.id);
+  }
+
+  const [primaryReservas, primaryHistorialReservas] = await Promise.all([
+    prisma.reserva.findMany({
       where: {
         userId: session.user.id,
-        OR: [{ status: "CANCELLED" }, { startsAt: { lt: new Date() } }],
+        status: "PAID",
+        sesion: { startsAt: { gte: new Date() } },
       },
-      include: { trainer: { select: { name: true, email: true } } },
-      orderBy: { startsAt: "desc" },
+      include: { sesion: { include: { sede: true } } },
+      orderBy: { createdAt: "desc" },
       take: 10,
     }),
     prisma.reserva.findMany({
-      where: { userId: session.user.id },
+      where: {
+        userId: session.user.id,
+        OR: [
+          { status: "PAID" },
+          { status: "CANCELLED" },
+          { status: "EXPIRED" },
+        ],
+        sesion: { startsAt: { lt: new Date() } },
+      },
       include: { sesion: { include: { sede: true } } },
       orderBy: { createdAt: "desc" },
       take: 10,
     }),
   ]);
+
+  const reservas = primaryReservas;
+  const historialReservas = primaryHistorialReservas;
 
   const RESERVA_STATUS_LABEL: Record<string, string> = {
     PENDING: "Pago pendiente",
@@ -38,29 +178,88 @@ export default async function CuentaPage() {
 
   return (
     <div className="space-y-10">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-2xl text-bone">Mi cuenta</h1>
+      <div className="flex flex-col gap-4 rounded-sm border border-bone/10 bg-bone/5 p-5 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="font-display text-2xl text-bone">Mi cuenta</h1>
+          <p className="mt-1 text-sm text-bone/70">
+            Gestiona tus reservas y revisa tu historial de entrenamientos.
+          </p>
+        </div>
         <a
           href="/reservar"
-          className="rounded-sm bg-volt px-4 py-2 text-sm font-semibold text-coal-deep transition hover:bg-bone"
+          className="inline-flex items-center justify-center rounded-sm bg-volt px-4 py-2 text-sm font-semibold text-coal-deep transition hover:bg-bone"
         >
-          Reservar sesión
+          Ver calendario
         </a>
       </div>
 
       <section>
-        <h2 className="mb-4 font-display text-lg text-bone">Tus reservas de eventos</h2>
+        <h2 className="mb-4 font-display text-lg text-bone">Tus reservas</h2>
         {reservas.length === 0 ? (
-          <p className="text-sm text-bone/60">Todavía no has reservado ninguna sesión pagada.</p>
+          <p className="text-sm text-bone/60">
+            Todavía no tienes reservas activas para entrenamientos.
+          </p>
         ) : (
           <ul className="divide-y divide-bone/10 rounded-sm border border-bone/10">
             {reservas.map((reserva) => (
               <li
                 key={reserva.id}
+                className="rounded-sm border border-transparent px-4 py-3 transition duration-200 hover:border-volt hover:bg-volt/5"
+              >
+                <a
+                  href={`/eventos/${reserva.sesionId}`}
+                  className="flex flex-wrap items-center justify-between gap-4"
+                >
+                  <div>
+                    <p className="text-sm font-medium text-bone">
+                      {reserva.sesion.title}
+                    </p>
+                    <p className="text-xs text-bone/50">
+                      {reserva.sesion.sede.name} ·{" "}
+                      {reserva.sesion.startsAt.toLocaleString("es-MX", {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                        timeZone: "America/Mexico_City",
+                      })}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-bone/80">
+                      {(reserva.amountCents / 100).toLocaleString("es-MX", {
+                        style: "currency",
+                        currency: "MXN",
+                      })}
+                    </p>
+                    <p className="font-mono text-[11px] uppercase tracking-widest text-bone/40">
+                      {RESERVA_STATUS_LABEL[reserva.status] ?? reserva.status}
+                    </p>
+                  </div>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section>
+        <h2 className="mb-4 font-display text-lg text-bone">
+          Historial de entrenamientos
+        </h2>
+        {historialReservas.length === 0 ? (
+          <p className="text-sm text-bone/60">
+            Todavía no hay entrenamientos en tu historial.
+          </p>
+        ) : (
+          <ul className="divide-y divide-bone/10 rounded-sm border border-bone/10">
+            {historialReservas.map((reserva) => (
+              <li
+                key={reserva.id}
                 className="flex flex-wrap items-center justify-between gap-4 px-4 py-3"
               >
                 <div>
-                  <p className="text-sm font-medium text-bone">{reserva.sesion.title}</p>
+                  <p className="text-sm font-medium text-bone">
+                    {reserva.sesion.title}
+                  </p>
                   <p className="text-xs text-bone/50">
                     {reserva.sesion.sede.name} ·{" "}
                     {reserva.sesion.startsAt.toLocaleString("es-MX", {
@@ -70,85 +269,8 @@ export default async function CuentaPage() {
                     })}
                   </p>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm text-bone/80">
-                    {(reserva.amountCents / 100).toLocaleString("es-MX", {
-                      style: "currency",
-                      currency: "MXN",
-                    })}
-                  </p>
-                  <p className="font-mono text-[11px] uppercase tracking-widest text-bone/40">
-                    {RESERVA_STATUS_LABEL[reserva.status] ?? reserva.status}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section>
-        <h2 className="mb-4 font-display text-lg text-bone">Próximas sesiones 1 a 1</h2>
-        {upcoming.length === 0 ? (
-          <p className="text-sm text-bone/60">No tienes sesiones reservadas.</p>
-        ) : (
-          <ul className="divide-y divide-bone/10 rounded-sm border border-bone/10">
-            {upcoming.map((booking) => (
-              <li
-                key={booking.id}
-                className="flex flex-wrap items-center justify-between gap-4 px-4 py-3"
-              >
-                <div>
-                  <p className="text-sm font-medium text-bone">
-                    {booking.trainer.name ?? booking.trainer.email}
-                  </p>
-                  <p className="text-xs text-bone/50">
-                    {getCityBySlug(booking.citySlug)?.name ?? booking.citySlug} ·{" "}
-                    {booking.startsAt.toLocaleString("es-MX", {
-                      dateStyle: "medium",
-                      timeStyle: "short",
-                      timeZone: "America/Mexico_City",
-                    })}
-                  </p>
-                </div>
-                <form
-                  action={async () => {
-                    "use server";
-                    await cancelMyBooking(booking.id);
-                  }}
-                >
-                  <button
-                    type="submit"
-                    className="rounded-sm border border-bone/20 px-3 py-1.5 text-xs font-medium text-bone/70 transition hover:border-red-400 hover:text-red-400"
-                  >
-                    Cancelar
-                  </button>
-                </form>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section>
-        <h2 className="mb-4 font-display text-lg text-bone">Historial</h2>
-        {past.length === 0 ? (
-          <p className="text-sm text-bone/60">Sin historial todavía.</p>
-        ) : (
-          <ul className="divide-y divide-bone/10 rounded-sm border border-bone/10">
-            {past.map((booking) => (
-              <li key={booking.id} className="px-4 py-3">
-                <p className="text-sm text-bone/70">
-                  {booking.trainer.name ?? booking.trainer.email} ·{" "}
-                  {getCityBySlug(booking.citySlug)?.name ?? booking.citySlug} ·{" "}
-                  {booking.startsAt.toLocaleString("es-MX", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                    timeZone: "America/Mexico_City",
-                  })}{" "}
-                  <span className="text-xs uppercase text-bone/40">
-                    {booking.status === "CANCELLED" ? "Cancelada" : "Realizada"}
-                  </span>
+                <p className="font-mono text-[11px] uppercase tracking-widest text-bone/40">
+                  {RESERVA_STATUS_LABEL[reserva.status] ?? reserva.status}
                 </p>
               </li>
             ))}

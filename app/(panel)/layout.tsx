@@ -15,12 +15,15 @@ export default async function PanelLayout({
   const role = session.user.role;
 
   const links = [
-    { href: "/reservar", label: "Reservar" },
-    { href: "/panel/cuenta", label: "Mi cuenta" },
+    ...(role === "TRAINER" || role === "ADMIN"
+      ? [{ href: "/panel/cuenta", label: "Mi cuenta" }]
+      : []),
     ...(role === "TRAINER" || role === "ADMIN"
       ? [{ href: "/panel/entrenador", label: "Panel entrenador" }]
       : []),
-    ...(role === "ADMIN" ? [{ href: "/panel/admin", label: "Panel admin" }] : []),
+    ...(role === "ADMIN"
+      ? [{ href: "/panel/admin", label: "Panel admin" }]
+      : []),
   ];
 
   return (
@@ -28,7 +31,10 @@ export default async function PanelLayout({
       <header className="border-b border-bone/10 bg-coal-deep/95">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-4">
           <nav className="flex flex-wrap items-center gap-6">
-            <a href="/" className="font-display text-lg tracking-wide text-bone">
+            <a
+              href="/"
+              className="font-display text-lg tracking-wide text-bone"
+            >
               ONCE<span className="text-volt">FC</span>
             </a>
             {links.map((link) => (

@@ -34,7 +34,9 @@ export default function Nav({
   const links = [
     // Hidden pre-launch: the events list is still seed/mock data — see
     // lib/launchFlags.ts.
-    ...(PRELAUNCH_MODE ? [] : [{ href: sectionHref("sesiones"), label: "Eventos" }]),
+    ...(PRELAUNCH_MODE
+      ? []
+      : [{ href: sectionHref("sesiones"), label: "Eventos" }]),
     { href: sectionHref("metodo"), label: "Método" },
     { href: "/preguntas-frecuentes", label: "Preguntas" },
   ];
@@ -99,36 +101,43 @@ export default function Nav({
             isAuthenticated ? (
               <a
                 href="/panel/cuenta"
-                aria-label="Mi cuenta"
-                className="hidden h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-bone/10 font-mono text-xs font-semibold text-bone transition hover:ring-2 hover:ring-volt md:flex"
+                aria-label="Ir a la cuenta"
+                className="hidden items-center gap-2 rounded-sm border border-bone/10 bg-bone/5 px-3 py-2 transition hover:border-volt hover:text-volt md:flex"
               >
-                {session?.user?.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={session.user.image}
-                    alt=""
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  userInitial
-                )}
-              </a>
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-bone/10 font-mono text-xs font-semibold text-bone">
+                    {session?.user?.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={session.user.image}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      userInitial
+                    )}
+                  </span>
+                  <span className="font-body text-sm font-medium text-bone">
+                    Mi cuenta
+                  </span>
+                </a>
+              ) : null
             ) : (
-              <a
-                href="/login"
-                className="hidden font-body text-sm font-medium text-bone/80 transition hover:text-volt md:inline-block"
-              >
-                Iniciar sesión
-              </a>
+              <div className="hidden items-center gap-2 md:flex">
+                <a
+                  href="/login"
+                  className="font-body text-sm font-medium text-bone/80 transition hover:text-volt"
+                >
+                  Iniciar sesión
+                </a>
+                <a
+                  href="/login"
+                  className="rounded-sm border border-volt/60 px-3 py-2 font-body text-sm font-semibold text-volt transition hover:bg-volt/10"
+                >
+                  Registrarse
+                </a>
+              </div>
             )
           ) : null}
-
-          <a
-            href={cityName ? "#prueba" : "/ciudades"}
-            className="hidden rounded-sm bg-volt px-4 py-2 font-body text-sm font-semibold text-coal-deep transition hover:bg-bone md:inline-block"
-          >
-            Reserva tu sesión
-          </a>
 
           <button
             type="button"
@@ -213,34 +222,31 @@ export default function Nav({
             </ul>
           </div>
 
-          <a
-            href={cityName ? "#prueba" : "/ciudades"}
-            onClick={() => setOpen(false)}
-            className="mt-6 block rounded-sm bg-volt px-4 py-3 text-center font-body text-sm font-semibold text-coal-deep transition hover:bg-bone"
-          >
-            Reserva tu sesión
-          </a>
           {!PRELAUNCH_MODE ? (
             isAuthenticated ? (
-              <a
-                href="/panel/cuenta"
-                onClick={() => setOpen(false)}
-                className="mt-3 flex items-center justify-center gap-2 rounded-sm border border-bone/20 px-4 py-3 text-center font-body text-sm font-semibold text-bone/80 transition hover:border-volt hover:text-volt"
-              >
-                <span className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-bone/10 font-mono text-[10px] font-semibold text-bone">
-                  {session?.user?.image ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={session.user.image}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    userInitial
-                  )}
-                </span>
-                Mi cuenta
-              </a>
+              pathname === "/" ? (
+                <a
+                  href="/panel/cuenta"
+                  onClick={() => setOpen(false)}
+                  className="mt-3 flex items-center gap-3 rounded-sm border border-bone/20 px-4 py-3 text-left font-body text-sm font-semibold text-bone/80 transition hover:border-volt hover:text-volt"
+                >
+                  <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-bone/10 font-mono text-[10px] font-semibold text-bone">
+                    {session?.user?.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={session.user.image}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      userInitial
+                    )}
+                  </span>
+                  <span className="truncate font-mono text-[10px] uppercase tracking-[0.2em] text-bone/50">
+                    {session?.user?.email ?? ""}
+                  </span>
+                </a>
+              ) : null
             ) : (
               <a
                 href="/login"

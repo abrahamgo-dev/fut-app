@@ -41,19 +41,37 @@ export default async function ProximasSesiones({
 
   if (sesiones.length === 0) return null;
 
+  const city = citySlug ? getCityBySlug(citySlug) : undefined;
+  const headingText = city
+    ? `Próximos entrenamientos en ${city.name}`
+    : "Próximos entrenamientos";
+  const calendarHref = citySlug ? `/reservar/${citySlug}` : "/reservar";
+
   return (
     <section id="sesiones" className="bg-bone py-24">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="font-mono text-xs uppercase tracking-[0.3em] text-ink/70">Agenda</p>
-            <h2 className="mt-3 font-display text-4xl text-ink sm:text-5xl">
-              Próximas sesiones
-            </h2>
+        <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div className="max-w-2xl">
+              <p className="font-mono text-xs uppercase tracking-[0.3em] text-ink/70">
+                Agenda
+              </p>
+              <h2 className="mt-3 font-display text-4xl text-ink sm:text-5xl">
+                {headingText}
+              </h2>
+            </div>
+            <Link
+              href={calendarHref}
+              className="inline-flex w-fit items-center gap-2 rounded-sm bg-ink px-4 py-3 text-sm font-semibold text-bone shadow-sm transition hover:bg-ink/90"
+            >
+              Ver calendario
+              {city ? ` · ${city.name}` : ""}
+              <span aria-hidden="true">→</span>
+            </Link>
           </div>
-          <p className="max-w-sm font-body text-sm text-ink/60">
-            Sesiones confirmadas con cancha y entrenador asignado. Reserva tu lugar antes de que
-            se llene.
+          <p className="max-w-2xl font-body text-sm text-ink/60">
+            Entrenamientos confirmados con cancha y entrenador asignado. Reserva
+            tu lugar antes de que se llene.
           </p>
         </div>
 
@@ -113,7 +131,10 @@ export default async function ProximasSesiones({
                   <p className="flex-shrink-0 font-mono text-sm text-ink/70">
                     {TIME_FORMAT.format(sesion.startsAt)}
                   </p>
-                  <span className="flex-shrink-0 font-mono text-sm text-ink/30" aria-hidden="true">
+                  <span
+                    className="flex-shrink-0 font-mono text-sm text-ink/30"
+                    aria-hidden="true"
+                  >
                     →
                   </span>
                 </Link>
