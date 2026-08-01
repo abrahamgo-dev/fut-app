@@ -62,6 +62,7 @@ export default function Hero({
         alt=""
         fill
         priority
+        quality={90}
         sizes="100vw"
         onLoad={() => setImageLoaded(true)}
         className={`object-cover object-[center_38%] transition-opacity duration-700 ease-out ${
@@ -69,7 +70,7 @@ export default function Hero({
         }`}
       />
       <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-coal-deep from-10% via-coal-deep/75 to-coal-deep/40"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-coal-deep/90 from-5% via-coal-deep/55 to-coal-deep/20"
         aria-hidden="true"
       />
       <div
@@ -150,16 +151,16 @@ export default function Hero({
         </div>
 
         <dl
-          className={`mt-16 grid grid-cols-3 gap-6 border-t border-bone/15 pt-8 ${reveal(360).className}`}
+          className={`mt-16 grid grid-cols-3 gap-3 border-t border-bone/15 pt-8 sm:gap-6 ${reveal(360).className}`}
           style={reveal(360).style}
         >
           {stats.map((stat) => (
-            <div key={stat.label}>
+            <div key={stat.label} className="min-w-0">
               <dt className="sr-only">{stat.label}</dt>
-              <dd className="font-mono scoreboard-num text-3xl text-volt sm:text-4xl">
+              <dd className="font-mono scoreboard-num truncate text-xl text-volt sm:text-3xl md:text-4xl">
                 {stat.value}
               </dd>
-              <dd className="mt-1 font-mono text-[11px] uppercase tracking-widest text-bone/60">
+              <dd className="mt-1 font-mono text-[9px] uppercase tracking-wide text-bone/60 sm:text-[11px] sm:tracking-widest">
                 {stat.label}
               </dd>
             </div>
