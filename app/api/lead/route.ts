@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { prisma } from "@/lib/prisma";
 
 function escapeHtml(value: string): string {
   return value
@@ -23,6 +24,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Faltan datos requeridos." }, { status: 400 });
   }
 
+  try {
+    await prisma.leadMessage.create({
+      data: {
+        name,
+        age,
+        phone,
+        cityName: cityName || null,
+        preferredSchedule: preferredSchedule || null,
+      },
+    });
+  } catch (err) {
+    console.error("No se pudo guardar el lead en la base de datos:", err);
+    return NextResponse.json({ error: "No se pudo guardar tu solicitud." }, { status: 500 });
+  }
+
   const to = process.env.LEAD_NOTIFICATION_EMAIL;
   const apiKey = process.env.RESEND_API_KEY;
 
@@ -30,10 +46,9 @@ export async function POST(request: Request) {
     console.error(
       "RESEND_API_KEY o LEAD_NOTIFICATION_EMAIL no configurados — ver .env.example."
     );
-    return NextResponse.json(
-      { error: "El servicio de correo no está configurado todavía." },
-      { status: 503 }
-    );
+    // The lead is already saved and visible in the admin panel, so a missing
+    // email config shouldn't block the visitor-facing submission.
+    return NextResponse.json({ ok: true });
   }
 
   const resend = new Resend(apiKey);
@@ -55,8 +70,9 @@ export async function POST(request: Request) {
   });
 
   if (error) {
+    // Notification email failed, but the lead is already saved — don't surface
+    // this as a failure to the visitor.
     console.error("Resend error:", error);
-    return NextResponse.json({ error: "No se pudo enviar el correo." }, { status: 502 });
   }
 
   return NextResponse.json({ ok: true });
