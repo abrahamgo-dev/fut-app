@@ -59,7 +59,14 @@ export default async function AdminSesionesPage() {
                       dateStyle: "medium",
                       timeStyle: "short",
                       timeZone: "America/Mexico_City",
-                    })}
+                    })}{" "}
+                    ·{" "}
+                    {sesion.priceCents
+                      ? (sesion.priceCents / 100).toLocaleString("es-MX", {
+                          style: "currency",
+                          currency: "MXN",
+                        })
+                      : "Sin precio"}
                   </p>
                 </div>
 
@@ -199,6 +206,18 @@ export default async function AdminSesionesPage() {
                 />
               </label>
             </div>
+
+            <label className="flex flex-col gap-1 text-sm text-bone/80">
+              Precio en MXN (opcional — vacío es gratis, sin botón de pago)
+              <input
+                type="number"
+                name="price"
+                min={0}
+                step={0.01}
+                placeholder="250.00"
+                className="rounded-sm border border-bone/20 bg-coal-deep px-3 py-2 text-bone placeholder:text-bone/30"
+              />
+            </label>
 
             <label className="flex flex-col gap-1 text-sm text-bone/80">
               Nivel (opcional)

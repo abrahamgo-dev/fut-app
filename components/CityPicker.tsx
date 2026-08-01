@@ -15,11 +15,11 @@ export default function CityPicker({ cities }: { cities: City[] }) {
               {city.name}
             </h3>
             <p className="mt-2 font-body text-sm text-bone/60 group-hover:text-coal-deep/80">
-              {city.zoneLabel}
+              {city.state}
             </p>
           </div>
           <p className="mt-8 font-mono text-xs uppercase tracking-widest text-volt-dim group-hover:text-coal-deep">
-            {city.levels.length} niveles disponibles →
+            Ver sesiones y sedes →
           </p>
         </Link>
       ))}

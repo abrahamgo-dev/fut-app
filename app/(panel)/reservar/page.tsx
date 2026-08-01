@@ -7,7 +7,7 @@ export default async function ReservarPage() {
   return (
     <div className="space-y-6">
       <h1 className="font-display text-2xl text-bone">Reserva una sesión</h1>
-      <p className="text-sm text-bone/60">Elige tu ciudad para ver entrenadores disponibles.</p>
+      <p className="text-sm text-bone/60">Elige tu ciudad para ver el calendario de sesiones.</p>
       <ul className="grid gap-3 sm:grid-cols-2">
         {getActiveCities().map((city) => (
           <li key={city.slug}>

@@ -19,6 +19,13 @@ enum BookingStatus {
   CANCELLED
 }
 
+enum ReservaStatus {
+  PENDING
+  PAID
+  CANCELLED
+  EXPIRED
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -37,6 +44,7 @@ model User {
   bookingsAsUser      Booking[]             @relation("BookingUser")
   bookingsAsTrainer   Booking[]             @relation("BookingTrainer")
   sesiones            Sesion[]              @relation("SesionTrainer")
+  reservas            Reserva[]             @relation("ReservaUser")
 }
 
 model Account {
@@ -118,6 +126,8 @@ model Sesion {
   description String?  @db.Text
   levelLabel  String?
   capacity    Int?
+  /// Price in cents (MXN). Null or 0 means free for now — no Stripe checkout is offered.
+  priceCents  Int?
   startsAt    DateTime
   durationMinutes Int  @default(60)
   active      Boolean  @default(true)
@@ -128,26 +138,30 @@ model Sesion {
   sede      Sede   @relation(fields: [sedeId], references: [id], onDelete: Cascade)
   trainerId String
   trainer   User   @relation("SesionTrainer", fields: [trainerId], references: [id], onDelete: Cascade)
+  reservas  Reserva[]
 
   @@index([sedeId])
   @@index([trainerId])
   @@index([startsAt])
 }
 
-// A submission from the public "sesión gratuita" lead form (see components/Prueba.tsx
-// and app/api/lead/route.ts). Kept independent of email delivery so admins can review
-// leads in the panel even if the notification email fails to send.
-model LeadMessage {
-  id                String   @id @default(cuid())
-  name              String
-  age               String
-  phone             String
-  cityName          String?
-  preferredSchedule String?
-  read              Boolean  @default(false)
-  createdAt         DateTime @default(now())
+// A user's paid (or pending-payment) spot in a Sesion. Created right before
+// redirecting to Stripe Checkout; the webhook is the source of truth for
+// flipping it to PAID once payment actually completes.
+model Reserva {
+  id                      String        @id @default(cuid())
+  userId                  String
+  user                    User          @relation("ReservaUser", fields: [userId], references: [id], onDelete: Cascade)
+  sesionId                String
+  sesion                  Sesion        @relation(fields: [sesionId], references: [id], onDelete: Cascade)
+  status                  ReservaStatus @default(PENDING)
+  amountCents             Int
+  stripeCheckoutSessionId String?       @unique
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
 
-  @@index([createdAt])
+  @@index([sesionId])
+  @@index([userId])
 }
 
 // A submission from the public "bolsa de trabajo" form (see
@@ -182,4 +196,28 @@ model Booking {
   @@index([trainerId, startsAt])
   @@index([userId])
   @@index([citySlug])
+}
+
+// A "free trial session" lead form submission (see components/Prueba.tsx).
+// phoneNormalized is the last-10-digits form of `phone`, used to catch the
+// same phone number claiming multiple free sessions regardless of how it was
+// typed (spaces, dashes, +52, etc). This is a soft anti-abuse signal, not a
+// hard guarantee — see app/api/lead/route.ts for how it's applied.
+model Lead {
+  id                String   @id @default(cuid())
+  name              String
+  age               String
+  phone             String
+  phoneNormalized   String
+  cityName          String?
+  preferredSchedule String?
+  ipAddress         String?
+  isDuplicatePhone  Boolean  @default(false)
+  isRateLimitedIp   Boolean  @default(false)
+  read              Boolean  @default(false)
+  createdAt         DateTime @default(now())
+
+  @@index([phoneNormalized])
+  @@index([ipAddress, createdAt])
+  @@index([createdAt])
 }

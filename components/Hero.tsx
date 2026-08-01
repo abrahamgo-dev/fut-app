@@ -3,21 +3,22 @@
 import { useState } from "react";
 import Image from "next/image";
 import { getActiveCities } from "@/data/cities";
+import { PRELAUNCH_MODE } from "@/lib/launchFlags";
 
 type HeroProps = {
   cityLabel?: string;
   citySlug?: string;
-  levelsCount?: number;
+  sedesCount?: number;
 };
 
-export default function Hero({ cityLabel = "México", citySlug, levelsCount = 6 }: HeroProps) {
+export default function Hero({ cityLabel = "México", citySlug, sedesCount = 5 }: HeroProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const citiesCount = getActiveCities().length;
   const reserveHref = citySlug ? "#prueba" : "#ciudades";
 
   const stats = [
     { value: "18+", label: "EDAD PARA JUGAR" },
-    { value: String(levelsCount), label: "NIVELES DE JUEGO" },
+    { value: String(sedesCount), label: "SEDES DE CALIDAD" },
     { value: String(citiesCount), label: "CIUDADES" },
   ];
 
@@ -50,7 +51,7 @@ export default function Hero({ cityLabel = "México", citySlug, levelsCount = 6 
 
       <div className="relative mx-auto max-w-6xl px-6">
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-volt">
-          Club de entrenamiento · {cityLabel}
+          Sesiones de entrenamiento · {cityLabel}
         </p>
 
         <h1 className="mt-6 max-w-3xl font-display text-[13vw] leading-[0.9] tracking-tight sm:text-7xl md:text-8xl">
@@ -63,9 +64,10 @@ export default function Hero({ cityLabel = "México", citySlug, levelsCount = 6 
 
         <div className="mt-10 flex max-w-3xl flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <p className="max-w-md font-body text-lg text-bone/80">
-            Entrena, compite y mantente en forma en un club pensado para{" "}
-            <strong className="text-volt">adultos</strong>: horario de 7 am a 9 pm,
-            coaches con experiencia y partidos todo el año.
+            Reserva sesiones de entrenamiento para{" "}
+            <strong className="text-volt">adultos</strong> en las mejores canchas de la
+            ciudad, con coaches de experiencia. Sin membresía fija: agenda cuando te
+            acomode.
           </p>
 
           <div className="flex flex-shrink-0 gap-3">
@@ -75,11 +77,14 @@ export default function Hero({ cityLabel = "México", citySlug, levelsCount = 6 
             >
               Reserva tu sesión gratis
             </a>
+            {/* Points at the events list when it's live; pre-launch that
+                section is hidden (mock data), so this points at Método
+                instead — see lib/launchFlags.ts. */}
             <a
-              href="#niveles"
+              href={PRELAUNCH_MODE ? "#metodo" : "#sesiones"}
               className="rounded-sm border border-bone/30 px-6 py-3 text-center font-body text-sm font-semibold text-bone transition hover:border-volt hover:text-volt"
             >
-              Ver niveles
+              {PRELAUNCH_MODE ? "Cómo funciona" : "Ver sesiones"}
             </a>
           </div>
         </div>

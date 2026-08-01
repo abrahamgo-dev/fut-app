@@ -6,7 +6,7 @@ import { cancelMyBooking } from "./actions";
 export default async function CuentaPage() {
   const session = await requireSession();
 
-  const [upcoming, past] = await Promise.all([
+  const [upcoming, past, reservas] = await Promise.all([
     prisma.booking.findMany({
       where: { userId: session.user.id, status: "CONFIRMED", startsAt: { gte: new Date() } },
       include: { trainer: { select: { name: true, email: true } } },
@@ -21,7 +21,20 @@ export default async function CuentaPage() {
       orderBy: { startsAt: "desc" },
       take: 10,
     }),
+    prisma.reserva.findMany({
+      where: { userId: session.user.id },
+      include: { sesion: { include: { sede: true } } },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+    }),
   ]);
+
+  const RESERVA_STATUS_LABEL: Record<string, string> = {
+    PENDING: "Pago pendiente",
+    PAID: "Pagada",
+    CANCELLED: "Cancelada",
+    EXPIRED: "Expirada",
+  };
 
   return (
     <div className="space-y-10">
@@ -36,7 +49,46 @@ export default async function CuentaPage() {
       </div>
 
       <section>
-        <h2 className="mb-4 font-display text-lg text-bone">Próximas sesiones</h2>
+        <h2 className="mb-4 font-display text-lg text-bone">Tus reservas de eventos</h2>
+        {reservas.length === 0 ? (
+          <p className="text-sm text-bone/60">Todavía no has reservado ninguna sesión pagada.</p>
+        ) : (
+          <ul className="divide-y divide-bone/10 rounded-sm border border-bone/10">
+            {reservas.map((reserva) => (
+              <li
+                key={reserva.id}
+                className="flex flex-wrap items-center justify-between gap-4 px-4 py-3"
+              >
+                <div>
+                  <p className="text-sm font-medium text-bone">{reserva.sesion.title}</p>
+                  <p className="text-xs text-bone/50">
+                    {reserva.sesion.sede.name} ·{" "}
+                    {reserva.sesion.startsAt.toLocaleString("es-MX", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                      timeZone: "America/Mexico_City",
+                    })}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-bone/80">
+                    {(reserva.amountCents / 100).toLocaleString("es-MX", {
+                      style: "currency",
+                      currency: "MXN",
+                    })}
+                  </p>
+                  <p className="font-mono text-[11px] uppercase tracking-widest text-bone/40">
+                    {RESERVA_STATUS_LABEL[reserva.status] ?? reserva.status}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section>
+        <h2 className="mb-4 font-display text-lg text-bone">Próximas sesiones 1 a 1</h2>
         {upcoming.length === 0 ? (
           <p className="text-sm text-bone/60">No tienes sesiones reservadas.</p>
         ) : (

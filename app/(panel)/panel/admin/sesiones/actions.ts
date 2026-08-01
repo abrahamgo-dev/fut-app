@@ -25,6 +25,7 @@ export async function createSesion(formData: FormData) {
   const durationMinutes = Number(formData.get("durationMinutes"));
   const levelLabel = String(formData.get("levelLabel") ?? "").trim();
   const capacityRaw = String(formData.get("capacity") ?? "").trim();
+  const priceRaw = String(formData.get("price") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
 
   if (
@@ -42,6 +43,7 @@ export async function createSesion(formData: FormData) {
   const [year, month, day] = date.split("-").map(Number);
   const startsAt = localToUtc(new Date(Date.UTC(year, month - 1, day)), time);
   const capacity = capacityRaw ? Number(capacityRaw) : null;
+  const priceCents = priceRaw ? Math.round(Number(priceRaw) * 100) : null;
 
   await prisma.sesion.create({
     data: {
@@ -52,6 +54,7 @@ export async function createSesion(formData: FormData) {
       durationMinutes,
       levelLabel: levelLabel || null,
       capacity: capacity && Number.isFinite(capacity) ? capacity : null,
+      priceCents: priceCents && Number.isFinite(priceCents) && priceCents > 0 ? priceCents : null,
       description: description || null,
     },
   });

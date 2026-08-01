@@ -1,13 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import type { Level } from "@/data/cities";
 
-function scheduleLabel(level: Level): string {
-  return `${level.title} — ${level.time} (${level.days})`;
-}
-
-export default function Prueba({ cityName, levels = [] }: { cityName?: string; levels?: Level[] }) {
+export default function Prueba({ cityName }: { cityName?: string }) {
   const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -24,7 +19,6 @@ export default function Prueba({ cityName, levels = [] }: { cityName?: string; l
           name: form.get("name"),
           age: form.get("age"),
           phone: form.get("phone"),
-          preferredSchedule: form.get("preferredSchedule"),
           cityName,
         }),
       });
@@ -47,8 +41,8 @@ export default function Prueba({ cityName, levels = [] }: { cityName?: string; l
             Tu primer entrenamiento va por nosotros
           </h2>
           <p className="mt-4 max-w-md font-body text-sm text-coal-deep/80">
-            Déjanos tus datos y te contactamos en menos de 24 horas para agendar tu nivel y darte
-            la ubicación exacta de la cancha.
+            Déjanos tus datos y te contactamos en menos de 24 horas para agendar tu
+            sesión y darte la ubicación exacta de la cancha.
           </p>
         </div>
 
@@ -114,26 +108,6 @@ export default function Prueba({ cityName, levels = [] }: { cityName?: string; l
                   className="rounded-sm border border-ink/20 bg-transparent px-3 py-2 font-body text-sm outline-none focus-visible:border-coal-deep"
                 />
               </label>
-              {levels.length > 0 ? (
-                <label className="flex flex-col gap-1 text-sm font-medium">
-                  Horario preferido
-                  <select
-                    required
-                    name="preferredSchedule"
-                    defaultValue=""
-                    className="rounded-sm border border-ink/20 bg-transparent px-3 py-2 font-body text-sm outline-none focus-visible:border-coal-deep"
-                  >
-                    <option value="" disabled>
-                      Elige un horario disponible
-                    </option>
-                    {levels.map((level) => (
-                      <option key={level.code} value={scheduleLabel(level)}>
-                        {scheduleLabel(level)}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              ) : null}
               {status === "error" ? (
                 <p role="alert" className="font-body text-sm text-red-700">
                   No se pudo enviar tu solicitud. Intenta de nuevo o escríbenos directo por

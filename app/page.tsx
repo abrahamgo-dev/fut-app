@@ -1,28 +1,29 @@
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
-import Categories from "@/components/Categories";
 import Method from "@/components/Method";
 import Showcase from "@/components/Showcase";
-// import ProximasSesiones from "@/components/ProximasSesiones"; // re-enable when ready to launch
+import ProximasSesiones from "@/components/ProximasSesiones";
 import Footer from "@/components/Footer";
 import CityPicker from "@/components/CityPicker";
 import { getActiveCities } from "@/data/cities";
+import { prisma } from "@/lib/prisma";
+import { PRELAUNCH_MODE } from "@/lib/launchFlags";
 
 export const revalidate = 60;
 
 const FEATURED_CITY_SLUGS = ["monterrey", "guadalajara", "cdmx"];
 
-export default function Home() {
+export default async function Home() {
   const cities = getActiveCities().filter((city) => FEATURED_CITY_SLUGS.includes(city.slug));
+  const sedesCount = await prisma.sede.count({ where: { active: true } });
 
   return (
     <main id="main">
       <Nav />
-      <Hero />
-      <Categories />
+      <Hero sedesCount={sedesCount} />
+      {!PRELAUNCH_MODE ? <ProximasSesiones /> : null}
       <Method />
-      {/* <ProximasSesiones /> — re-enable when ready to launch */}
       <Showcase />
 
       <section id="ciudades" className="bg-coal py-24 text-bone">

@@ -7,7 +7,7 @@ import { getActiveCities } from "@/data/cities";
 export const metadata: Metadata = {
   title: "Ciudades",
   description:
-    "Once FC opera en varias ciudades de México. Elige tu ciudad para ver niveles, horarios y agendar tu sesión gratuita.",
+    "Once FC opera en varias ciudades de México. Elige tu ciudad para ver sesiones, sedes y agendar tu sesión gratuita.",
 };
 
 export default function CiudadesPage() {

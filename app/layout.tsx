@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Anton, Work_Sans, IBM_Plex_Mono } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 
 const display = Anton({
@@ -29,15 +30,15 @@ const siteUrl = "https://once-fc.com";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Once FC — Club de entrenamiento de fútbol para adultos en México",
+    default: "Once FC — Reserva sesiones de entrenamiento de fútbol para adultos",
     template: "%s | Once FC",
   },
   description:
-    "Once FC es un club de entrenamiento de fútbol para adultos en México. Niveles de iniciación a competitivo, sesiones antes del trabajo, coaches con experiencia y partidos todo el año. Agenda tu sesión gratuita.",
+    "Once FC te ayuda a reservar sesiones de entrenamiento de fútbol para adultos en canchas de calidad, con coaches con experiencia y partidos todo el año. Sin membresía fija. Agenda tu sesión gratuita.",
   keywords: [
     "futbol para adultos",
-    "club de futbol adultos",
-    "liga de futbol amateur",
+    "reservar cancha de futbol",
+    "sesiones de entrenamiento de futbol",
     "entrenamiento de futbol adultos",
     "futbol despues del trabajo",
     "escuela de futbol para adultos",
@@ -49,9 +50,9 @@ export const metadata: Metadata = {
     locale: "es_MX",
     url: siteUrl,
     siteName: "Once FC",
-    title: "Once FC — Club de entrenamiento de fútbol para adultos en México",
+    title: "Once FC — Reserva sesiones de entrenamiento de fútbol para adultos",
     description:
-      "Niveles de iniciación a competitivo, sesiones antes del trabajo y coaches con experiencia. Agenda tu sesión gratuita.",
+      "Sesiones de entrenamiento en canchas de calidad, coaches con experiencia y sin membresía fija. Agenda tu sesión gratuita.",
     images: [
       {
         url: "/og-cover.svg",
@@ -63,9 +64,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Once FC — Club de entrenamiento de fútbol para adultos",
+    title: "Once FC — Reserva sesiones de entrenamiento de fútbol para adultos",
     description:
-      "Niveles de iniciación a competitivo y partidos todo el año. Agenda tu sesión gratuita.",
+      "Sesiones de entrenamiento en canchas de calidad y partidos todo el año. Agenda tu sesión gratuita.",
     images: ["/og-cover.svg"],
   },
   alternates: {
@@ -92,7 +93,7 @@ export default function RootLayout({
     "@type": "SportsOrganization",
     name: "Once FC",
     description:
-      "Club de entrenamiento de fútbol para adultos en México, con niveles de iniciación a competitivo, presente en varias ciudades.",
+      "Sesiones de entrenamiento de fútbol para adultos en canchas de calidad, en varias ciudades de México.",
     url: siteUrl,
     sport: "Soccer",
     areaServed: "MX",
@@ -108,7 +109,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {children}
+        <SessionProvider>{children}</SessionProvider>
         {process.env.NEXT_PUBLIC_GA_ID ? (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
         ) : null}

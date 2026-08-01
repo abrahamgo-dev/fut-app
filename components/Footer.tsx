@@ -1,14 +1,21 @@
+"use client";
+
+import { useSession } from "next-auth/react";
+import { PRELAUNCH_MODE } from "@/lib/launchFlags";
+
 type FooterProps = {
-  zoneLabel?: string;
+  cityLabel?: string;
   scheduleNote?: string;
   contactEmail?: string;
 };
 
 export default function Footer({
-  zoneLabel = "México",
+  cityLabel = "México",
   scheduleNote = "Lun a sáb",
   contactEmail = "hola@once-fc.com",
 }: FooterProps) {
+  const { status } = useSession();
+  const isAuthenticated = status === "authenticated";
 
   return (
     <footer className="bg-coal-deep py-14 text-bone">
@@ -18,26 +25,33 @@ export default function Footer({
             ONCE<span className="text-volt">FC</span>
           </span>
           <p className="mt-3 max-w-xs font-body text-sm text-bone/60">
-            Club de entrenamiento de fútbol para adultos. Niveles de iniciación a competitivo.
+            Reserva sesiones de entrenamiento de fútbol para adultos en canchas
+            de calidad.
           </p>
         </div>
 
         <div className="grid grid-cols-2 gap-10 sm:flex sm:gap-16">
           <div>
-            <p className="font-mono text-xs uppercase tracking-widest text-volt">Contacto</p>
+            <p className="font-mono text-xs uppercase tracking-widest text-volt">
+              Contacto
+            </p>
             <ul className="mt-3 space-y-1 font-body text-sm text-bone/70">
               <li>{contactEmail}</li>
             </ul>
           </div>
           <div>
-            <p className="font-mono text-xs uppercase tracking-widest text-volt">Cancha</p>
+            <p className="font-mono text-xs uppercase tracking-widest text-volt">
+              Cancha
+            </p>
             <ul className="mt-3 space-y-1 font-body text-sm text-bone/70">
-              <li>{zoneLabel}</li>
+              <li>{cityLabel}</li>
               <li>{scheduleNote}</li>
             </ul>
           </div>
           <div>
-            <p className="font-mono text-xs uppercase tracking-widest text-volt">Ayuda</p>
+            <p className="font-mono text-xs uppercase tracking-widest text-volt">
+              Ayuda
+            </p>
             <ul className="mt-3 space-y-1 font-body text-sm text-bone/70">
               <li>
                 <a href="/preguntas-frecuentes" className="hover:text-volt">
@@ -49,6 +63,16 @@ export default function Footer({
                   Todas las ciudades
                 </a>
               </li>
+              {!PRELAUNCH_MODE ? (
+                <li>
+                  <a
+                    href={isAuthenticated ? "/panel/cuenta" : "/login"}
+                    className="hover:text-volt"
+                  >
+                    {isAuthenticated ? "Mi cuenta" : "Iniciar sesión"}
+                  </a>
+                </li>
+              ) : null}
               <li>
                 <a href="/bolsa-de-trabajo" className="hover:text-volt">
                   Bolsa de trabajo

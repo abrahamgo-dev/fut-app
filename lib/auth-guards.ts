@@ -3,10 +3,10 @@ import type { Role } from "@prisma/client";
 import type { Session } from "next-auth";
 import { auth } from "@/auth";
 
-export async function requireSession(): Promise<Session> {
+export async function requireSession(callbackUrl = "/panel"): Promise<Session> {
   const session = await auth();
   if (!session?.user) {
-    redirect("/login?callbackUrl=/panel");
+    redirect(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
   }
   return session;
 }

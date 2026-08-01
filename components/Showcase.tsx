@@ -15,9 +15,16 @@ const shots = [
     caption: "Control y técnica",
     span: "",
   },
+  {
+    n: "03",
+    src: "/hero-players.jpg",
+    alt: "Jugadores entrenando en equipo sobre césped natural",
+    caption: "Trabajo en equipo",
+    span: "",
+  },
 ];
 
-export default function Showcase() {
+export default function Showcase({ cityName }: { cityName?: string }) {
   return (
     <section className="relative overflow-hidden bg-coal-deep py-24 text-bone">
       <div
@@ -36,8 +43,8 @@ export default function Showcase() {
             </h2>
           </div>
           <p className="max-w-sm font-body text-sm text-bone/60">
-            Luz de cancha, césped de verdad y un balón que no deja de moverse: así se siente
-            entrenar con nosotros, semana tras semana.
+            Luz de cancha, césped de verdad y buena ubicación
+            {cityName ? ` en ${cityName}` : ""}: así se siente entrenar con nosotros.
           </p>
         </div>
 
