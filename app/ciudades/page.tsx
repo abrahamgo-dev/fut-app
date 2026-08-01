@@ -25,12 +25,13 @@ export default function CiudadesPage() {
             Elige tu ciudad
           </h1>
           <p className="mt-6 max-w-md font-body text-lg text-bone/80">
-            Mismo club, mismo método, en cada ciudad donde entrenamos.
+            Hoy entrenamos en Monterrey — mismo club, mismo método llegando pronto a más
+            ciudades.
           </p>
 
           <div className="mt-14">
             <h2 className="sr-only">Ciudades disponibles</h2>
-            <CityPicker cities={cities} />
+            <CityPicker cities={cities} showMoreCitiesCard />
           </div>
         </div>
       </section>

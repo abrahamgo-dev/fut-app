@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 
-export default function Prueba({ cityName }: { cityName?: string }) {
+export default function Prueba({
+  cityName,
+  comingSoon = false,
+}: {
+  cityName?: string;
+  comingSoon?: boolean;
+}) {
   const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -35,14 +41,18 @@ export default function Prueba({ cityName }: { cityName?: string }) {
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 md:grid-cols-2">
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-coal-deep/70">
-            Sesión gratuita{cityName ? ` · ${cityName}` : ""}
+            {comingSoon ? "Próximamente" : "Sesión gratuita"}
+            {cityName ? ` · ${cityName}` : ""}
           </p>
           <h2 className="mt-3 font-display text-4xl sm:text-5xl">
-            Tu primer entrenamiento va por nosotros
+            {comingSoon
+              ? "Sé de los primeros en enterarte"
+              : "Tu primer entrenamiento va por nosotros"}
           </h2>
           <p className="mt-4 max-w-md font-body text-sm text-coal-deep/80">
-            Déjanos tus datos y te contactamos en menos de 24 horas para agendar tu
-            sesión y darte la ubicación exacta de la cancha.
+            {comingSoon
+              ? `Déjanos tus datos y te avisamos en cuanto abramos sesiones en ${cityName ?? "tu ciudad"}.`
+              : "Déjanos tus datos y te contactamos en menos de 24 horas para agendar tu sesión y darte la ubicación exacta de la cancha."}
           </p>
         </div>
 
@@ -52,8 +62,9 @@ export default function Prueba({ cityName }: { cityName?: string }) {
         >
           {status === "sent" ? (
             <p role="status" className="font-body text-sm">
-              Listo, recibimos tus datos. Un coach de Once FC te contacta pronto con la ubicación
-              exacta de la cancha y los horarios disponibles.
+              {comingSoon
+                ? `Listo, te avisamos en cuanto abramos sesiones en ${cityName ?? "tu ciudad"}.`
+                : "Listo, recibimos tus datos. Un coach de Once FC te contacta pronto con la ubicación exacta de la cancha y los horarios disponibles."}
             </p>
           ) : (
             <>
@@ -72,7 +83,15 @@ export default function Prueba({ cityName }: { cityName?: string }) {
                   <label className="flex items-start gap-2 text-sm font-medium">
                     <input required type="checkbox" name="cityConfirmed" className="mt-1" />
                     <span>
-                      Confirmo que quiero entrenar en <strong>{cityName}</strong>
+                      {comingSoon ? (
+                        <>
+                          Avísenme cuando abran en <strong>{cityName}</strong>
+                        </>
+                      ) : (
+                        <>
+                          Confirmo que quiero entrenar en <strong>{cityName}</strong>
+                        </>
+                      )}
                     </span>
                   </label>
                 </>
@@ -131,6 +150,8 @@ export default function Prueba({ cityName }: { cityName?: string }) {
                       className="absolute inset-0 -translate-x-full animate-[shimmer_1.4s_infinite] bg-gradient-to-r from-transparent via-bone/10 to-transparent"
                     />
                   </>
+                ) : comingSoon ? (
+                  "Avísenme cuando abran"
                 ) : (
                   "Quiero mi sesión gratis"
                 )}

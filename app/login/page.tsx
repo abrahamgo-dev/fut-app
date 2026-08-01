@@ -20,12 +20,15 @@ export default function LoginPage({
 }) {
   const callbackUrl = searchParams.callbackUrl ?? "/panel";
   const errorMessage = searchParams.error
-    ? ERROR_MESSAGES[searchParams.error] ?? ERROR_MESSAGES.Default
+    ? (ERROR_MESSAGES[searchParams.error] ?? ERROR_MESSAGES.Default)
     : null;
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-coal-deep px-6 py-16 text-bone">
-      <div className="pointer-events-none absolute inset-0 bg-grid-lines" aria-hidden="true" />
+      <div
+        className="pointer-events-none absolute inset-0 bg-grid-lines"
+        aria-hidden="true"
+      />
       <div
         className="pointer-events-none absolute inset-0 bg-gradient-to-b from-coal-deep via-coal-deep to-coal"
         aria-hidden="true"
@@ -43,9 +46,12 @@ export default function LoginPage({
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-volt">
             Acceso de jugadores
           </p>
-          <h1 className="mt-3 font-display text-3xl leading-tight">Entra a tu cuenta</h1>
+          <h1 className="mt-3 font-display text-3xl leading-tight">
+            Entra a tu cuenta
+          </h1>
           <p className="mt-3 font-body text-sm text-bone/60">
-            Reserva tus sesiones, revisa tu horario y gestiona tu cuenta con tu cuenta de Google.
+            Reserva tus entrenamientos, revisa tu horario y gestiona tu cuenta
+            con tu cuenta de Google.
           </p>
 
           {errorMessage ? (

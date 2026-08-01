@@ -53,11 +53,16 @@ export default function CityDropdown({
               <Link
                 href={`/ciudades/${city.slug}`}
                 onClick={() => setOpen(false)}
-                className={`block px-4 py-2 font-body text-sm transition hover:bg-bone/10 hover:text-volt ${
+                className={`flex items-center justify-between gap-2 px-4 py-2 font-body text-sm transition hover:bg-bone/10 hover:text-volt ${
                   city.slug === currentSlug ? "text-volt" : "text-bone/80"
                 }`}
               >
                 {city.name}
+                {city.status === "comingSoon" ? (
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-bone/40">
+                    Próx.
+                  </span>
+                ) : null}
               </Link>
             </li>
           ))}

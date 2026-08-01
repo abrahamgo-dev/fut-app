@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
+import {
+  getFollowUpMessage,
+  getFollowUpSendTime,
+  sendFollowUpWhatsApp,
+} from "@/lib/whatsapp-followup";
 
 // Same phone number claiming another free session within this window gets
 // silently skipped (no re-notification) — see prisma/schema.prisma Lead model.
@@ -32,14 +37,23 @@ function getClientIp(request: Request): string | null {
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const name = typeof body?.name === "string" ? body.name.trim() : "";
-  const age = typeof body?.age === "string" || typeof body?.age === "number" ? String(body.age).trim() : "";
+  const age =
+    typeof body?.age === "string" || typeof body?.age === "number"
+      ? String(body.age).trim()
+      : "";
   const phone = typeof body?.phone === "string" ? body.phone.trim() : "";
-  const cityName = typeof body?.cityName === "string" ? body.cityName.trim() : "";
+  const cityName =
+    typeof body?.cityName === "string" ? body.cityName.trim() : "";
   const preferredSchedule =
-    typeof body?.preferredSchedule === "string" ? body.preferredSchedule.trim() : "";
+    typeof body?.preferredSchedule === "string"
+      ? body.preferredSchedule.trim()
+      : "";
 
   if (!name || !age || !phone) {
-    return NextResponse.json({ error: "Faltan datos requeridos." }, { status: 400 });
+    return NextResponse.json(
+      { error: "Faltan datos requeridos." },
+      { status: 400 },
+    );
   }
 
   const phoneNormalized = normalizePhone(phone);
@@ -50,13 +64,20 @@ export async function POST(request: Request) {
       ? prisma.lead.findFirst({
           where: {
             phoneNormalized,
-            createdAt: { gte: new Date(Date.now() - DUPLICATE_PHONE_WINDOW_DAYS * 86_400_000) },
+            createdAt: {
+              gte: new Date(
+                Date.now() - DUPLICATE_PHONE_WINDOW_DAYS * 86_400_000,
+              ),
+            },
           },
         })
       : null,
     ipAddress
       ? prisma.lead.count({
-          where: { ipAddress, createdAt: { gte: new Date(Date.now() - 86_400_000) } },
+          where: {
+            ipAddress,
+            createdAt: { gte: new Date(Date.now() - 86_400_000) },
+          },
         })
       : 0,
   ]);
@@ -64,7 +85,7 @@ export async function POST(request: Request) {
   const isDuplicatePhone = Boolean(duplicatePhone);
   const isRateLimitedIp = recentFromIp >= IP_RATE_LIMIT_PER_DAY;
 
-  await prisma.lead.create({
+  const createdLead = await prisma.lead.create({
     data: {
       name,
       age,
@@ -78,6 +99,15 @@ export async function POST(request: Request) {
     },
   });
 
+  if (phoneNormalized.length === 10) {
+    const followUpSendAt = getFollowUpSendTime(new Date());
+    const followUpDelayMs = Math.max(0, followUpSendAt.getTime() - Date.now());
+
+    setTimeout(() => {
+      void sendFollowUpWhatsApp(phone, getFollowUpMessage());
+    }, followUpDelayMs);
+  }
+
   // Same phone already claimed a free session recently: pretend it worked
   // (no error shown to the visitor) but skip notifying the coach again.
   if (isDuplicatePhone) {
@@ -89,7 +119,7 @@ export async function POST(request: Request) {
 
   if (!apiKey || !to) {
     console.error(
-      "RESEND_API_KEY o LEAD_NOTIFICATION_EMAIL no configurados — ver .env.example."
+      "RESEND_API_KEY o LEAD_NOTIFICATION_EMAIL no configurados — ver .env.example.",
     );
     // The lead is already saved and visible in the admin panel, so a missing
     // email config shouldn't block the visitor-facing submission.

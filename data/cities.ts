@@ -5,6 +5,9 @@ export type City = {
   scheduleNote: string;
   contactEmail: string;
   active: boolean;
+  /** "live" = actually running sessions there today. "comingSoon" = page stays
+   * up for SEO/geo reach, but copy must not claim we're operating there yet. */
+  status: "live" | "comingSoon";
 };
 
 export const cities: City[] = [
@@ -15,6 +18,7 @@ export const cities: City[] = [
     scheduleNote: "7 am – 9 pm disponible",
     contactEmail: "monterrey@once-fc.com",
     active: true,
+    status: "live",
   },
   {
     slug: "guadalajara",
@@ -23,6 +27,7 @@ export const cities: City[] = [
     scheduleNote: "7 am – 9 pm disponible",
     contactEmail: "guadalajara@once-fc.com",
     active: true,
+    status: "comingSoon",
   },
   {
     slug: "cdmx",
@@ -31,6 +36,7 @@ export const cities: City[] = [
     scheduleNote: "7 am – 9 pm disponible",
     contactEmail: "cdmx@once-fc.com",
     active: true,
+    status: "comingSoon",
   },
   {
     slug: "tijuana",
@@ -39,6 +45,7 @@ export const cities: City[] = [
     scheduleNote: "7 am – 9 pm disponible",
     contactEmail: "tijuana@once-fc.com",
     active: true,
+    status: "comingSoon",
   },
   {
     slug: "saltillo",
@@ -47,6 +54,7 @@ export const cities: City[] = [
     scheduleNote: "7 am – 9 pm disponible",
     contactEmail: "saltillo@once-fc.com",
     active: true,
+    status: "comingSoon",
   },
 ];
 
@@ -56,4 +64,8 @@ export function getCityBySlug(slug: string): City | undefined {
 
 export function getActiveCities(): City[] {
   return cities.filter((city) => city.active);
+}
+
+export function getLiveCities(): City[] {
+  return cities.filter((city) => city.active && city.status === "live");
 }

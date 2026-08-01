@@ -1,28 +1,76 @@
 import Image from "next/image";
 
-const shots = [
-  {
-    n: "01",
-    src: "/izuddin-helmi-adnan-K5ChxJaheKI-unsplash.jpg",
-    alt: "Cancha iluminada durante un entrenamiento nocturno",
-    caption: "Entrenamiento nocturno",
-    span: "sm:col-span-2 sm:aspect-[16/10]",
-  },
+const bigShot = {
+  n: "01",
+  src: "/izuddin-helmi-adnan-K5ChxJaheKI-unsplash.jpg",
+  alt: "Cancha iluminada durante un entrenamiento nocturno, vista aérea",
+  caption: "Iluminación profesional",
+};
+
+const smallShots = [
   {
     n: "02",
     src: "/connor-coyne-OgqWLzWRSaI-unsplash.jpg",
     alt: "Jugador dominando el balón con la mirada en el control técnico",
     caption: "Control y técnica",
-    span: "",
   },
   {
     n: "03",
-    src: "/hero-players.jpg",
-    alt: "Jugadores entrenando en equipo sobre césped natural",
-    caption: "Trabajo en equipo",
-    span: "",
+    src: "/sven-kucinic-Z0KjmjxUsKs-unsplash.jpg",
+    alt: "Jugador rematando a gol en plena carrera",
+    caption: "Remate a gol",
+  },
+  {
+    n: "04",
+    src: "/dmitry-ant-lTydd5V_cUE-unsplash.jpg",
+    alt: "Cancha de pasto sintético vacía, vista aérea",
+    caption: "Superficie de calidad",
+  },
+  {
+    n: "05",
+    src: "/sporlab-ggUrWc5Pg9o-unsplash.jpg",
+    alt: "Partido nocturno en cancha con iluminación artificial",
+    caption: "Ritmo de partido",
   },
 ];
+
+function Tile({
+  shot,
+  sizes,
+  className = "",
+}: {
+  shot: { n: string; src: string; alt: string; caption: string };
+  sizes: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`group relative aspect-[4/5] overflow-hidden rounded-sm sm:aspect-auto ${className}`}
+    >
+      <Image
+        src={shot.src}
+        alt={shot.alt}
+        fill
+        sizes={sizes}
+        className="object-cover transition duration-700 ease-out group-hover:scale-105"
+      />
+      <div
+        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-coal-deep/85 via-coal-deep/5 to-transparent"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-0 ring-1 ring-inset ring-volt/40 transition group-hover:opacity-100"
+        aria-hidden="true"
+      />
+      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-4 sm:p-5">
+        <p className="font-mono text-[11px] uppercase tracking-widest text-bone/80">
+          {shot.caption}
+        </p>
+        <p className="font-mono scoreboard-num text-xl text-volt">{shot.n}</p>
+      </div>
+    </div>
+  );
+}
 
 export default function Showcase({ cityName }: { cityName?: string }) {
   return (
@@ -48,38 +96,14 @@ export default function Showcase({ cityName }: { cityName?: string }) {
           </p>
         </div>
 
-        <div className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
-          {shots.map((shot) => (
-            <div
-              key={shot.n}
-              className={`group relative aspect-[4/5] overflow-hidden rounded-sm ${shot.span}`}
-            >
-              <Image
-                src={shot.src}
-                alt={shot.alt}
-                fill
-                sizes={
-                  shot.span
-                    ? "(min-width: 640px) 66vw, 100vw"
-                    : "(min-width: 640px) 33vw, 100vw"
-                }
-                className="object-cover transition duration-700 ease-out group-hover:scale-105"
-              />
-              <div
-                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-coal-deep/85 via-coal-deep/5 to-transparent"
-                aria-hidden="true"
-              />
-              <div
-                className="pointer-events-none absolute inset-0 opacity-0 ring-1 ring-inset ring-volt/40 transition group-hover:opacity-100"
-                aria-hidden="true"
-              />
-              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 sm:p-6">
-                <p className="font-mono text-[11px] uppercase tracking-widest text-bone/80">
-                  {shot.caption}
-                </p>
-                <p className="font-mono scoreboard-num text-2xl text-volt">{shot.n}</p>
-              </div>
-            </div>
+        <div className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-4 sm:auto-rows-[14rem] sm:gap-5">
+          <Tile
+            shot={bigShot}
+            sizes="(min-width: 640px) 50vw, 100vw"
+            className="sm:col-span-2 sm:row-span-2"
+          />
+          {smallShots.map((shot) => (
+            <Tile key={shot.n} shot={shot} sizes="(min-width: 640px) 25vw, 100vw" />
           ))}
         </div>
       </div>
