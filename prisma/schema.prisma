@@ -150,6 +150,19 @@ model LeadMessage {
   @@index([createdAt])
 }
 
+// A submission from the public "bolsa de trabajo" form (see
+// components/JobApplicationForm.tsx and app/api/postulacion/route.ts).
+model JobApplication {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  message   String   @db.Text
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
 model Booking {
   id          String        @id @default(cuid())
   userId      String
