@@ -1,3 +1,4 @@
+import type { ReservaStatus } from "@prisma/client";
 import { requireSession } from "@/lib/auth-guards";
 import { prisma } from "@/lib/prisma";
 
@@ -89,7 +90,7 @@ export default async function CuentaPage() {
     const historySessionIds = new Set(
       existingHistoryReservations.map((reservation) => reservation.sesionId),
     );
-    const historicalStatuses = ["PAID", "CANCELLED", "EXPIRED"];
+    const historicalStatuses: ReservaStatus[] = ["PAID", "CANCELLED", "EXPIRED"];
 
     for (let index = 0; index < 20; index += 1) {
       const startsAt = new Date();
