@@ -60,6 +60,11 @@ export default function Footer({
                   {isAuthenticated ? "Mi cuenta" : "Iniciar sesión"}
                 </a>
               </li>
+              <li>
+                <a href="/bolsa-de-trabajo" className="hover:text-volt">
+                  Bolsa de trabajo
+                </a>
+              </li>
             </ul>
           </div>
         </div>

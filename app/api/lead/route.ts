@@ -91,10 +91,9 @@ export async function POST(request: Request) {
     console.error(
       "RESEND_API_KEY o LEAD_NOTIFICATION_EMAIL no configurados — ver .env.example."
     );
-    return NextResponse.json(
-      { error: "El servicio de correo no está configurado todavía." },
-      { status: 503 }
-    );
+    // The lead is already saved and visible in the admin panel, so a missing
+    // email config shouldn't block the visitor-facing submission.
+    return NextResponse.json({ ok: true });
   }
 
   const resend = new Resend(apiKey);
@@ -117,8 +116,9 @@ export async function POST(request: Request) {
   });
 
   if (error) {
+    // Notification email failed, but the lead is already saved — don't surface
+    // this as a failure to the visitor.
     console.error("Resend error:", error);
-    return NextResponse.json({ error: "No se pudo enviar el correo." }, { status: 502 });
   }
 
   return NextResponse.json({ ok: true });
