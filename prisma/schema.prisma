@@ -156,6 +156,9 @@ model JobApplication {
   id        String   @id @default(cuid())
   name      String
   phone     String
+  /// City name from data/cities.ts — cities are static TS data, not a DB table, so there's
+  /// intentionally no FK here.
+  cityName  String
   message   String   @db.Text
   read      Boolean  @default(false)
   createdAt DateTime @default(now())

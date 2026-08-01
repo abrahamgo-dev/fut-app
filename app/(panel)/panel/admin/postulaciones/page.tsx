@@ -68,7 +68,9 @@ export default async function AdminPostulacionesPage({
                     </span>
                   ) : null}
                 </p>
-                <p className="text-xs text-bone/50">{application.phone}</p>
+                <p className="text-xs text-bone/50">
+                  {application.phone} · {application.cityName}
+                </p>
                 <p className="mt-1 max-w-xl whitespace-pre-wrap text-sm text-bone/70">
                   {application.message}
                 </p>

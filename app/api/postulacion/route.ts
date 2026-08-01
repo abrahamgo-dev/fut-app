@@ -15,15 +15,16 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const name = typeof body?.name === "string" ? body.name.trim() : "";
   const phone = typeof body?.phone === "string" ? body.phone.trim() : "";
+  const cityName = typeof body?.cityName === "string" ? body.cityName.trim() : "";
   const message = typeof body?.message === "string" ? body.message.trim() : "";
 
-  if (!name || !phone || !message) {
+  if (!name || !phone || !cityName || !message) {
     return NextResponse.json({ error: "Faltan datos requeridos." }, { status: 400 });
   }
 
   try {
     await prisma.jobApplication.create({
-      data: { name, phone, message },
+      data: { name, phone, cityName, message },
     });
   } catch (err) {
     console.error("No se pudo guardar la postulación en la base de datos:", err);
@@ -52,6 +53,7 @@ export async function POST(request: Request) {
       <h2>Nueva postulación de bolsa de trabajo</h2>
       <p><strong>Nombre:</strong> ${escapeHtml(name)}</p>
       <p><strong>Teléfono:</strong> ${escapeHtml(phone)}</p>
+      <p><strong>Ciudad:</strong> ${escapeHtml(cityName)}</p>
       <p><strong>Mensaje:</strong> ${escapeHtml(message)}</p>
     `,
   });

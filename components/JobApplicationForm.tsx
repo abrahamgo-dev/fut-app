@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { getActiveCities } from "@/data/cities";
 
 export default function JobApplicationForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle");
+  const cities = getActiveCities();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -18,6 +20,7 @@ export default function JobApplicationForm() {
         body: JSON.stringify({
           name: form.get("name"),
           phone: form.get("phone"),
+          cityName: form.get("cityName"),
           message: form.get("message"),
         }),
       });
@@ -60,6 +63,24 @@ export default function JobApplicationForm() {
               placeholder="10 dígitos"
               className="rounded-sm border border-ink/20 bg-transparent px-3 py-2 font-body text-sm outline-none focus-visible:border-coal-deep"
             />
+          </label>
+          <label className="flex flex-col gap-1 text-sm font-medium">
+            Sede
+            <select
+              required
+              name="cityName"
+              defaultValue=""
+              className="rounded-sm border border-ink/20 bg-transparent px-3 py-2 font-body text-sm outline-none focus-visible:border-coal-deep"
+            >
+              <option value="" disabled>
+                Elige una ciudad
+              </option>
+              {cities.map((city) => (
+                <option key={city.slug} value={city.name}>
+                  {city.name}
+                </option>
+              ))}
+            </select>
           </label>
           <label className="flex flex-col gap-1 text-sm font-medium">
             Cuéntanos sobre tu experiencia
