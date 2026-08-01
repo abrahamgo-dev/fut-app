@@ -25,7 +25,7 @@ export const cities: City[] = [
     name: "Monterrey",
     state: "Nuevo León",
     zoneLabel: "Guadalupe, Nuevo León",
-    scheduleNote: "7 am – 9 pm disponible (excepto viernes y domingo)",
+    scheduleNote: "7 am – 9 pm disponible",
     contactEmail: "monterrey@once-fc.com",
     levels: [
       {
@@ -92,7 +92,7 @@ export const cities: City[] = [
     name: "Guadalajara",
     state: "Jalisco",
     zoneLabel: "Zapopan, Jalisco",
-    scheduleNote: "7 am – 9 pm disponible (excepto viernes y domingo)",
+    scheduleNote: "7 am – 9 pm disponible",
     contactEmail: "guadalajara@once-fc.com",
     levels: [
       {
@@ -152,7 +152,7 @@ export const cities: City[] = [
     name: "Ciudad de México",
     state: "CDMX",
     zoneLabel: "Del Valle, Ciudad de México",
-    scheduleNote: "7 am – 9 pm disponible (excepto viernes y domingo)",
+    scheduleNote: "7 am – 9 pm disponible",
     contactEmail: "cdmx@once-fc.com",
     levels: [
       {
@@ -219,7 +219,7 @@ export const cities: City[] = [
     name: "Tijuana",
     state: "Baja California",
     zoneLabel: "Zona Río, Tijuana",
-    scheduleNote: "7 am – 9 pm disponible (excepto viernes y domingo)",
+    scheduleNote: "7 am – 9 pm disponible",
     contactEmail: "tijuana@once-fc.com",
     levels: [
       {
@@ -279,7 +279,7 @@ export const cities: City[] = [
     name: "Saltillo",
     state: "Coahuila",
     zoneLabel: "Saltillo Centro, Coahuila",
-    scheduleNote: "7 am – 9 pm disponible (excepto viernes y domingo)",
+    scheduleNote: "7 am – 9 pm disponible",
     contactEmail: "saltillo@once-fc.com",
     levels: [
       {
