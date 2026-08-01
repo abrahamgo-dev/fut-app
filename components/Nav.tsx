@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import CityDropdown from "@/components/CityDropdown";
 import { getActiveCities } from "@/data/cities";
 
@@ -14,10 +15,18 @@ export default function Nav({
 }) {
   const [open, setOpen] = useState(false);
   const cities = getActiveCities();
+  const pathname = usePathname();
+
+  // "Niveles" and "Método" are sections that only live on the home page and
+  // on city pages — everywhere else we need to navigate home first, then
+  // scroll to the section, instead of linking to a hash that doesn't exist
+  // on the current page.
+  const hasPageSections = pathname === "/" || /^\/ciudades\/[^/]+$/.test(pathname);
+  const sectionHref = (id: string) => (hasPageSections ? `#${id}` : `/#${id}`);
 
   const links = [
-    { href: "#niveles", label: "Niveles" },
-    { href: "#metodo", label: "Método" },
+    { href: sectionHref("niveles"), label: "Niveles" },
+    { href: sectionHref("metodo"), label: "Método" },
     { href: "/preguntas-frecuentes", label: "Preguntas" },
   ];
 
@@ -28,7 +37,7 @@ export default function Nav({
       }`}
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <a href="#top" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
             <circle cx="14" cy="14" r="13" stroke="#B6FF3B" strokeWidth="1.5" />
             <path d="M14 5 L18 9 L16.5 14 L11.5 14 L10 9 Z" fill="#B6FF3B" />
@@ -42,17 +51,17 @@ export default function Nav({
               {cityName}
             </span>
           ) : null}
-        </a>
+        </Link>
 
         <ul className="hidden items-center gap-8 md:flex">
           {links.map((link) => (
             <li key={link.href}>
-              <a
+              <Link
                 href={link.href}
                 className="font-body text-sm font-medium text-bone/80 transition hover:text-volt"
               >
                 {link.label}
-              </a>
+              </Link>
             </li>
           ))}
           <li>
@@ -107,13 +116,13 @@ export default function Nav({
           <ul className="flex flex-col gap-4">
             {links.map((link) => (
               <li key={link.href}>
-                <a
+                <Link
                   href={link.href}
                   onClick={() => setOpen(false)}
                   className="block font-body text-base font-medium text-bone/80 transition hover:text-volt"
                 >
                   {link.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
