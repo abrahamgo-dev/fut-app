@@ -137,7 +137,7 @@ export default function Nav({
                 </a>
               </div>
             )
-          ) : null}
+          )}
 
           <button
             type="button"
