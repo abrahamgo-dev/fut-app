@@ -8,6 +8,7 @@ export default async function AdminDashboardPage() {
     sedeCount,
     upcomingSesionCount,
     unreadMessageCount,
+    unreadApplicationCount,
   ] = await Promise.all([
     prisma.user.count(),
     prisma.user.count({ where: { role: "TRAINER" } }),
@@ -15,6 +16,7 @@ export default async function AdminDashboardPage() {
     prisma.sede.count({ where: { active: true } }),
     prisma.sesion.count({ where: { active: true, startsAt: { gte: new Date() } } }),
     prisma.leadMessage.count({ where: { read: false } }),
+    prisma.jobApplication.count({ where: { read: false } }),
   ]);
 
   const stats = [
@@ -24,6 +26,7 @@ export default async function AdminDashboardPage() {
     { label: "Sedes activas", value: sedeCount },
     { label: "Sesiones próximas", value: upcomingSesionCount },
     { label: "Mensajes sin leer", value: unreadMessageCount },
+    { label: "Postulaciones sin leer", value: unreadApplicationCount },
   ];
 
   return (
@@ -75,6 +78,12 @@ export default async function AdminDashboardPage() {
           className="rounded-sm border border-bone/20 px-4 py-2 text-sm font-medium text-bone/80 transition hover:border-volt hover:text-volt"
         >
           Ver mensajes
+        </a>
+        <a
+          href="/panel/admin/postulaciones"
+          className="rounded-sm border border-bone/20 px-4 py-2 text-sm font-medium text-bone/80 transition hover:border-volt hover:text-volt"
+        >
+          Ver bolsa de trabajo
         </a>
       </div>
     </div>
