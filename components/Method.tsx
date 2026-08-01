@@ -1,23 +1,33 @@
 const pillars = [
   {
     n: "01",
+    title: "Sedes de calidad",
+    body: "Elegimos las canchas por iluminación, césped y ubicación — no cualquier terreno. Cada sesión te dice exactamente dónde vas a jugar antes de reservar.",
+  },
+  {
+    n: "02",
+    title: "Reserva por sesión",
+    body: "Sin membresía fija ni asistencia diaria obligatoria: agenda la sesión que te acomode, cuando te acomode.",
+  },
+  {
+    n: "03",
     title: "Coaches con experiencia",
     body: "Un grupo pequeño de entrenadores con experiencia trabajando con jugadores adultos, no solo con niños.",
   },
   {
-    n: "02",
-    title: "Progresión por nivel",
-    body: "El plan de cada grupo se construye sobre el anterior: de recuperar la forma a competir en serio.",
-  },
-  {
-    n: "03",
-    title: "Partidos todo el año",
-    body: "Calendario de amistosos y torneos internos para que cada nivel compita, no solo entrene.",
-  },
-  {
     n: "04",
+    title: "Crece a tu ritmo",
+    body: "Cada sesión indica su nivel — de iniciación a competitivo — para que elijas la que corresponda a tu condición, sin quedarte atado a un grupo fijo.",
+  },
+  {
+    n: "05",
+    title: "Partidos todo el año",
+    body: "Calendario de amistosos y torneos para quienes quieren competir, no solo entrenar.",
+  },
+  {
+    n: "06",
     title: "Comunidad de jugadores",
-    body: "Grupo de WhatsApp, calendario de horarios y resultados, y una comunidad de adultos que también trabajan, tienen familia y aun así no dejan el fútbol.",
+    body: "Grupo de WhatsApp, calendario de sesiones y resultados, y una comunidad de adultos que también trabajan, tienen familia y aun así no dejan el fútbol.",
   },
 ];
 

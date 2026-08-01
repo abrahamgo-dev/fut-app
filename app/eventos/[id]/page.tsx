@@ -169,7 +169,7 @@ export default async function EventoPage({ params }: Props) {
       </section>
 
       <Footer
-        zoneLabel={city?.zoneLabel}
+        cityLabel={city?.name}
         scheduleNote={city?.scheduleNote}
         contactEmail={city?.contactEmail}
       />

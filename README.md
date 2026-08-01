@@ -46,7 +46,7 @@ pero con datos de ejemplo:
 |---|---|
 | Nombre del club / dominio | `app/layout.tsx` (`siteUrl`, título, JSON-LD) y `components/Nav.tsx`, `Footer.tsx` |
 | Teléfono, correo, dirección real | `components/Footer.tsx` |
-| Niveles, horarios y grupos reales | `components/Categories.tsx` |
+| Sedes y sesiones reales | `prisma/seed.mjs` (datos de ejemplo) y el panel de administración |
 | Testimonios reales (con permiso de los jugadores) | `components/Testimonials.tsx` |
 | El formulario de "Sesión gratuita" | `components/Prueba.tsx` — hoy solo simula el envío; conéctalo a un servicio de correo (Resend, Formspree) o a tu CRM |
 

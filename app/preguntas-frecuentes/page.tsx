@@ -6,19 +6,19 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "Preguntas frecuentes",
   description:
-    "Precio, qué llevar a tu primera sesión, cómo funcionan los niveles y qué horarios tenemos disponibles. Todo lo que debes saber antes de entrenar en Once FC.",
+    "Precio, qué llevar a tu primera sesión, cómo reservar y en qué canchas entrenamos. Todo lo que debes saber antes de tu primera sesión con Once FC.",
 };
 
 const faqs = [
   {
     question: "¿Necesito experiencia previa para entrenar?",
     answer:
-      "No. Empiezas en el nivel que corresponda a tu condición actual, desde Iniciación (sin presión) hasta Competitivo. Un coach evalúa tu nivel en la primera sesión.",
+      "No. Cada sesión indica su nivel, de Iniciación (sin presión) a Competitivo, así que reservas la que corresponda a tu condición actual. Un coach confirma tu nivel en la primera sesión.",
   },
   {
-    question: "¿Cuánto cuesta entrenar en Once FC?",
+    question: "¿Cuánto cuesta una sesión?",
     answer:
-      "El precio varía por ciudad y nivel. Agenda tu sesión gratuita y un coach te comparte el costo exacto y las opciones de pago según tu grupo.",
+      "El precio varía por ciudad y sesión. Agenda tu sesión gratuita y un coach te comparte el costo exacto y las opciones de pago.",
   },
   {
     question: "¿Qué debo llevar a mi primera sesión?",
@@ -26,24 +26,24 @@ const faqs = [
       "Ropa deportiva cómoda, tenis o zapatos de fútbol (tachones si los tienes), espinilleras y una botella de agua. Nosotros ponemos los balones y el material de entrenamiento.",
   },
   {
-    question: "¿Puedo cambiar de nivel o de horario después?",
+    question: "¿Tengo que ir siempre a la misma hora?",
     answer:
-      "Sí. Conforme mejora tu condición puedes subir de nivel, y si tu horario de trabajo cambia puedes cambiar de grupo. Solo avísale a tu coach.",
+      "No. No hay membresía fija ni grupo asignado: reservas la sesión que te acomode en el momento que quieras, revisando el calendario de sesiones disponibles en tu ciudad.",
   },
   {
     question: "¿Hay partidos o solo entrenamientos?",
     answer:
-      "Ambos. Además de las sesiones de entrenamiento, cada nivel tiene amistosos y torneos internos durante todo el año, así que compites, no solo practicas.",
+      "Ambos. Además de las sesiones de entrenamiento, organizamos amistosos y torneos durante todo el año, así que compites, no solo practicas.",
   },
   {
-    question: "¿Qué horarios tienen disponibles?",
+    question: "¿Cómo veo qué sesiones hay disponibles?",
     answer:
-      "Entrenamos de 7 am a 9 pm, con sesiones a las 7 y 8 am y a las 4, 5, 6, 7, 8 y 9 pm, de lunes a sábado — no hay sesiones los viernes. Elige tu horario preferido al agendar tu sesión gratuita y un coach lo confirma según el nivel y la ciudad.",
+      "En la sección de Eventos de la página de tu ciudad puedes ver las próximas sesiones confirmadas, con cancha, coach y horario asignado, y reservar tu lugar directamente.",
   },
   {
     question: "¿En qué ciudades opera Once FC?",
     answer:
-      "Actualmente en Monterrey, Guadalajara y Ciudad de México, con el mismo método y los mismos niveles en cada sede.",
+      "Actualmente en Monterrey, Guadalajara, Ciudad de México, Tijuana y Saltillo, con el mismo método y sedes seleccionadas por calidad en cada ciudad.",
   },
   {
     question: "¿Cómo agendo mi sesión gratuita?",
