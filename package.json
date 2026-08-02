@@ -10,7 +10,8 @@
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
-    "db:seed": "node prisma/seed.mjs"
+    "db:seed": "node prisma/seed.mjs",
+    "leads:whatsapp-backfill": "node scripts/send-lead-whatsapp-backfill.mjs"
   },
   "prisma": {
     "seed": "node prisma/seed.mjs"

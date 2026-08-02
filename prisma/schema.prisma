@@ -215,6 +215,7 @@ model Lead {
   isDuplicatePhone  Boolean  @default(false)
   isRateLimitedIp   Boolean  @default(false)
   read              Boolean  @default(false)
+  whatsappSentAt    DateTime?
   createdAt         DateTime @default(now())
 
   @@index([phoneNormalized])

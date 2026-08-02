@@ -103,6 +103,11 @@ export default async function AdminLeadsPage({
                       IP sospechosa
                     </span>
                   ) : null}
+                  {lead.whatsappSentAt ? (
+                    <span className="ml-2 rounded-sm border border-emerald-400/40 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-emerald-300">
+                      WhatsApp enviado
+                    </span>
+                  ) : null}
                 </p>
                 <p className="text-xs text-bone/50">
                   {lead.phone} · {lead.age} años
