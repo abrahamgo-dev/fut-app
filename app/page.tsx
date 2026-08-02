@@ -37,7 +37,7 @@ export default function Home() {
             </h2>
             <p className="max-w-sm font-body text-sm text-bone/60">
               Hoy entrenamos en Monterrey — muy pronto en más ciudades. Agenda
-              tu entrenamiento gratuito o déjanos tus datos para avisarte cuando
+              tu entrenamiento o déjanos tus datos para avisarte cuando
               abramos en la tuya.
             </p>
           </div>

@@ -18,7 +18,7 @@ const faqs = [
   {
     question: "¿Cuánto cuesta una sesión?",
     answer:
-      "El precio varía por ciudad y sesión. Agenda tu sesión gratuita y un coach te comparte el costo exacto y las opciones de pago.",
+      "El precio varía por ciudad y sesión. Contáctanos y un coach te comparte el costo exacto y las opciones de pago.",
   },
   {
     question: "¿Qué debo llevar a mi primera sesión?",
@@ -46,9 +46,9 @@ const faqs = [
       "Hoy entrenamos en Monterrey. Guadalajara, Ciudad de México, Tijuana y Saltillo abren próximamente en la apertura, con el mismo método y sedes seleccionadas por calidad en cada ciudad.",
   },
   {
-    question: "¿Cómo agendo mi sesión gratuita?",
+    question: "¿Cómo agendo mi sesión?",
     answer:
-      "Llena el formulario en la página de tu ciudad. Un coach te contacta por WhatsApp en menos de 24 horas para confirmar horario y darte la ubicación exacta de la cancha.",
+      "Llena el formulario de contacto en la página de tu ciudad o revisa el calendario disponible. Un coach te contacta en menos de 24 horas para confirmar horario y darte la ubicación exacta de la cancha.",
   },
 ];
 

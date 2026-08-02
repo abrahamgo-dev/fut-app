@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Lead" ADD COLUMN     "email" TEXT;
+ALTER TABLE "Lead" ALTER COLUMN "phone" DROP NOT NULL;
+ALTER TABLE "Lead" ALTER COLUMN "phoneNormalized" DROP NOT NULL;

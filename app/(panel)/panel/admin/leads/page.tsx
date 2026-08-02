@@ -23,9 +23,9 @@ export default async function AdminLeadsPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl text-bone">Solicitudes de sesión gratis</h1>
+        <h1 className="font-display text-2xl text-bone">Solicitudes de contacto</h1>
         <p className="mt-1 text-sm text-bone/60">
-          Cada envío del formulario de "Reserva tu sesión gratis". Un mismo teléfono no vuelve a
+          Cada envío del formulario de contacto. Un mismo teléfono no vuelve a
           notificarte por correo dentro de {90} días, pero queda registrado aquí como duplicado
           para que lo revises si hace falta.{" "}
           {unreadCount > 0 ? (
@@ -105,7 +105,8 @@ export default async function AdminLeadsPage({
                   ) : null}
                 </p>
                 <p className="text-xs text-bone/50">
-                  {lead.phone} · {lead.age} años
+                  {lead.email ?? "Sin correo"} · {lead.age} años
+                  {lead.phone ? ` · ${lead.phone}` : ""}
                   {lead.cityName ? ` · ${lead.cityName}` : ""}
                   {lead.preferredSchedule ? ` · ${lead.preferredSchedule}` : ""}
                 </p>
