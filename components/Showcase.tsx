@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 const bigShot = {
@@ -34,18 +37,40 @@ const smallShots = [
   },
 ];
 
+// Same staggered slide+fade entrance as the Hero headline, but gated behind
+// an IntersectionObserver instead of firing on mount — this section is below
+// the fold, so it needs to wait for scroll instead of animating unseen.
+function reveal(
+  hasEntered: boolean,
+  delayMs: number,
+): { className: string; style: React.CSSProperties } {
+  return {
+    className: hasEntered
+      ? "opacity-0 animate-[slide-fade-in_0.7s_ease-out_forwards]"
+      : "opacity-0",
+    style: { animationDelay: `${delayMs}ms` },
+  };
+}
+
 function Tile({
   shot,
   sizes,
   className = "",
+  hasEntered,
+  delayMs,
 }: {
   shot: { n: string; src: string; alt: string; caption: string };
   sizes: string;
   className?: string;
+  hasEntered: boolean;
+  delayMs: number;
 }) {
+  const entrance = reveal(hasEntered, delayMs);
+
   return (
     <div
-      className={`group relative aspect-[4/5] overflow-hidden rounded-sm sm:aspect-auto ${className}`}
+      className={`group relative aspect-[4/5] overflow-hidden rounded-sm sm:aspect-auto ${className} ${entrance.className}`}
+      style={entrance.style}
     >
       <Image
         src={shot.src}
@@ -73,8 +98,34 @@ function Tile({
 }
 
 export default function Showcase({ cityName }: { cityName?: string }) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [hasEntered, setHasEntered] = useState(false);
+
+  useEffect(() => {
+    const node = sectionRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setHasEntered(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  const heading = reveal(hasEntered, 0);
+  const subtitle = reveal(hasEntered, 90);
+
   return (
-    <section className="relative overflow-hidden bg-coal-deep py-24 text-bone">
+    <section
+      ref={sectionRef}
+      className="relative overflow-hidden bg-coal-deep py-24 text-bone"
+    >
       <div
         className="pointer-events-none absolute inset-0 bg-grid-lines opacity-60"
         aria-hidden="true"
@@ -82,7 +133,7 @@ export default function Showcase({ cityName }: { cityName?: string }) {
 
       <div className="relative mx-auto max-w-6xl px-6">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-          <div>
+          <div className={heading.className} style={heading.style}>
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-volt">Así se vive</p>
             <h2 className="mt-3 font-display text-5xl leading-[0.92] tracking-tight sm:text-6xl md:text-7xl">
               CANCHA REAL
@@ -90,7 +141,10 @@ export default function Showcase({ cityName }: { cityName?: string }) {
               NIVEL <span className="text-outline">REAL</span>
             </h2>
           </div>
-          <p className="max-w-sm font-body text-sm text-bone/60">
+          <p
+            className={`max-w-sm font-body text-sm text-bone/60 ${subtitle.className}`}
+            style={subtitle.style}
+          >
             Luz de cancha, césped de verdad y buena ubicación
             {cityName ? ` en ${cityName}` : ""}: así se siente entrenar con nosotros.
           </p>
@@ -101,9 +155,17 @@ export default function Showcase({ cityName }: { cityName?: string }) {
             shot={bigShot}
             sizes="(min-width: 640px) 50vw, 100vw"
             className="sm:col-span-2 sm:row-span-2"
+            hasEntered={hasEntered}
+            delayMs={180}
           />
-          {smallShots.map((shot) => (
-            <Tile key={shot.n} shot={shot} sizes="(min-width: 640px) 25vw, 100vw" />
+          {smallShots.map((shot, index) => (
+            <Tile
+              key={shot.n}
+              shot={shot}
+              sizes="(min-width: 640px) 25vw, 100vw"
+              hasEntered={hasEntered}
+              delayMs={270 + index * 90}
+            />
           ))}
         </div>
       </div>

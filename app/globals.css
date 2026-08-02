@@ -4,6 +4,31 @@
 
 :root {
   color-scheme: light;
+
+  /* Brand tokens as r g b triplets so Tailwind's rgb(var(...) / <alpha-value>)
+     colors work. This is the site-wide (dark) palette; the admin panel is the
+     only place that overrides it, via [data-admin-theme="light"] below. */
+  --color-coal: 10 11 10;
+  --color-coal-deep: 0 0 0;
+  --color-bone: 243 243 239;
+  --color-volt: 182 255 59;
+  --color-volt-dim: 131 184 42;
+  --color-graphite: 140 140 134;
+  --color-ink: 10 10 10;
+}
+
+/* Light theme for the admin panel only (toggled by AdminThemeShell). Every
+   other page keeps the dark palette above — this selector never matches
+   outside app/(panel)/panel/admin. Backgrounds and text swap, and volt gets a
+   darker shade so it stays legible against a light surface. */
+[data-admin-theme="light"] {
+  --color-coal: 233 233 227;
+  --color-coal-deep: 243 243 239;
+  --color-bone: 23 23 20;
+  --color-volt: 58 122 0;
+  --color-volt-dim: 43 90 0;
+  --color-graphite: 110 110 104;
+  --color-ink: 243 243 239;
 }
 
 html {

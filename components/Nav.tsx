@@ -36,7 +36,7 @@ export default function Nav({
     // lib/launchFlags.ts.
     ...(PRELAUNCH_MODE
       ? []
-      : [{ href: sectionHref("sesiones"), label: "Eventos" }]),
+      : [{ href: sectionHref("sesiones"), label: "Próximos entrenamientos" }]),
     { href: sectionHref("metodo"), label: "Método" },
     { href: "/preguntas-frecuentes", label: "Preguntas" },
     { href: "#footer", label: "Contacto" },
@@ -105,23 +105,22 @@ export default function Nav({
                 aria-label="Ir a la cuenta"
                 className="hidden items-center gap-2 rounded-sm border border-bone/10 bg-bone/5 px-3 py-2 transition hover:border-volt hover:text-volt md:flex"
               >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-bone/10 font-mono text-xs font-semibold text-bone">
-                    {session?.user?.image ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={session.user.image}
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      userInitial
-                    )}
-                  </span>
-                  <span className="font-body text-sm font-medium text-bone">
-                    Mi cuenta
-                  </span>
-                </a>
-              ) : null
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-bone/10 font-mono text-xs font-semibold text-bone">
+                  {session?.user?.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={session.user.image}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    userInitial
+                  )}
+                </span>
+                <span className="font-body text-sm font-medium text-bone">
+                  Mi cuenta
+                </span>
+              </a>
             ) : (
               <div className="hidden items-center gap-2 md:flex">
                 <a
@@ -138,7 +137,7 @@ export default function Nav({
                 </a>
               </div>
             )
-          }
+          ) : null}
 
           <button
             type="button"

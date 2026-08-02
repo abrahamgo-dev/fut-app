@@ -156,6 +156,10 @@ model Reserva {
   sesion                  Sesion        @relation(fields: [sesionId], references: [id], onDelete: Cascade)
   status                  ReservaStatus @default(PENDING)
   amountCents             Int
+  /// "STRIPE" for the normal checkout flow; a free-form label (Efectivo,
+  /// Transferencia, etc.) when an admin registers a manual/offline payment
+  /// from the entrenamiento detail page.
+  paymentMethod           String        @default("STRIPE")
   stripeCheckoutSessionId String?       @unique
   createdAt               DateTime      @default(now())
   updatedAt               DateTime      @updatedAt

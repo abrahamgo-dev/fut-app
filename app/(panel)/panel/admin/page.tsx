@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import AdminStatsPanel, { type StatGroup } from "@/components/AdminStatsPanel";
 
 export default async function AdminDashboardPage() {
   const [
@@ -21,73 +22,50 @@ export default async function AdminDashboardPage() {
     prisma.jobApplication.count({ where: { read: false } }),
   ]);
 
-  const stats = [
-    { label: "Usuarios", value: userCount },
-    { label: "Entrenadores", value: trainerCount },
-    { label: "Reservas próximas", value: upcomingReservaCount },
-    { label: "Sedes activas", value: sedeCount },
-    { label: "Sesiones próximas", value: upcomingSesionCount },
-    { label: "Leads sin leer", value: unreadLeadCount },
-    { label: "Postulaciones sin leer", value: unreadApplicationCount },
+  const groups: StatGroup[] = [
+    {
+      label: "Reservas",
+      items: [
+        {
+          label: "Reservas próximas",
+          value: upcomingReservaCount,
+          href: "/panel/admin/entrenamientos",
+        },
+      ],
+    },
+    {
+      label: "Operación",
+      items: [
+        {
+          label: "Entrenamientos próximos",
+          value: upcomingSesionCount,
+          href: "/panel/admin/sesiones",
+        },
+        { label: "Sedes activas", value: sedeCount, href: "/panel/admin/sedes" },
+        { label: "Entrenadores", value: trainerCount, href: "/panel/admin/entrenadores" },
+      ],
+    },
+    {
+      label: "Personas",
+      items: [{ label: "Usuarios", value: userCount, href: "/panel/admin/usuarios" }],
+    },
+    {
+      label: "Bandeja de entrada",
+      items: [
+        { label: "Leads sin leer", value: unreadLeadCount, href: "/panel/admin/leads" },
+        {
+          label: "Postulaciones sin leer",
+          value: unreadApplicationCount,
+          href: "/panel/admin/postulaciones",
+        },
+      ],
+    },
   ];
 
   return (
     <div className="space-y-8">
       <h1 className="font-display text-2xl text-bone">Panel de administración</h1>
-
-      <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
-        {stats.map((stat) => (
-          <div key={stat.label} className="rounded-sm border border-bone/10 px-4 py-5">
-            <p className="font-mono text-3xl text-volt">{stat.value}</p>
-            <p className="text-sm text-bone/60">{stat.label}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex flex-wrap gap-4">
-        <a
-          href="/panel/admin/sesiones"
-          className="rounded-sm border border-bone/20 px-4 py-2 text-sm font-medium text-bone/80 transition hover:border-volt hover:text-volt"
-        >
-          Publicar sesión
-        </a>
-        <a
-          href="/panel/admin/sedes"
-          className="rounded-sm border border-bone/20 px-4 py-2 text-sm font-medium text-bone/80 transition hover:border-volt hover:text-volt"
-        >
-          Gestionar sedes
-        </a>
-        <a
-          href="/panel/admin/entrenadores"
-          className="rounded-sm border border-bone/20 px-4 py-2 text-sm font-medium text-bone/80 transition hover:border-volt hover:text-volt"
-        >
-          Gestionar entrenadores
-        </a>
-        <a
-          href="/panel/admin/usuarios"
-          className="rounded-sm border border-bone/20 px-4 py-2 text-sm font-medium text-bone/80 transition hover:border-volt hover:text-volt"
-        >
-          Gestionar usuarios
-        </a>
-        <a
-          href="/panel/admin/reservas"
-          className="rounded-sm border border-bone/20 px-4 py-2 text-sm font-medium text-bone/80 transition hover:border-volt hover:text-volt"
-        >
-          Ver reservas
-        </a>
-        <a
-          href="/panel/admin/leads"
-          className="rounded-sm border border-bone/20 px-4 py-2 text-sm font-medium text-bone/80 transition hover:border-volt hover:text-volt"
-        >
-          Ver leads
-        </a>
-        <a
-          href="/panel/admin/postulaciones"
-          className="rounded-sm border border-bone/20 px-4 py-2 text-sm font-medium text-bone/80 transition hover:border-volt hover:text-volt"
-        >
-          Ver bolsa de trabajo
-        </a>
-      </div>
+      <AdminStatsPanel groups={groups} />
     </div>
   );
 }

@@ -5,8 +5,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/panel", "/reservar"],
+      disallow: ["/panel", "/reservar", "/checkout"],
     },
-    sitemap: "https://once-fc.com/sitemap.xml",
+    sitemap: "https://www.once-fc.com/sitemap.xml",
   };
 }

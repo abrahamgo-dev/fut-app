@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { requireSession } from "@/lib/auth-guards";
-import { signOut } from "@/auth";
+import LogoutButton from "@/components/LogoutButton";
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -49,19 +49,7 @@ export default async function PanelLayout({
           </nav>
           <div className="flex items-center gap-4">
             <span className="text-xs text-bone/50">{session.user.email}</span>
-            <form
-              action={async () => {
-                "use server";
-                await signOut({ redirectTo: "/" });
-              }}
-            >
-              <button
-                type="submit"
-                className="rounded-sm border border-bone/20 px-3 py-1.5 text-xs font-medium text-bone/80 transition hover:border-volt hover:text-volt"
-              >
-                Cerrar sesión
-              </button>
-            </form>
+            <LogoutButton className="rounded-sm border border-bone/20 px-3 py-1.5 text-xs font-medium text-bone/80 transition hover:border-volt hover:text-volt" />
           </div>
         </div>
       </header>

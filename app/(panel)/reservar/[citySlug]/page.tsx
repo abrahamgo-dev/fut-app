@@ -29,10 +29,16 @@ export default async function ReservarCiudadPage({
       ).map((reserva) => reserva.sesionId)
     : [];
 
+  // The calendar's own month navigation is capped to the current year (see
+  // EventsCalendar), so there's no point fetching sessions further back than
+  // that — but within the year, include past ones so players can look back
+  // at what already happened, not just what's upcoming.
+  const startOfYear = new Date(Date.UTC(new Date().getUTCFullYear(), 0, 1));
+
   const sesiones = await prisma.sesion.findMany({
     where: {
       active: true,
-      startsAt: { gte: new Date() },
+      startsAt: { gte: startOfYear },
       sede: { citySlug: city.slug },
     },
     include: {

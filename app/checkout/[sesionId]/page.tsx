@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/auth-guards";
 import { getStripe } from "@/lib/stripe";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 type Props = {
   params: { sesionId: string };
@@ -51,11 +56,14 @@ export default async function CheckoutPage({ params }: Props) {
           currency: "mxn",
           product_data: {
             name: sesion.title,
-            description: `${sesion.sede.name} · ${sesion.startsAt.toLocaleString("es-MX", {
-              timeZone: "America/Mexico_City",
-              dateStyle: "medium",
-              timeStyle: "short",
-            })}`,
+            description: `${sesion.sede.name} · ${sesion.startsAt.toLocaleString(
+              "es-MX",
+              {
+                timeZone: "America/Mexico_City",
+                dateStyle: "medium",
+                timeStyle: "short",
+              },
+            )}`,
           },
           unit_amount: amountCents,
         },

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import Method from "@/components/Method";
@@ -10,6 +11,10 @@ import { getActiveCities } from "@/data/cities";
 import { PRELAUNCH_MODE } from "@/lib/launchFlags";
 
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 const FEATURED_CITY_SLUGS = ["monterrey", "guadalajara", "cdmx"];
 
@@ -37,8 +42,8 @@ export default function Home() {
             </h2>
             <p className="max-w-sm font-body text-sm text-bone/60">
               Hoy entrenamos en Monterrey — muy pronto en más ciudades. Agenda
-              tu entrenamiento o déjanos tus datos para avisarte cuando
-              abramos en la tuya.
+              tu entrenamiento o déjanos tus datos para avisarte cuando abramos
+              en la tuya.
             </p>
           </div>
 

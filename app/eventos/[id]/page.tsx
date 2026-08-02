@@ -38,10 +38,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const sesion = await getSesion(params.id);
   if (!sesion) return {};
 
+  const isIndexable = sesion.active && sesion.startsAt >= new Date();
+
   return {
     title: `${sesion.title} — Once FC`,
     description: `${sesion.title} en ${sesion.sede.name}. ${FULL_DATE_FORMAT.format(sesion.startsAt)} a las ${TIME_FORMAT.format(sesion.startsAt)}.`,
-    robots: { index: false, follow: false },
+    alternates: { canonical: `/eventos/${sesion.id}` },
+    robots: { index: isIndexable, follow: isIndexable },
   };
 }
 

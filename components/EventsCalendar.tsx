@@ -15,32 +15,23 @@ export type CalendarEvent = {
 
 const WEEKDAY_LABELS = ["LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB", "DOM"];
 
-// rgb triplets (not hex) so they can be composed into rgba() fills/borders at
-// different opacities for the calendar squares and agenda cards below.
-const LEVEL_COLORS: Record<string, { rgb: string }> = {
-  Mañanero: { rgb: "251,191,36" }, // amber-400
-  Iniciación: { rgb: "56,189,248" }, // sky-400
-  Intermedio: { rgb: "182,255,59" }, // brand volt
-  Competitivo: { rgb: "251,113,133" }, // rose-400
-  "Liga libre": { rgb: "167,139,250" }, // violet-400
-};
-const DEFAULT_COLOR = { rgb: "243,243,239" }; // bone
-
-function colorFor(level: string | null) {
-  if (!level) return DEFAULT_COLOR;
-  return LEVEL_COLORS[level] ?? DEFAULT_COLOR;
-}
+// One accent color (volt) for anything bookable, one neutral (bone) for
+// anything in the past — no more per-level rainbow.
+const VOLT_RGB = "182,255,59";
+const BONE_RGB = "243,243,239";
 
 function cellStyle(
   dayEvents: CalendarEvent[],
   isSelected: boolean,
+  isPastDay: boolean,
 ): React.CSSProperties {
   if (dayEvents.length === 0) return {};
 
-  const fillAlpha = isSelected ? 0.48 : 0.24;
-  const background = `rgba(182, 255, 59, ${fillAlpha})`;
-  const shadows = ["inset 0 0 0 1px rgba(182, 255, 59, 0.75)"];
-  if (isSelected) shadows.push("0 0 0 2px rgba(182, 255, 59, 0.7)");
+  const rgb = isPastDay ? BONE_RGB : VOLT_RGB;
+  const fillAlpha = isSelected ? (isPastDay ? 0.16 : 0.48) : isPastDay ? 0.08 : 0.24;
+  const background = `rgba(${rgb}, ${fillAlpha})`;
+  const shadows = [`inset 0 0 0 1px rgba(${rgb}, ${isPastDay ? 0.35 : 0.75})`];
+  if (isSelected) shadows.push(`0 0 0 2px rgba(${rgb}, ${isPastDay ? 0.35 : 0.7})`);
 
   return { background, boxShadow: shadows.join(", ") };
 }
@@ -96,21 +87,44 @@ export default function EventsCalendar({
 
   const todayKey = localDayKey(new Date());
 
+  // Navigation is capped to the current calendar year — see clampToCurrentYear.
+  const currentYear = useMemo(() => new Date().getUTCFullYear(), []);
+
+  function clampToCurrentYear(year: number, month: number) {
+    if (year < currentYear) return { year: currentYear, month: 0 };
+    if (year > currentYear) return { year: currentYear, month: 11 };
+    return { year, month };
+  }
+
   const initial = useMemo(() => {
-    const firstKey = Array.from(eventsByDay.keys()).sort()[0] ?? todayKey;
+    // Past events are included so players can look back, but the calendar
+    // should still default to the nearest upcoming day — not the earliest
+    // day overall, which would land on a bygone January once history is in
+    // the mix. Falls back to the most recent past day, then today.
+    const sortedKeys = Array.from(eventsByDay.keys()).sort();
+    const upcomingKey = sortedKeys.find((key) => key >= todayKey);
+    const firstKey = upcomingKey ?? sortedKeys[sortedKeys.length - 1] ?? todayKey;
     const [year, month] = firstKey.split("-").map(Number);
     return { year, month: month - 1, selectedKey: firstKey };
   }, [eventsByDay, todayKey]);
 
-  const fallbackCursor = useMemo(() => ({ year: 2026, month: 7 }), []);
+  const fallbackCursor = useMemo(() => {
+    const now = new Date();
+    return { year: now.getUTCFullYear(), month: now.getUTCMonth() };
+  }, []);
   const initialCursor =
-    initial.year && initial.month >= 0 ? initial : fallbackCursor;
+    initial.year && initial.month >= 0
+      ? clampToCurrentYear(initial.year, initial.month)
+      : fallbackCursor;
 
   const [cursor, setCursor] = useState({
     year: initialCursor.year,
     month: initialCursor.month,
   });
   const [selectedKey, setSelectedKey] = useState(initial.selectedKey);
+
+  const isAtEarliestMonth = cursor.year <= currentYear && cursor.month <= 0;
+  const isAtLatestMonth = cursor.year >= currentYear && cursor.month >= 11;
 
   const monthAnchor = new Date(Date.UTC(cursor.year, cursor.month, 1));
   const firstWeekday = monthAnchor.getUTCDay(); // 0=Sun..6=Sat
@@ -154,16 +168,8 @@ export default function EventsCalendar({
 
   function goToMonth(delta: number) {
     const next = new Date(Date.UTC(cursor.year, cursor.month + delta, 1));
-    setCursor({ year: next.getUTCFullYear(), month: next.getUTCMonth() });
+    setCursor(clampToCurrentYear(next.getUTCFullYear(), next.getUTCMonth()));
   }
-
-  const activeLevels = useMemo(() => {
-    const set = new Set<string>();
-    for (const event of events) {
-      if (event.levelLabel) set.add(event.levelLabel);
-    }
-    return Array.from(set);
-  }, [events]);
 
   return (
     <div className="rounded-sm border border-bone/10">
@@ -175,16 +181,18 @@ export default function EventsCalendar({
           <button
             type="button"
             onClick={() => goToMonth(-1)}
+            disabled={isAtEarliestMonth}
             aria-label="Mes anterior"
-            className="flex h-8 w-8 items-center justify-center rounded-sm border border-bone/20 text-bone/70 transition hover:border-volt hover:text-volt"
+            className="flex h-8 w-8 items-center justify-center rounded-sm border border-bone/20 text-bone/70 transition hover:border-volt hover:text-volt disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-bone/20 disabled:hover:text-bone/70"
           >
             ←
           </button>
           <button
             type="button"
             onClick={() => goToMonth(1)}
+            disabled={isAtLatestMonth}
             aria-label="Mes siguiente"
-            className="flex h-8 w-8 items-center justify-center rounded-sm border border-bone/20 text-bone/70 transition hover:border-volt hover:text-volt"
+            className="flex h-8 w-8 items-center justify-center rounded-sm border border-bone/20 text-bone/70 transition hover:border-volt hover:text-volt disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-bone/20 disabled:hover:text-bone/70"
           >
             →
           </button>
@@ -208,6 +216,7 @@ export default function EventsCalendar({
           const dayEvents = eventsByDay.get(key) ?? [];
           const isToday = key === todayKey;
           const isSelected = key === selectedKey;
+          const isPastDay = key < todayKey;
 
           return (
             <button
@@ -215,7 +224,7 @@ export default function EventsCalendar({
               key={key}
               disabled={dayEvents.length === 0}
               onClick={() => setSelectedKey(key)}
-              style={cellStyle(dayEvents, isSelected)}
+              style={cellStyle(dayEvents, isSelected, isPastDay)}
               className={`flex h-16 flex-col items-center justify-center gap-1 rounded-sm py-1.5 transition sm:h-20 ${
                 cell.inMonth ? "text-bone" : "text-bone/25"
               } ${dayEvents.length === 0 ? "cursor-default hover:bg-bone/5" : "cursor-pointer hover:brightness-125"}`}
@@ -223,7 +232,9 @@ export default function EventsCalendar({
               <span
                 className={`flex h-7 w-7 items-center justify-center rounded-full font-mono text-xs font-semibold ${
                   dayEvents.length > 0
-                    ? "bg-coal-deep text-volt ring-1 ring-volt/70"
+                    ? isPastDay
+                      ? "bg-coal-deep text-bone/50 ring-1 ring-bone/30"
+                      : "bg-coal-deep text-volt ring-1 ring-volt/70"
                     : isToday
                       ? "bg-bone text-coal-deep"
                       : ""
@@ -232,7 +243,11 @@ export default function EventsCalendar({
                 {cell.day}
               </span>
               {dayEvents.length > 0 ? (
-                <span className="rounded-full border border-volt/60 bg-coal-deep/85 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-volt">
+                <span
+                  className={`rounded-full border bg-coal-deep/85 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] ${
+                    isPastDay ? "border-bone/30 text-bone/50" : "border-volt/60 text-volt"
+                  }`}
+                >
                   {dayEvents.length}{" "}
                   {dayEvents.length === 1 ? "sesión" : "sesiones"}
                 </span>
@@ -242,23 +257,6 @@ export default function EventsCalendar({
         })}
       </div>
 
-      {activeLevels.length > 0 ? (
-        <div className="flex flex-wrap gap-x-4 gap-y-2 border-t border-bone/10 px-5 py-4">
-          {activeLevels.map((level) => (
-            <span
-              key={level}
-              className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-bone/50"
-            >
-              <span
-                className="h-2.5 w-2.5 rounded-[2px]"
-                style={{ backgroundColor: `rgb(${colorFor(level).rgb})` }}
-              />
-              {level}
-            </span>
-          ))}
-        </div>
-      ) : null}
-
       <div className="border-t border-bone/10 px-5 py-5">
         {selectedEvents.length === 0 ? (
           <p className="text-sm text-bone/50">
@@ -267,43 +265,52 @@ export default function EventsCalendar({
         ) : (
           <ul className="space-y-3">
             {selectedEvents.map((event) => {
-              const color = colorFor(event.levelLabel);
+              const isPast = new Date(event.startsAt).getTime() < Date.now();
+
               return (
                 <li key={event.id}>
                   <Link
                     href={`/eventos/${event.id}`}
-                    style={{
-                      borderLeftColor: `rgb(${color.rgb})`,
-                      background: `linear-gradient(90deg, rgba(${color.rgb}, 0.1), rgba(${color.rgb}, 0.02) 70%)`,
-                    }}
-                    className="flex flex-wrap items-center justify-between gap-4 rounded-sm border border-l-4 border-bone/10 px-5 py-4 transition hover:brightness-125"
+                    className={`flex flex-wrap items-center justify-between gap-4 rounded-sm border border-l-4 px-5 py-4 transition ${
+                      isPast
+                        ? "border-bone/10 border-l-bone/20 opacity-60 hover:opacity-80"
+                        : "border-bone/10 border-l-volt/50 bg-bone/5 hover:border-volt/40 hover:bg-volt/5"
+                    }`}
                   >
                     <div className="min-w-0">
-                      <p className="truncate font-display text-lg text-bone">
+                      <p
+                        className={`truncate font-display text-lg ${isPast ? "text-bone/50" : "text-bone"}`}
+                      >
                         {event.title}
                       </p>
-                      <p className="mt-1 truncate text-sm text-bone/60">
+                      <p
+                        className={`mt-1 truncate text-sm ${isPast ? "text-bone/30" : "text-bone/60"}`}
+                      >
                         {event.trainerName} · {event.sedeName}
                       </p>
                     </div>
                     <div className="flex flex-shrink-0 items-center gap-3">
-                      {event.isReserved ? (
+                      {isPast ? (
+                        <span className="rounded-sm border border-bone/15 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-bone/40">
+                          Finalizada
+                        </span>
+                      ) : event.isReserved ? (
                         <span className="rounded-sm border border-volt/60 bg-volt/15 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-volt">
                           Reservado
                         </span>
                       ) : null}
                       {event.levelLabel ? (
                         <span
-                          className="rounded-sm px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest"
-                          style={{
-                            backgroundColor: `rgba(${color.rgb}, 0.18)`,
-                            color: `rgb(${color.rgb})`,
-                          }}
+                          className={`rounded-sm border px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest ${
+                            isPast ? "border-bone/15 text-bone/30" : "border-bone/20 text-bone/60"
+                          }`}
                         >
                           {event.levelLabel}
                         </span>
                       ) : null}
-                      <span className="font-mono scoreboard-num text-base text-bone">
+                      <span
+                        className={`font-mono scoreboard-num text-base ${isPast ? "text-bone/40" : "text-bone"}`}
+                      >
                         {TIME_FORMAT.format(new Date(event.startsAt))}
                       </span>
                     </div>

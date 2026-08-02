@@ -19,7 +19,7 @@ export default async function AdminSesionesPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-2xl text-bone">Próximas sesiones</h1>
+        <h1 className="font-display text-2xl text-bone">Entrenamientos</h1>
         <p className="mt-1 text-sm text-bone/60">
           Combina una sede y un entrenador en una sesión pública. Aparecen en el sitio ordenadas
           por fecha, mientras estén activas y en el futuro.

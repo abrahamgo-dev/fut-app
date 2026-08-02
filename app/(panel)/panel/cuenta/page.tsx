@@ -2,6 +2,13 @@ import type { ReservaStatus } from "@prisma/client";
 import { requireSession } from "@/lib/auth-guards";
 import { prisma } from "@/lib/prisma";
 
+function toGoogleCalendarDate(date: Date): string {
+  return date
+    .toISOString()
+    .replace(/[-:]/g, "")
+    .replace(/\.\d{3}Z$/, "Z");
+}
+
 export default async function CuentaPage() {
   const session = await requireSession();
 
@@ -90,7 +97,11 @@ export default async function CuentaPage() {
     const historySessionIds = new Set(
       existingHistoryReservations.map((reservation) => reservation.sesionId),
     );
-    const historicalStatuses: ReservaStatus[] = ["PAID", "CANCELLED", "EXPIRED"];
+    const historicalStatuses: ReservaStatus[] = [
+      "PAID",
+      "CANCELLED",
+      "EXPIRED",
+    ];
 
     for (let index = 0; index < 20; index += 1) {
       const startsAt = new Date();
@@ -207,35 +218,86 @@ export default async function CuentaPage() {
                 key={reserva.id}
                 className="rounded-sm border border-transparent px-4 py-3 transition duration-200 hover:border-volt hover:bg-volt/5"
               >
-                <a
-                  href={`/eventos/${reserva.sesionId}`}
-                  className="flex flex-wrap items-center justify-between gap-4"
-                >
-                  <div>
-                    <p className="text-sm font-medium text-bone">
-                      {reserva.sesion.title}
-                    </p>
-                    <p className="text-xs text-bone/50">
-                      {reserva.sesion.sede.name} ·{" "}
-                      {reserva.sesion.startsAt.toLocaleString("es-MX", {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                        timeZone: "America/Mexico_City",
-                      })}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-bone/80">
-                      {(reserva.amountCents / 100).toLocaleString("es-MX", {
-                        style: "currency",
-                        currency: "MXN",
-                      })}
-                    </p>
-                    <p className="font-mono text-[11px] uppercase tracking-widest text-bone/40">
-                      {RESERVA_STATUS_LABEL[reserva.status] ?? reserva.status}
-                    </p>
-                  </div>
-                </a>
+                {(() => {
+                  const startsAt = reserva.sesion.startsAt;
+                  const endsAt = new Date(
+                    startsAt.getTime() +
+                      Math.max(reserva.sesion.durationMinutes ?? 60, 1) *
+                        60_000,
+                  );
+                  const params = new URLSearchParams({
+                    action: "TEMPLATE",
+                    text: `Entrenamiento Once FC: ${reserva.sesion.title}`,
+                    dates: `${toGoogleCalendarDate(startsAt)}/${toGoogleCalendarDate(endsAt)}`,
+                    details: [
+                      `Sesion: ${reserva.sesion.title}`,
+                      reserva.sesion.description
+                        ? `Detalles: ${reserva.sesion.description}`
+                        : null,
+                      "Nos vemos en cancha. Llega 10 minutos antes.",
+                    ]
+                      .filter(Boolean)
+                      .join("\n"),
+                    location: `${reserva.sesion.sede.name} - ${reserva.sesion.sede.address}`,
+                  });
+                  const googleCalendarUrl = `https://calendar.google.com/calendar/render?${params.toString()}`;
+                  const icsUrl = `/api/calendar/ics?reserva_id=${encodeURIComponent(reserva.id)}`;
+
+                  return (
+                    <>
+                      <a
+                        href={`/eventos/${reserva.sesionId}`}
+                        className="flex flex-wrap items-center justify-between gap-4"
+                      >
+                        <div>
+                          <p className="text-sm font-medium text-bone">
+                            {reserva.sesion.title}
+                          </p>
+                          <p className="text-xs text-bone/50">
+                            {reserva.sesion.sede.name} ·{" "}
+                            {reserva.sesion.startsAt.toLocaleString("es-MX", {
+                              dateStyle: "medium",
+                              timeStyle: "short",
+                              timeZone: "America/Mexico_City",
+                            })}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm text-bone/80">
+                            {(reserva.amountCents / 100).toLocaleString(
+                              "es-MX",
+                              {
+                                style: "currency",
+                                currency: "MXN",
+                              },
+                            )}
+                          </p>
+                          <p className="font-mono text-[11px] uppercase tracking-widest text-bone/40">
+                            {RESERVA_STATUS_LABEL[reserva.status] ??
+                              reserva.status}
+                          </p>
+                        </div>
+                      </a>
+
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <a
+                          href={googleCalendarUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="rounded-sm border border-bone/25 px-3 py-1.5 text-xs font-semibold text-bone/85 transition hover:border-volt hover:text-volt"
+                        >
+                          Google Calendar
+                        </a>
+                        <a
+                          href={icsUrl}
+                          className="rounded-sm border border-bone/25 px-3 py-1.5 text-xs font-semibold text-bone/85 transition hover:border-volt hover:text-volt"
+                        >
+                          Descargar .ics
+                        </a>
+                      </div>
+                    </>
+                  );
+                })()}
               </li>
             ))}
           </ul>

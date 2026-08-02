@@ -13,12 +13,23 @@ const ERROR_MESSAGES: Record<string, string> = {
   Default: "Algo salió mal al iniciar sesión. Intenta de nuevo.",
 };
 
+function sanitizeCallbackUrl(value?: string): string {
+  if (!value) return "/panel";
+
+  // Only allow same-site absolute paths; block external and protocol-relative URLs.
+  if (!value.startsWith("/") || value.startsWith("//")) {
+    return "/panel";
+  }
+
+  return value;
+}
+
 export default function LoginPage({
   searchParams,
 }: {
   searchParams: { callbackUrl?: string; error?: string };
 }) {
-  const callbackUrl = searchParams.callbackUrl ?? "/panel";
+  const callbackUrl = sanitizeCallbackUrl(searchParams.callbackUrl);
   const errorMessage = searchParams.error
     ? (ERROR_MESSAGES[searchParams.error] ?? ERROR_MESSAGES.Default)
     : null;

@@ -25,12 +25,13 @@ const mono = IBM_Plex_Mono({
   display: "swap",
 });
 
-const siteUrl = "https://once-fc.com";
+const siteUrl = "https://www.once-fc.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Once FC — Reserva sesiones de entrenamiento de fútbol para adultos",
+    default:
+      "Once FC — Reserva sesiones de entrenamiento de fútbol para adultos",
     template: "%s | Once FC",
   },
   description:
@@ -69,9 +70,6 @@ export const metadata: Metadata = {
       "Sesiones de entrenamiento en canchas de calidad y partidos todo el año. Agenda tu sesión.",
     images: ["/og-cover.svg"],
   },
-  alternates: {
-    canonical: siteUrl,
-  },
   robots: {
     index: true,
     follow: true,
@@ -100,7 +98,10 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="es-MX" className={`${display.variable} ${body.variable} ${mono.variable}`}>
+    <html
+      lang="es-MX"
+      className={`${display.variable} ${body.variable} ${mono.variable}`}
+    >
       <body className="font-body antialiased">
         <a href="#main" className="skip-link">
           Saltar al contenido principal

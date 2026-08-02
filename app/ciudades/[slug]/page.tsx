@@ -75,12 +75,14 @@ export default function CiudadPage({ params }: Props) {
         citySlug={city.slug}
         comingSoon={comingSoon}
       />
-      {!PRELAUNCH_MODE && !comingSoon ? <ProximasSesiones citySlug={city.slug} /> : null}
+      {!PRELAUNCH_MODE && !comingSoon ? (
+        <ProximasSesiones citySlug={city.slug} />
+      ) : null}
       <Method />
       <Showcase cityName={city.name} />
       <Prueba cityName={city.name} comingSoon={comingSoon} />
       <Footer
-        cityLabel={city.name}
+        cityLabel={`${city.name}, ${city.state}`}
         scheduleNote={city.scheduleNote}
         contactEmail={city.contactEmail}
       />

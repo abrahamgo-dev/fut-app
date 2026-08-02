@@ -9,7 +9,7 @@ export function buildAutoReply(message: string): string {
   }
 
   if (/hola|buenas|buenos|hello|hi/.test(normalized)) {
-    return "Hola! Gracias por escribirnos a Once FC. ¿Quieres reservar una sesión o saber más sobre nuestros entrenamientos?";
+    return "¡Hola! Gracias por escribirnos a Once FC. ¿Quieres reservar una sesión o saber más sobre nuestros entrenamientos?";
   }
 
   if (/reserva|reservar|turno|agendar/.test(normalized)) {
@@ -17,7 +17,7 @@ export function buildAutoReply(message: string): string {
   }
 
   if (/horario|horarios|cuando/.test(normalized)) {
-    return "Nuestros entrenamientos varían por sede y grupo. Díganos tu ciudad y te compartimos los horarios disponibles.";
+    return "Nuestros entrenamientos varían por sede y grupo. Dinos tu ciudad y te compartimos los horarios disponibles.";
   }
 
   if (/precio|costo|cuanto|pago/.test(normalized)) {
@@ -25,7 +25,7 @@ export function buildAutoReply(message: string): string {
   }
 
   if (/ayuda|duda|información|info/.test(normalized)) {
-    return "Claro. Escribenos tu ciudad o el tipo de entrenamiento que buscas y te respondemos con la información más útil.";
+    return "Claro. Escríbenos tu ciudad o el tipo de entrenamiento que buscas y te respondemos con la información más útil.";
   }
 
   return DEFAULT_REPLY;

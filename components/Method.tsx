@@ -27,7 +27,7 @@ const pillars = [
   {
     n: "06",
     title: "Comunidad de jugadores",
-    body: "Grupo de WhatsApp, calendario de entrenamientos y resultados, y una comunidad de adultos que también trabajan, tienen familia y aun así no dejan el fútbol.",
+    body: "Grupo de WhatsApp, calendario de entrenamientos y resultados, y una comunidad de adultos que también trabajan, tienen familia y aún así no dejan el fútbol.",
   },
 ];
 

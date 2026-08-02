@@ -8,13 +8,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        coal: "#0A0B0A",
-        "coal-deep": "#000000",
-        bone: "#F3F3EF",
-        volt: "#B6FF3B",
-        "volt-dim": "#83B82A",
-        graphite: "#8C8C86",
-        ink: "#0A0A0A",
+        // rgb(var(...) / <alpha-value>) instead of flat hex so these tokens
+        // can be re-pointed per color-scheme (see [data-admin-theme="light"]
+        // in globals.css) without touching every className that uses them.
+        coal: "rgb(var(--color-coal) / <alpha-value>)",
+        "coal-deep": "rgb(var(--color-coal-deep) / <alpha-value>)",
+        bone: "rgb(var(--color-bone) / <alpha-value>)",
+        volt: "rgb(var(--color-volt) / <alpha-value>)",
+        "volt-dim": "rgb(var(--color-volt-dim) / <alpha-value>)",
+        graphite: "rgb(var(--color-graphite) / <alpha-value>)",
+        ink: "rgb(var(--color-ink) / <alpha-value>)",
       },
       fontFamily: {
         display: ["var(--font-display)"],

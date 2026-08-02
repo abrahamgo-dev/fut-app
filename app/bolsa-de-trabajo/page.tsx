@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "Bolsa de trabajo",
   description:
     "¿Quieres trabajar con nosotros como entrenador o coach en Once FC? Déjanos tus datos y cuéntanos sobre tu experiencia.",
+  alternates: { canonical: "/bolsa-de-trabajo" },
 };
 
 export default function BolsaDeTrabajoPage() {
@@ -23,9 +24,9 @@ export default function BolsaDeTrabajoPage() {
               Súmate al equipo de Once FC
             </h1>
             <p className="mt-6 max-w-md font-body text-lg text-bone/80">
-              Buscamos entrenadores y coaches para nuestras sedes. Déjanos tus datos y cuéntanos
-              sobre tu experiencia — te contactamos si tu perfil encaja con una vacante
-              disponible.
+              Buscamos entrenadores y coaches para nuestras sedes. Déjanos tus
+              datos y cuéntanos sobre tu experiencia — te contactamos si tu
+              perfil encaja con una vacante disponible.
             </p>
           </div>
 

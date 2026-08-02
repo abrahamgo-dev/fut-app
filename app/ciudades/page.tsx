@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Ciudades",
   description:
     "Once FC opera en varias ciudades de México. Elige tu ciudad para ver sesiones, sedes y agendar tu sesión.",
+  alternates: { canonical: "/ciudades" },
 };
 
 export default function CiudadesPage() {
@@ -25,8 +26,8 @@ export default function CiudadesPage() {
             Elige tu ciudad
           </h1>
           <p className="mt-6 max-w-md font-body text-lg text-bone/80">
-            Hoy entrenamos en Monterrey — mismo club, mismo método llegando pronto a más
-            ciudades.
+            Hoy entrenamos en Monterrey: mismo club, mismo método y pronto en
+            más ciudades.
           </p>
 
           <div className="mt-14">

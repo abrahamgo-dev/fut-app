@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 import { getActiveCities } from "@/data/cities";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const siteUrl = "https://once-fc.com";
+  const siteUrl = "https://www.once-fc.com";
   const lastModified = new Date();
 
   return [
@@ -23,6 +23,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
       changeFrequency: "monthly",
       priority: 0.6,
+    },
+    {
+      url: `${siteUrl}/bolsa-de-trabajo`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.5,
     },
     ...getActiveCities().map((city) => ({
       url: `${siteUrl}/ciudades/${city.slug}`,
