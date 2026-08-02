@@ -28,9 +28,9 @@ const smallShots = [
   },
   {
     n: "05",
-    src: "/pexels-franco-monsalvo-252430633-38040108.jpg",
-    alt: "Jugador disputando el balón en plena jugada durante un partido",
-    caption: "Competencia real",
+    src: "/pexels-jeffrey-paa-kwesi-opare-157343-36862523.jpg",
+    alt: "Toma cercana de un jugador dominando el balón mientras un rival se acerca",
+    caption: "Duelo por el balón",
   },
 ];
 
