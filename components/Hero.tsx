@@ -34,6 +34,16 @@ export default function Hero({
   const [imageLoaded, setImageLoaded] = useState(false);
   const citiesCount = getLiveCities().length;
   const calendarHref = citySlug ? `/reservar/${citySlug}` : "/reservar";
+  const primaryCtaHref = PRELAUNCH_MODE
+    ? comingSoon
+      ? "#prueba"
+      : "/#footer"
+    : calendarHref;
+  const primaryCtaLabel = PRELAUNCH_MODE
+    ? "Contacto"
+    : comingSoon
+      ? "Avísenme cuando abran"
+      : "Ver calendario";
 
   const stats = [
     { value: "18+", label: "EDAD PARA JUGAR" },
@@ -131,10 +141,10 @@ export default function Hero({
 
           <div className="flex flex-shrink-0 gap-3">
             <a
-              href={calendarHref}
+              href={primaryCtaHref}
               className="rounded-sm bg-volt px-6 py-3 text-center font-body text-sm font-semibold text-coal-deep transition hover:brightness-95"
             >
-              {comingSoon ? "Avísenme cuando abran" : "Ver calendario"}
+              {primaryCtaLabel}
             </a>
             {/* Points at the events list when it's live; pre-launch that
                 section is hidden (mock data), so this points at Método

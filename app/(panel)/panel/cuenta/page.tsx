@@ -1,6 +1,7 @@
 import type { ReservaStatus } from "@prisma/client";
 import { requireSession } from "@/lib/auth-guards";
 import { prisma } from "@/lib/prisma";
+import { PRELAUNCH_MODE } from "@/lib/launchFlags";
 
 function toGoogleCalendarDate(date: Date): string {
   return date
@@ -280,20 +281,31 @@ export default async function CuentaPage() {
                       </a>
 
                       <div className="mt-3 flex flex-wrap gap-2">
-                        <a
-                          href={googleCalendarUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="rounded-sm border border-bone/25 px-3 py-1.5 text-xs font-semibold text-bone/85 transition hover:border-volt hover:text-volt"
-                        >
-                          Google Calendar
-                        </a>
-                        <a
-                          href={icsUrl}
-                          className="rounded-sm border border-bone/25 px-3 py-1.5 text-xs font-semibold text-bone/85 transition hover:border-volt hover:text-volt"
-                        >
-                          Descargar .ics
-                        </a>
+                        {PRELAUNCH_MODE ? (
+                          <a
+                            href="/#footer"
+                            className="rounded-sm border border-bone/25 px-3 py-1.5 text-xs font-semibold text-bone/85 transition hover:border-volt hover:text-volt"
+                          >
+                            Contacto
+                          </a>
+                        ) : (
+                          <>
+                            <a
+                              href={googleCalendarUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="rounded-sm border border-bone/25 px-3 py-1.5 text-xs font-semibold text-bone/85 transition hover:border-volt hover:text-volt"
+                            >
+                              Google Calendar
+                            </a>
+                            <a
+                              href={icsUrl}
+                              className="rounded-sm border border-bone/25 px-3 py-1.5 text-xs font-semibold text-bone/85 transition hover:border-volt hover:text-volt"
+                            >
+                              Descargar .ics
+                            </a>
+                          </>
+                        )}
                       </div>
                     </>
                   );
