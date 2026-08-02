@@ -83,10 +83,25 @@ export default function Footer({
         </div>
       </div>
 
-      <div className="mx-auto mt-10 max-w-6xl border-t border-bone/10 px-6 pt-6">
+      <div className="mx-auto mt-10 flex max-w-6xl flex-col-reverse items-center gap-3 border-t border-bone/10 px-6 pt-6 sm:flex-row sm:justify-between">
         <p className="font-mono text-xs text-bone/60">
           © {new Date().getFullYear()} Once FC. Todos los derechos reservados.
         </p>
+        <a
+          href="https://fenwebstudio.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 font-mono text-xs text-bone/40 transition hover:text-bone/70"
+        >
+          Hecho por
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/fen-webstudio-mark.png"
+            alt="Fen Webstudio"
+            className="h-3.5 w-auto opacity-80"
+          />
+          Fen Webstudio
+        </a>
       </div>
     </footer>
   );
