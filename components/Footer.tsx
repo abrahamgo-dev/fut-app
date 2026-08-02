@@ -18,7 +18,7 @@ export default function Footer({
   const isAuthenticated = status === "authenticated";
 
   return (
-    <footer className="bg-coal-deep py-14 text-bone">
+    <footer id="footer" className="scroll-mt-20 bg-coal-deep py-14 text-bone">
       <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 sm:flex-row sm:justify-between">
         <div>
           <span className="font-display text-2xl">

@@ -39,6 +39,7 @@ export default function Nav({
       : [{ href: sectionHref("sesiones"), label: "Eventos" }]),
     { href: sectionHref("metodo"), label: "Método" },
     { href: "/preguntas-frecuentes", label: "Preguntas" },
+    { href: "#footer", label: "Contacto" },
   ];
 
   return (
