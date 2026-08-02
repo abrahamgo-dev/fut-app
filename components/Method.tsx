@@ -38,7 +38,7 @@ export default function Method() {
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-volt">
           Método
         </p>
-        <h2 className="mt-3 max-w-xl font-display text-4xl sm:text-5xl">
+        <h2 className="mt-3 max-w-xl font-display text-4xl leading-[0.9] tracking-tight sm:text-5xl">
           Entrenamiento real, no solo cascarita
         </h2>
 
