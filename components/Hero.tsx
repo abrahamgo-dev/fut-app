@@ -65,7 +65,7 @@ export default function Hero({
         quality={90}
         sizes="100vw"
         onLoad={() => setImageLoaded(true)}
-        className={`object-cover object-[center_38%] transition-opacity duration-700 ease-out ${
+        className={`object-cover object-[75%_38%] transition-opacity duration-700 ease-out sm:object-[center_38%] ${
           imageLoaded ? "opacity-100" : "opacity-0"
         }`}
       />
