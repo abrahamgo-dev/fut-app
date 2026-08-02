@@ -28,9 +28,9 @@ const smallShots = [
   },
   {
     n: "05",
-    src: "/sporlab-ggUrWc5Pg9o-unsplash.jpg",
-    alt: "Partido nocturno en cancha con iluminación artificial",
-    caption: "Ritmo de partido",
+    src: "/pexels-jeffrey-paa-kwesi-opare-157343-36862523.jpg",
+    alt: "Toma cercana de un jugador dominando el balón mientras un rival se acerca",
+    caption: "Duelo por el balón",
   },
 ];
 
