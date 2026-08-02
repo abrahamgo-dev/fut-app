@@ -36,14 +36,7 @@ export default function Footer({
               Contacto
             </p>
             <ul className="mt-3 space-y-1 font-body text-sm text-bone/70">
-              <li>
-                <a
-                  href={`mailto:${contactEmail}`}
-                  className="inline-block rounded-sm border border-bone/20 px-3 py-1.5 transition hover:border-volt hover:text-volt"
-                >
-                  {contactEmail}
-                </a>
-              </li>
+              <li>{contactEmail}</li>
             </ul>
           </div>
           <div>
