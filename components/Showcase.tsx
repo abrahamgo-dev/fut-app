@@ -28,9 +28,9 @@ const smallShots = [
   },
   {
     n: "05",
-    src: "/sporlab-ggUrWc5Pg9o-unsplash.jpg",
-    alt: "Partido nocturno en cancha con iluminación artificial",
-    caption: "Ritmo de partido",
+    src: "/pexels-franco-monsalvo-252430633-38040108.jpg",
+    alt: "Jugador disputando el balón en plena jugada durante un partido",
+    caption: "Competencia real",
   },
 ];
 

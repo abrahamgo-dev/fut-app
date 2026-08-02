@@ -43,7 +43,7 @@ const faqs = [
   {
     question: "¿En qué ciudades opera Once FC?",
     answer:
-      "Actualmente en Monterrey, Guadalajara, Ciudad de México, Tijuana y Saltillo, con el mismo método y sedes seleccionadas por calidad en cada ciudad.",
+      "Hoy entrenamos en Monterrey. Guadalajara, Ciudad de México, Tijuana y Saltillo abren próximamente en la apertura, con el mismo método y sedes seleccionadas por calidad en cada ciudad.",
   },
   {
     question: "¿Cómo agendo mi sesión gratuita?",
