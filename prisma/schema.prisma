@@ -198,17 +198,19 @@ model Booking {
   @@index([citySlug])
 }
 
-// A "free trial session" lead form submission (see components/Prueba.tsx).
-// phoneNormalized is the last-10-digits form of `phone`, used to catch the
-// same phone number claiming multiple free sessions regardless of how it was
-// typed (spaces, dashes, +52, etc). This is a soft anti-abuse signal, not a
-// hard guarantee — see app/api/lead/route.ts for how it's applied.
+// A contact form submission (see components/Prueba.tsx). Email is required;
+// phone is optional. phoneNormalized is the last-10-digits form of `phone`,
+// used to catch the same phone number submitting multiple requests
+// regardless of how it was typed (spaces, dashes, +52, etc), when a phone is
+// given. This is a soft anti-abuse signal, not a hard guarantee — see
+// app/api/lead/route.ts for how it's applied.
 model Lead {
   id                String   @id @default(cuid())
   name              String
   age               String
-  phone             String
-  phoneNormalized   String
+  email             String?
+  phone             String?
+  phoneNormalized   String?
   cityName          String?
   preferredSchedule String?
   ipAddress         String?

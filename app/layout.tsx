@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     template: "%s | Once FC",
   },
   description:
-    "Once FC te ayuda a reservar sesiones de entrenamiento de fútbol para adultos en canchas de calidad, con coaches con experiencia y partidos todo el año. Sin membresía fija. Agenda tu sesión gratuita.",
+    "Once FC te ayuda a reservar sesiones de entrenamiento de fútbol para adultos en canchas de calidad, con coaches con experiencia y partidos todo el año. Sin membresía fija. Agenda tu sesión.",
   keywords: [
     "futbol para adultos",
     "reservar cancha de futbol",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     siteName: "Once FC",
     title: "Once FC — Reserva sesiones de entrenamiento de fútbol para adultos",
     description:
-      "Sesiones de entrenamiento en canchas de calidad, coaches con experiencia y sin membresía fija. Agenda tu sesión gratuita.",
+      "Sesiones de entrenamiento en canchas de calidad, coaches con experiencia y sin membresía fija. Agenda tu sesión.",
     images: [
       {
         url: "/og-cover.svg",
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Once FC — Reserva sesiones de entrenamiento de fútbol para adultos",
     description:
-      "Sesiones de entrenamiento en canchas de calidad y partidos todo el año. Agenda tu sesión gratuita.",
+      "Sesiones de entrenamiento en canchas de calidad y partidos todo el año. Agenda tu sesión.",
     images: ["/og-cover.svg"],
   },
   alternates: {

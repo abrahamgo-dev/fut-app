@@ -24,6 +24,7 @@ export default function Prueba({
         body: JSON.stringify({
           name: form.get("name"),
           age: form.get("age"),
+          email: form.get("email"),
           phone: form.get("phone"),
           cityName,
         }),
@@ -41,18 +42,18 @@ export default function Prueba({
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 md:grid-cols-2">
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-coal-deep/70">
-            {comingSoon ? "Próximamente" : "Sesión gratuita"}
+            {comingSoon ? "Próximamente" : "Contacto"}
             {cityName ? ` · ${cityName}` : ""}
           </p>
           <h2 className="mt-3 font-display text-4xl sm:text-5xl">
             {comingSoon
               ? "Sé de los primeros en enterarte"
-              : "Tu primer entrenamiento va por nosotros"}
+              : "Comunícate con nuestro equipo"}
           </h2>
           <p className="mt-4 max-w-md font-body text-sm text-coal-deep/80">
             {comingSoon
               ? `Déjanos tus datos y te avisamos en cuanto abramos sesiones en ${cityName ?? "tu ciudad"}.`
-              : "Déjanos tus datos y te contactamos en menos de 24 horas para agendar tu sesión y darte la ubicación exacta de la cancha."}
+              : "Déjanos tus datos y te contactamos en menos de 24 horas para revisar promociones, horarios y encontrar la sesión que mejor te acomode."}
           </p>
         </div>
 
@@ -64,7 +65,7 @@ export default function Prueba({
             <p role="status" className="font-body text-sm">
               {comingSoon
                 ? `Listo, te avisamos en cuanto abramos sesiones en ${cityName ?? "tu ciudad"}.`
-                : "Listo, recibimos tus datos. Un coach de Once FC te contacta pronto con la ubicación exacta de la cancha y los horarios disponibles."}
+                : "Listo, recibimos tus datos. Un coach de Once FC te contacta pronto para revisar promociones, horarios y la ubicación exacta de la cancha."}
             </p>
           ) : (
             <>
@@ -117,9 +118,18 @@ export default function Prueba({
                 />
               </label>
               <label className="flex flex-col gap-1 text-sm font-medium">
-                Teléfono
+                Correo electrónico
                 <input
                   required
+                  type="email"
+                  name="email"
+                  autoComplete="email"
+                  className="rounded-sm border border-ink/20 bg-transparent px-3 py-2 font-body text-sm outline-none focus-visible:border-coal-deep"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-sm font-medium">
+                Teléfono (opcional)
+                <input
                   type="tel"
                   name="phone"
                   autoComplete="tel"
@@ -153,7 +163,7 @@ export default function Prueba({
                 ) : comingSoon ? (
                   "Avísenme cuando abran"
                 ) : (
-                  "Quiero mi sesión gratis"
+                  "Quiero que me contacten"
                 )}
               </button>
             </>
