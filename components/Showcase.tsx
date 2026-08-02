@@ -10,9 +10,9 @@ const bigShot = {
 const smallShots = [
   {
     n: "02",
-    src: "/connor-coyne-OgqWLzWRSaI-unsplash.jpg",
-    alt: "Jugador dominando el balón con la mirada en el control técnico",
-    caption: "Control y técnica",
+    src: "/ambitious-studio-rick-barrett-83iRRfY_mWI-unsplash.jpg",
+    alt: "Balones y conos de entrenamiento listos frente a la portería en una sesión nocturna",
+    caption: "Equipo de entrenamiento",
   },
   {
     n: "03",
