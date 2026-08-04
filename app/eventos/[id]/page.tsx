@@ -9,6 +9,14 @@ import { getCityBySlug } from "@/data/cities";
 
 type Props = {
   params: { id: string };
+  searchParams: { reserva?: string };
+};
+
+const RESERVA_REDIRECT_MESSAGES: Record<string, string> = {
+  full: "Este entrenamiento se llenó justo antes de que completaras tu reserva.",
+  existing: "Ya tienes una reserva activa para este entrenamiento.",
+  retry: "Hubo mucha demanda por este horario. Intenta reservar de nuevo.",
+  error: "No se pudo iniciar el pago con Stripe. Intenta de nuevo.",
 };
 
 const FULL_DATE_FORMAT = new Intl.DateTimeFormat("es-MX", {
@@ -48,7 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function EventoPage({ params }: Props) {
+export default async function EventoPage({ params, searchParams }: Props) {
   const sesion = await getSesion(params.id);
   if (!sesion || !sesion.active) notFound();
 
@@ -56,14 +64,33 @@ export default async function EventoPage({ params }: Props) {
   const city = getCityBySlug(sesion.sede.citySlug);
   const trainerName = sesion.trainer.name ?? "Entrenador Once FC";
   const isPast = sesion.startsAt < new Date();
-  const existingReserva = session?.user?.id
-    ? await prisma.reserva.findFirst({
-        where: {
-          userId: session.user.id,
-          sesionId: sesion.id,
-          status: { in: ["PENDING", "PAID"] },
-        },
-      })
+  const [existingReserva, reservationCount] = await Promise.all([
+    session?.user?.id
+      ? prisma.reserva.findFirst({
+          where: {
+            userId: session.user.id,
+            sesionId: sesion.id,
+            status: { in: ["PENDING", "PAID"] },
+          },
+        })
+      : null,
+    sesion.capacity != null
+      ? prisma.reserva.count({
+          where: { sesionId: sesion.id, status: { in: ["PENDING", "PAID"] } },
+        })
+      : null,
+  ]);
+  const isFull =
+    sesion.capacity != null &&
+    reservationCount != null &&
+    reservationCount >= sesion.capacity;
+  const spotsLeft =
+    sesion.capacity != null && reservationCount != null
+      ? Math.max(sesion.capacity - reservationCount, 0)
+      : null;
+  const isLowAvailability = spotsLeft != null && spotsLeft > 0 && spotsLeft <= 3;
+  const redirectMessage = searchParams.reserva
+    ? RESERVA_REDIRECT_MESSAGES[searchParams.reserva]
     : null;
   const price =
     sesion.priceCents && sesion.priceCents > 0
@@ -83,6 +110,12 @@ export default async function EventoPage({ params }: Props) {
           aria-hidden="true"
         />
         <div className="relative mx-auto max-w-3xl px-6">
+          {redirectMessage ? (
+            <p className="mb-4 rounded-sm border border-bone/20 bg-bone/5 px-4 py-2 text-sm text-bone/80">
+              {redirectMessage}
+            </p>
+          ) : null}
+
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-volt">
             {city ? `Entrenamiento en ${city.name}` : "Entrenamiento"}
             {isPast ? " · Finalizada" : ""}
@@ -128,9 +161,16 @@ export default async function EventoPage({ params }: Props) {
                 <p className="font-mono text-[11px] uppercase tracking-widest text-bone/50">
                   Cupo
                 </p>
-                <p className="mt-2 font-display text-xl">
-                  {sesion.capacity} jugadores
+                <p
+                  className={`mt-2 font-display text-xl ${isLowAvailability ? "text-volt" : ""}`}
+                >
+                  {spotsLeft} de {sesion.capacity} lugares disponibles
                 </p>
+                {isLowAvailability ? (
+                  <p className="font-mono text-xs uppercase tracking-widest text-volt">
+                    ¡Quedan pocos lugares!
+                  </p>
+                ) : null}
               </div>
             ) : null}
 
@@ -187,13 +227,86 @@ export default async function EventoPage({ params }: Props) {
                     Ya tienes una reserva activa para este entrenamiento.
                   </p>
                 </div>
+              ) : isFull ? (
+                <div className="mt-10">
+                  <p className="text-sm text-bone/60">
+                    Cupo lleno para este entrenamiento.
+                  </p>
+                </div>
               ) : (
-                <a
-                  href={`/checkout/${sesion.id}`}
-                  className="mt-10 inline-block rounded-sm bg-volt px-6 py-3 text-center font-body text-sm font-semibold text-coal-deep transition hover:brightness-95"
-                >
-                  Reserva
-                </a>
+                <div className="mt-10 rounded-sm border border-volt/30 bg-volt/5 p-6">
+                  <a
+                    href={`/checkout/${sesion.id}`}
+                    className="block rounded-sm bg-volt px-6 py-3 text-center font-body text-sm font-semibold text-coal-deep transition hover:brightness-95"
+                  >
+                    Reservar mi lugar — {price}
+                  </a>
+                  <div className="mt-3 flex items-center justify-center gap-1.5 text-bone/50">
+                    <svg
+                      aria-hidden="true"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      className="h-3.5 w-3.5 flex-shrink-0"
+                    >
+                      <rect
+                        x="5"
+                        y="11"
+                        width="14"
+                        height="9"
+                        rx="1.5"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                      />
+                      <path
+                        d="M8 11V7.5a4 4 0 0 1 8 0V11"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                      />
+                    </svg>
+                    <span className="font-mono text-[11px] uppercase tracking-widest">
+                      Pago seguro procesado por Stripe
+                    </span>
+                  </div>
+                  {isLowAvailability ? (
+                    <p className="mt-2 text-center font-mono text-xs uppercase tracking-widest text-volt">
+                      Quedan {spotsLeft} lugares
+                    </p>
+                  ) : null}
+
+                  <dl className="mt-6 grid gap-4 border-t border-bone/10 pt-5 sm:grid-cols-2">
+                    <div>
+                      <dt className="font-mono text-[11px] uppercase tracking-widest text-bone/50">
+                        Qué llevar
+                      </dt>
+                      <dd className="mt-1.5 font-body text-sm text-bone/70">
+                        Ropa deportiva, tenis o tachones y espinilleras. Nosotros
+                        ponemos los balones y el material de entrenamiento.
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="font-mono text-[11px] uppercase tracking-widest text-bone/50">
+                        Pago y devoluciones
+                      </dt>
+                      <dd className="mt-1.5 font-body text-sm text-bone/70">
+                        Pago seguro en línea con Stripe. Devolución solo si se
+                        cancela la clase —{" "}
+                        <Link
+                          href="/terminos"
+                          className="underline decoration-bone/30 underline-offset-2 hover:text-volt hover:decoration-volt"
+                        >
+                          ver política completa
+                        </Link>
+                        .
+                      </dd>
+                    </div>
+                  </dl>
+                  <Link
+                    href="/preguntas-frecuentes"
+                    className="mt-4 inline-block font-body text-xs text-bone/50 underline decoration-bone/30 underline-offset-2 transition hover:text-volt hover:decoration-volt"
+                  >
+                    Ver todas las preguntas frecuentes
+                  </Link>
+                </div>
               )
             ) : (
               <p className="mt-10 font-mono text-xs uppercase tracking-widest text-bone/40">

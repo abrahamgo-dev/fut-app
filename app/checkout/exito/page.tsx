@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
-import { PRELAUNCH_MODE } from "@/lib/launchFlags";
 
 function toGoogleCalendarDate(date: Date): string {
   return date
@@ -78,7 +77,7 @@ export default async function CheckoutExitoPage({
             ? `Tu lugar en "${reserva.sesion.title}" (${reserva.sesion.sede.name}) se confirma en cuanto Stripe termine de procesar el pago.`
             : "Tu pago se está procesando. Te avisaremos en cuanto se confirme tu lugar."}
         </p>
-        {!PRELAUNCH_MODE && googleCalendarUrl ? (
+        {googleCalendarUrl ? (
           <a
             href={googleCalendarUrl}
             target="_blank"
@@ -88,7 +87,7 @@ export default async function CheckoutExitoPage({
             Agregar a Google Calendar
           </a>
         ) : null}
-        {!PRELAUNCH_MODE && icsUrl ? (
+        {icsUrl ? (
           <a
             href={icsUrl}
             className="mt-3 inline-block rounded-sm border border-bone/30 px-6 py-3 font-body text-sm font-semibold text-bone transition hover:border-volt hover:text-volt"
@@ -96,19 +95,11 @@ export default async function CheckoutExitoPage({
             Descargar .ics
           </a>
         ) : null}
-        {!PRELAUNCH_MODE && reserva?.status && reserva.status !== "PAID" ? (
+        {reserva?.status && reserva.status !== "PAID" ? (
           <p className="mt-3 font-body text-xs text-bone/60">
             Cuando el pago se confirme, podrás descargar tu archivo de
             calendario (.ics).
           </p>
-        ) : null}
-        {PRELAUNCH_MODE ? (
-          <a
-            href="/#footer"
-            className="mt-6 inline-block rounded-sm border border-bone/30 px-6 py-3 font-body text-sm font-semibold text-bone transition hover:border-volt hover:text-volt"
-          >
-            Contacto
-          </a>
         ) : null}
         <a
           href="/panel/cuenta"

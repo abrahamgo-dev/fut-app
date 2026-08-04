@@ -97,6 +97,19 @@ body {
   }
 }
 
+/* Gentle attention float for a CTA — a soft, even glide up and back down,
+   no squash/stretch. Set a finite iteration-count (not infinite) on the
+   element so it settles after a few reps instead of looping forever;
+   0%/100% match exactly so it comes to rest cleanly, not mid-motion. */
+@keyframes cta-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
 @keyframes slide-fade-in {
   from {
     opacity: 0;

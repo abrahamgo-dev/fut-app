@@ -106,6 +106,11 @@ export default async function AdminEntrenamientosPage({
                     </p>
                   </div>
                   <div className="flex flex-shrink-0 items-center gap-3 font-mono text-xs uppercase tracking-widest">
+                    {sesion.cancelledAt ? (
+                      <span className="rounded-sm border border-red-400/40 px-2 py-1 text-red-400">
+                        Cancelado
+                      </span>
+                    ) : null}
                     <span className="rounded-sm border border-volt/40 px-2 py-1 text-volt">
                       {paidCount}
                       {sesion.capacity ? ` / ${sesion.capacity}` : ""} pagadas

@@ -11,6 +11,8 @@ export type CalendarEvent = {
   sedeName: string;
   trainerName: string;
   isReserved?: boolean;
+  price?: string | null;
+  spotsLeft?: number | null;
 };
 
 const WEEKDAY_LABELS = ["LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB", "DOM"];
@@ -287,6 +289,7 @@ export default function EventsCalendar({
                         className={`mt-1 truncate text-sm ${isPast ? "text-bone/30" : "text-bone/60"}`}
                       >
                         {event.trainerName} · {event.sedeName}
+                        {event.price ? ` · ${event.price}` : ""}
                       </p>
                     </div>
                     <div className="flex flex-shrink-0 items-center gap-3">
@@ -297,6 +300,10 @@ export default function EventsCalendar({
                       ) : event.isReserved ? (
                         <span className="rounded-sm border border-volt/60 bg-volt/15 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-volt">
                           Reservado
+                        </span>
+                      ) : event.spotsLeft != null && event.spotsLeft > 0 && event.spotsLeft <= 3 ? (
+                        <span className="rounded-sm border border-volt/60 bg-volt/15 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-volt">
+                          Quedan {event.spotsLeft}
                         </span>
                       ) : null}
                       {event.levelLabel ? (

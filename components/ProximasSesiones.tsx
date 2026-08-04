@@ -39,7 +39,22 @@ export default async function ProximasSesiones({
     take: limit,
   });
 
-  if (sesiones.length === 0) return null;
+  // Reservation counts per session, so the teaser list shows the same
+  // price + spots-left urgency as the calendar and event detail pages.
+  const reservationCounts =
+    sesiones.length > 0
+      ? await prisma.reserva.groupBy({
+          by: ["sesionId"],
+          where: {
+            sesionId: { in: sesiones.map((sesion) => sesion.id) },
+            status: { in: ["PENDING", "PAID"] },
+          },
+          _count: { _all: true },
+        })
+      : [];
+  const reservationCountBySesionId = new Map(
+    reservationCounts.map((row) => [row.sesionId, row._count._all]),
+  );
 
   const city = citySlug ? getCityBySlug(citySlug) : undefined;
   const headingText = city
@@ -62,7 +77,7 @@ export default async function ProximasSesiones({
             </div>
             <Link
               href={calendarHref}
-              className="inline-flex w-fit items-center gap-2 rounded-sm bg-ink px-4 py-3 text-sm font-semibold text-bone shadow-sm transition hover:bg-ink/90"
+              className="inline-flex w-fit items-center gap-2 rounded-sm bg-ink px-4 py-3 text-sm font-semibold text-bone shadow-sm transition hover:bg-ink/90 [animation:cta-float_1.25s_ease-in-out_8]"
             >
               Ver calendario
               {city ? ` · ${city.name}` : ""}
@@ -75,10 +90,44 @@ export default async function ProximasSesiones({
           </p>
         </div>
 
+        {sesiones.length === 0 ? (
+          <div className="mt-12 flex flex-col items-start gap-4 rounded-sm border border-ink/10 bg-ink/[0.03] px-6 py-10">
+            <p className="font-display text-xl text-ink">
+              Aún no hay entrenamientos programados
+              {city ? ` en ${city.name}` : ""}.
+            </p>
+            <p className="max-w-md font-body text-sm text-ink/60">
+              Estamos armando el calendario. Escríbenos y te avisamos en
+              cuanto haya nuevas fechas disponibles.
+            </p>
+            <a
+              href="#footer"
+              className="inline-flex w-fit items-center gap-2 rounded-sm bg-ink px-4 py-3 text-sm font-semibold text-bone shadow-sm transition hover:bg-ink/90"
+            >
+              Contáctanos
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        ) : (
         <ul className="mt-12 divide-y divide-ink/10 rounded-sm border border-ink/10">
           {sesiones.map((sesion) => {
             const city = getCityBySlug(sesion.sede.citySlug);
             const trainerName = sesion.trainer.name ?? "Entrenador Once FC";
+            const price =
+              sesion.priceCents && sesion.priceCents > 0
+                ? (sesion.priceCents / 100).toLocaleString("es-MX", {
+                    style: "currency",
+                    currency: "MXN",
+                  })
+                : null;
+            const reservationCount =
+              reservationCountBySesionId.get(sesion.id) ?? 0;
+            const spotsLeft =
+              sesion.capacity != null
+                ? Math.max(sesion.capacity - reservationCount, 0)
+                : null;
+            const isLowAvailability =
+              spotsLeft != null && spotsLeft > 0 && spotsLeft <= 3;
 
             return (
               <li key={sesion.id}>
@@ -121,10 +170,16 @@ export default async function ProximasSesiones({
                           {sesion.levelLabel}
                         </span>
                       ) : null}
+                      {isLowAvailability ? (
+                        <span className="ml-2 rounded-sm border border-volt-dim/60 bg-volt-dim/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-volt-dim">
+                          Quedan {spotsLeft}
+                        </span>
+                      ) : null}
                     </p>
                     <p className="truncate text-xs text-ink/50">
                       {trainerName} · {sesion.sede.name}
                       {city ? `, ${city.name}` : ""}
+                      {price ? ` · ${price}` : ""}
                     </p>
                   </div>
 
@@ -142,6 +197,7 @@ export default async function ProximasSesiones({
             );
           })}
         </ul>
+        )}
       </div>
     </section>
   );

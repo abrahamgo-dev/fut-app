@@ -24,6 +24,10 @@ enum ReservaStatus {
   PAID
   CANCELLED
   EXPIRED
+  /// Was PAID, then refunded via Stripe because the Sesion got cancelled.
+  /// Distinct from CANCELLED, which covers reservas that never had money
+  /// refunded (e.g. an admin cancelling a single still-PENDING reserva).
+  REFUNDED
 }
 
 model User {
@@ -131,6 +135,12 @@ model Sesion {
   startsAt    DateTime
   durationMinutes Int  @default(60)
   active      Boolean  @default(true)
+  /// Set when an admin cancels this entrenamiento from the panel — distinct
+  /// from `active`, which just controls public visibility. Setting this
+  /// triggers a full Stripe refund of every PAID reserva tied to this
+  /// Sesion (see cancelSesionAndRefund in
+  /// app/(panel)/panel/admin/entrenamientos/actions.ts).
+  cancelledAt DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -148,6 +158,14 @@ model Sesion {
 // A user's paid (or pending-payment) spot in a Sesion. Created right before
 // redirecting to Stripe Checkout; the webhook is the source of truth for
 // flipping it to PAID once payment actually completes.
+//
+// DB-enforced invariant not visible below: a partial unique index on
+// (userId, sesionId) WHERE status IN ('PENDING', 'PAID') stops a user from
+// holding two active reservations for the same Sesion. Prisma's schema DSL
+// can't express partial indexes, so it's a hand-written migration —
+// prisma/migrations/20260804120000_add_reserva_booking_partial_unique_indexes.
+// Keep that constraint in mind (and update the migration) if this model's
+// status handling ever changes.
 model Reserva {
   id                      String        @id @default(cuid())
   userId                  String
@@ -161,6 +179,14 @@ model Reserva {
   /// from the entrenamiento detail page.
   paymentMethod           String        @default("STRIPE")
   stripeCheckoutSessionId String?       @unique
+  /// Captured from the webhook once payment completes — needed to issue a
+  /// Stripe refund later (stripe.refunds.create takes a payment_intent, not
+  /// a checkout session id).
+  stripePaymentIntentId   String?       @unique
+  /// Set by cancelSesionAndRefund once the Stripe refund for this reserva
+  /// succeeds.
+  stripeRefundId          String?
+  refundedAt              DateTime?
   createdAt               DateTime      @default(now())
   updatedAt               DateTime      @updatedAt
 
@@ -184,6 +210,10 @@ model JobApplication {
   @@index([createdAt])
 }
 
+// DB-enforced invariant not visible below: a partial unique index on
+// (trainerId, startsAt) WHERE status = 'CONFIRMED' stops the same trainer
+// slot from being double-booked. See the same note on Reserva above —
+// hand-written migration, not representable as `@@unique` here.
 model Booking {
   id          String        @id @default(cuid())
   userId      String

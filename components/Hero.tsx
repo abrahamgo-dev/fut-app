@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Image from "next/image";
 import { getLiveCities } from "@/data/cities";
-import { PRELAUNCH_MODE } from "@/lib/launchFlags";
 
 type HeroProps = {
   cityLabel?: string;
@@ -34,16 +33,8 @@ export default function Hero({
   const [imageLoaded, setImageLoaded] = useState(false);
   const citiesCount = getLiveCities().length;
   const calendarHref = citySlug ? `/reservar/${citySlug}` : "/reservar";
-  const primaryCtaHref = PRELAUNCH_MODE
-    ? comingSoon
-      ? "#prueba"
-      : "/#footer"
-    : calendarHref;
-  const primaryCtaLabel = PRELAUNCH_MODE
-    ? "Contacto"
-    : comingSoon
-      ? "Avísenme cuando abran"
-      : "Ver calendario";
+  const primaryCtaHref = calendarHref;
+  const primaryCtaLabel = comingSoon ? "Avísenme cuando abran" : "Ver calendario";
 
   const stats = [
     { value: "18+", label: "EDAD PARA JUGAR" },
@@ -142,18 +133,15 @@ export default function Hero({
           <div className="flex flex-shrink-0 gap-3">
             <a
               href={primaryCtaHref}
-              className="rounded-sm bg-volt px-6 py-3 text-center font-body text-sm font-semibold text-coal-deep transition hover:brightness-95"
+              className="rounded-sm bg-volt px-6 py-3 text-center font-body text-sm font-semibold text-coal-deep transition hover:brightness-95 [animation:cta-float_1.25s_ease-in-out_8]"
             >
               {primaryCtaLabel}
             </a>
-            {/* Points at the events list when it's live; pre-launch that
-                section is hidden (mock data), so this points at Método
-                instead — see lib/launchFlags.ts. */}
             <a
-              href={PRELAUNCH_MODE ? "#metodo" : "#sesiones"}
+              href="#sesiones"
               className="rounded-sm border border-bone/30 px-6 py-3 text-center font-body text-sm font-semibold text-bone transition hover:border-volt hover:text-volt"
             >
-              {PRELAUNCH_MODE ? "Cómo funciona" : "Ver entrenamientos"}
+              Ver entrenamientos
             </a>
           </div>
         </div>
