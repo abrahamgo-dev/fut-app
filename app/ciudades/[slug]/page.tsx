@@ -8,7 +8,6 @@ import ProximasSesiones from "@/components/ProximasSesiones";
 import Prueba from "@/components/Prueba";
 import Footer from "@/components/Footer";
 import { cities, getCityBySlug } from "@/data/cities";
-import { PRELAUNCH_MODE } from "@/lib/launchFlags";
 
 type Props = {
   params: { slug: string };
@@ -75,9 +74,7 @@ export default function CiudadPage({ params }: Props) {
         citySlug={city.slug}
         comingSoon={comingSoon}
       />
-      {!PRELAUNCH_MODE && !comingSoon ? (
-        <ProximasSesiones citySlug={city.slug} />
-      ) : null}
+      {!comingSoon ? <ProximasSesiones citySlug={city.slug} /> : null}
       <Method />
       <Showcase cityName={city.name} />
       <Prueba cityName={city.name} comingSoon={comingSoon} />

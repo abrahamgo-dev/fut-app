@@ -1,19 +1,60 @@
 import type { ReservaStatus } from "@prisma/client";
 import { requireSession } from "@/lib/auth-guards";
 import { prisma } from "@/lib/prisma";
-import { PRELAUNCH_MODE } from "@/lib/launchFlags";
+import ReservasActivasList from "@/components/panel/ReservasActivasList";
+import HistorialList from "@/components/panel/HistorialList";
+import { RESERVAS_PAGE_SIZE } from "@/lib/reservaPagination";
+import { USE_TEST_DATA } from "@/lib/launchFlags";
+import type { ReservaListItem } from "./actions";
 
-function toGoogleCalendarDate(date: Date): string {
-  return date
-    .toISOString()
-    .replace(/[-:]/g, "")
-    .replace(/\.\d{3}Z$/, "Z");
+type HistorialHighlight = "PAID" | "CANCELLED" | "EXPIRED" | null;
+
+function parseHistorialHighlight(
+  value: string | string[] | undefined,
+): HistorialHighlight {
+  const normalized = Array.isArray(value) ? (value[0] ?? "") : (value ?? "");
+  if (normalized === "paid") return "PAID";
+  if (normalized === "cancelled") return "CANCELLED";
+  if (normalized === "expired") return "EXPIRED";
+  return null;
 }
 
-export default async function CuentaPage() {
-  const session = await requireSession();
+function toListItem(reserva: {
+  id: string;
+  sesionId: string;
+  amountCents: number;
+  status: ReservaStatus;
+  sesion: {
+    title: string;
+    description: string | null;
+    durationMinutes: number;
+    startsAt: Date;
+    sede: { name: string; address: string };
+  };
+}): ReservaListItem {
+  return {
+    id: reserva.id,
+    sesionId: reserva.sesionId,
+    title: reserva.sesion.title,
+    sedeName: reserva.sesion.sede.name,
+    sedeAddress: reserva.sesion.sede.address,
+    startsAtISO: reserva.sesion.startsAt.toISOString(),
+    durationMinutes: reserva.sesion.durationMinutes,
+    description: reserva.sesion.description,
+    amountCents: reserva.amountCents,
+    status: reserva.status,
+  };
+}
 
-  const shouldCreateMockData = process.env.NODE_ENV !== "production";
+export default async function CuentaPage({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
+  const session = await requireSession();
+  const historialHighlight = parseHistorialHighlight(searchParams?.historial);
+
+  const shouldCreateMockData = USE_TEST_DATA;
 
   async function ensureMockReservationsForCurrentUser(userId: string) {
     const existingActiveReservations = await prisma.reserva.findMany({
@@ -152,18 +193,63 @@ export default async function CuentaPage() {
     await ensureMockReservationsForCurrentUser(session.user.id);
   }
 
-  const [primaryReservas, primaryHistorialReservas] = await Promise.all([
-    prisma.reserva.findMany({
+  // Fetch PAGE_SIZE + 1 so hasMore can be read off the result length instead
+  // of a separate count() query — see loadMoreReservasActivas/loadMoreHistorial
+  // in ./actions, which the client-side "Cargar más" buttons call for
+  // subsequent pages.
+  const [primaryReservas, primaryHistorialReservas, nextUpcomingReserva] =
+    await Promise.all([
+      prisma.reserva.findMany({
+        where: {
+          userId: session.user.id,
+          status: "PAID",
+          sesion: { startsAt: { gte: new Date() } },
+        },
+        include: { sesion: { include: { sede: true } } },
+        orderBy: { createdAt: "desc" },
+        take: RESERVAS_PAGE_SIZE + 1,
+      }),
+      prisma.reserva.findMany({
+        where: {
+          userId: session.user.id,
+          OR: [
+            { status: "PAID" },
+            { status: "CANCELLED" },
+            { status: "EXPIRED" },
+          ],
+          sesion: { startsAt: { lt: new Date() } },
+        },
+        include: { sesion: { include: { sede: true } } },
+        orderBy: { createdAt: "desc" },
+        take: RESERVAS_PAGE_SIZE + 1,
+      }),
+      prisma.reserva.findFirst({
+        where: {
+          userId: session.user.id,
+          status: "PAID",
+          sesion: { startsAt: { gte: new Date() } },
+        },
+        include: { sesion: { include: { sede: true } } },
+        orderBy: { sesion: { startsAt: "asc" } },
+      }),
+    ]);
+
+  const reservasHasMore = primaryReservas.length > RESERVAS_PAGE_SIZE;
+  const reservas = primaryReservas.slice(0, RESERVAS_PAGE_SIZE).map(toListItem);
+  const historialHasMore = primaryHistorialReservas.length > RESERVAS_PAGE_SIZE;
+  const historialReservas = primaryHistorialReservas
+    .slice(0, RESERVAS_PAGE_SIZE)
+    .map(toListItem);
+
+  const [upcomingCount, historyCount, cancelledCount] = await Promise.all([
+    prisma.reserva.count({
       where: {
         userId: session.user.id,
         status: "PAID",
         sesion: { startsAt: { gte: new Date() } },
       },
-      include: { sesion: { include: { sede: true } } },
-      orderBy: { createdAt: "desc" },
-      take: 10,
     }),
-    prisma.reserva.findMany({
+    prisma.reserva.count({
       where: {
         userId: session.user.id,
         OR: [
@@ -173,184 +259,137 @@ export default async function CuentaPage() {
         ],
         sesion: { startsAt: { lt: new Date() } },
       },
-      include: { sesion: { include: { sede: true } } },
-      orderBy: { createdAt: "desc" },
-      take: 10,
+    }),
+    prisma.reserva.count({
+      where: {
+        userId: session.user.id,
+        status: "CANCELLED",
+      },
     }),
   ]);
-
-  const reservas = primaryReservas;
-  const historialReservas = primaryHistorialReservas;
-
-  const RESERVA_STATUS_LABEL: Record<string, string> = {
-    PENDING: "Pago pendiente",
-    PAID: "Pagada",
-    CANCELLED: "Cancelada",
-    EXPIRED: "Expirada",
-  };
 
   return (
     <div className="space-y-10">
       <div className="flex flex-col gap-4 rounded-sm border border-bone/10 bg-bone/5 p-5 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="font-display text-2xl text-bone">Mi cuenta</h1>
+          <h1 className="font-display text-2xl text-bone">Mis reservas</h1>
           <p className="mt-1 text-sm text-bone/70">
-            Gestiona tus reservas y revisa tu historial de entrenamientos.
+            Revisa tus proximas clases, agrega recordatorios y consulta tu
+            historial.
           </p>
         </div>
         <a
           href="/reservar"
           className="inline-flex items-center justify-center rounded-sm bg-volt px-4 py-2 text-sm font-semibold text-coal-deep transition hover:bg-bone"
         >
-          Ver calendario
+          Reservar otra clase
         </a>
       </div>
 
-      <section>
-        <h2 className="mb-4 font-display text-lg text-bone">Tus reservas</h2>
-        {reservas.length === 0 ? (
-          <p className="text-sm text-bone/60">
-            Todavía no tienes reservas activas para entrenamientos.
+      <section className="grid gap-3 sm:grid-cols-3">
+        <a
+          href="#proximas-clases"
+          className="rounded-sm border border-bone/10 bg-coal-deep/40 px-4 py-3 transition hover:border-volt/40 hover:bg-volt/5"
+        >
+          <p className="text-xs uppercase tracking-wider text-bone/50">
+            Proximas
           </p>
-        ) : (
-          <ul className="divide-y divide-bone/10 rounded-sm border border-bone/10">
-            {reservas.map((reserva) => (
-              <li
-                key={reserva.id}
-                className="rounded-sm border border-transparent px-4 py-3 transition duration-200 hover:border-volt hover:bg-volt/5"
-              >
-                {(() => {
-                  const startsAt = reserva.sesion.startsAt;
-                  const endsAt = new Date(
-                    startsAt.getTime() +
-                      Math.max(reserva.sesion.durationMinutes ?? 60, 1) *
-                        60_000,
-                  );
-                  const params = new URLSearchParams({
-                    action: "TEMPLATE",
-                    text: `Entrenamiento Once FC: ${reserva.sesion.title}`,
-                    dates: `${toGoogleCalendarDate(startsAt)}/${toGoogleCalendarDate(endsAt)}`,
-                    details: [
-                      `Sesion: ${reserva.sesion.title}`,
-                      reserva.sesion.description
-                        ? `Detalles: ${reserva.sesion.description}`
-                        : null,
-                      "Nos vemos en cancha. Llega 10 minutos antes.",
-                    ]
-                      .filter(Boolean)
-                      .join("\n"),
-                    location: `${reserva.sesion.sede.name} - ${reserva.sesion.sede.address}`,
-                  });
-                  const googleCalendarUrl = `https://calendar.google.com/calendar/render?${params.toString()}`;
-                  const icsUrl = `/api/calendar/ics?reserva_id=${encodeURIComponent(reserva.id)}`;
-
-                  return (
-                    <>
-                      <a
-                        href={`/eventos/${reserva.sesionId}`}
-                        className="flex flex-wrap items-center justify-between gap-4"
-                      >
-                        <div>
-                          <p className="text-sm font-medium text-bone">
-                            {reserva.sesion.title}
-                          </p>
-                          <p className="text-xs text-bone/50">
-                            {reserva.sesion.sede.name} ·{" "}
-                            {reserva.sesion.startsAt.toLocaleString("es-MX", {
-                              dateStyle: "medium",
-                              timeStyle: "short",
-                              timeZone: "America/Mexico_City",
-                            })}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm text-bone/80">
-                            {(reserva.amountCents / 100).toLocaleString(
-                              "es-MX",
-                              {
-                                style: "currency",
-                                currency: "MXN",
-                              },
-                            )}
-                          </p>
-                          <p className="font-mono text-[11px] uppercase tracking-widest text-bone/40">
-                            {RESERVA_STATUS_LABEL[reserva.status] ??
-                              reserva.status}
-                          </p>
-                        </div>
-                      </a>
-
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {PRELAUNCH_MODE ? (
-                          <a
-                            href="/#footer"
-                            className="rounded-sm border border-bone/25 px-3 py-1.5 text-xs font-semibold text-bone/85 transition hover:border-volt hover:text-volt"
-                          >
-                            Contacto
-                          </a>
-                        ) : (
-                          <>
-                            <a
-                              href={googleCalendarUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="rounded-sm border border-bone/25 px-3 py-1.5 text-xs font-semibold text-bone/85 transition hover:border-volt hover:text-volt"
-                            >
-                              Google Calendar
-                            </a>
-                            <a
-                              href={icsUrl}
-                              className="rounded-sm border border-bone/25 px-3 py-1.5 text-xs font-semibold text-bone/85 transition hover:border-volt hover:text-volt"
-                            >
-                              Descargar .ics
-                            </a>
-                          </>
-                        )}
-                      </div>
-                    </>
-                  );
-                })()}
-              </li>
-            ))}
-          </ul>
-        )}
+          <p className="mt-1 font-display text-2xl text-bone">
+            {upcomingCount}
+          </p>
+        </a>
+        <a
+          href="/panel/cuenta#clases-anteriores"
+          className="rounded-sm border border-bone/10 bg-coal-deep/40 px-4 py-3 transition hover:border-volt/40 hover:bg-volt/5"
+        >
+          <p className="text-xs uppercase tracking-wider text-bone/50">
+            Anteriores
+          </p>
+          <p className="mt-1 font-display text-2xl text-bone">{historyCount}</p>
+        </a>
+        <a
+          href="/panel/cuenta?historial=cancelled#clases-anteriores"
+          className="rounded-sm border border-bone/10 bg-coal-deep/40 px-4 py-3 transition hover:border-volt/40 hover:bg-volt/5"
+        >
+          <p className="text-xs uppercase tracking-wider text-bone/50">
+            Canceladas
+          </p>
+          <p className="mt-1 font-display text-2xl text-bone">
+            {cancelledCount}
+          </p>
+        </a>
       </section>
 
-      <section>
-        <h2 className="mb-4 font-display text-lg text-bone">
-          Historial de entrenamientos
-        </h2>
-        {historialReservas.length === 0 ? (
-          <p className="text-sm text-bone/60">
-            Todavía no hay entrenamientos en tu historial.
+      {nextUpcomingReserva ? (
+        <section className="rounded-sm border border-volt/30 bg-volt/10 p-4">
+          <p className="text-xs uppercase tracking-wider text-volt">
+            Tu proxima clase
           </p>
-        ) : (
-          <ul className="divide-y divide-bone/10 rounded-sm border border-bone/10">
-            {historialReservas.map((reserva) => (
-              <li
-                key={reserva.id}
-                className="flex flex-wrap items-center justify-between gap-4 px-4 py-3"
-              >
-                <div>
-                  <p className="text-sm font-medium text-bone">
-                    {reserva.sesion.title}
-                  </p>
-                  <p className="text-xs text-bone/50">
-                    {reserva.sesion.sede.name} ·{" "}
-                    {reserva.sesion.startsAt.toLocaleString("es-MX", {
-                      dateStyle: "medium",
-                      timeStyle: "short",
-                      timeZone: "America/Mexico_City",
-                    })}
-                  </p>
-                </div>
-                <p className="font-mono text-[11px] uppercase tracking-widest text-bone/40">
-                  {RESERVA_STATUS_LABEL[reserva.status] ?? reserva.status}
-                </p>
-              </li>
-            ))}
-          </ul>
-        )}
+          <p className="mt-1 font-display text-xl text-bone">
+            {nextUpcomingReserva.sesion.title}
+          </p>
+          <p className="mt-1 text-sm text-bone/80">
+            {nextUpcomingReserva.sesion.sede.name} ·{" "}
+            {nextUpcomingReserva.sesion.startsAt.toLocaleString("es-MX", {
+              dateStyle: "full",
+              timeStyle: "short",
+              timeZone: "America/Mexico_City",
+            })}
+          </p>
+          <a
+            href={`/eventos/${nextUpcomingReserva.sesionId}`}
+            className="mt-3 inline-flex rounded-sm border border-bone/25 px-3 py-1.5 text-xs font-semibold text-bone/85 transition hover:border-volt hover:text-volt"
+          >
+            Ver detalle de la clase
+          </a>
+        </section>
+      ) : null}
+
+      <section className="rounded-sm border border-bone/10 bg-bone/5 p-4">
+        <p className="text-sm text-bone/80">
+          ¿Necesitas ayuda con un cambio o una cancelacion? Escribenos y te
+          ayudamos rapido.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <a
+            href="/#footer"
+            className="rounded-sm border border-bone/25 px-3 py-1.5 text-xs font-semibold text-bone/85 transition hover:border-volt hover:text-volt"
+          >
+            Contacto
+          </a>
+          <a
+            href="/preguntas-frecuentes"
+            className="rounded-sm border border-bone/25 px-3 py-1.5 text-xs font-semibold text-bone/85 transition hover:border-volt hover:text-volt"
+          >
+            Preguntas frecuentes
+          </a>
+        </div>
+      </section>
+
+      <section id="proximas-clases">
+        <h2 className="mb-1 font-display text-lg text-bone">Proximas clases</h2>
+        <p className="mb-4 text-sm text-bone/60">
+          Aqui veras tus entrenamientos confirmados y accesos rapidos para
+          agendarlos.
+        </p>
+        <ReservasActivasList
+          initialItems={reservas}
+          initialHasMore={reservasHasMore}
+        />
+      </section>
+
+      <section id="clases-anteriores">
+        <h2 className="mb-1 font-display text-lg text-bone">
+          Clases anteriores
+        </h2>
+        <p className="mb-4 text-sm text-bone/60">
+          Consulta tus reservas pasadas y el estado en el que quedaron.
+        </p>
+        <HistorialList
+          initialItems={historialReservas}
+          initialHasMore={historialHasMore}
+          initialHighlight={historialHighlight}
+        />
       </section>
     </div>
   );

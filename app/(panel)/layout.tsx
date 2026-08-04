@@ -16,7 +16,7 @@ export default async function PanelLayout({
 
   const links = [
     ...(role === "TRAINER" || role === "ADMIN"
-      ? [{ href: "/panel/cuenta", label: "Mi cuenta" }]
+      ? [{ href: "/panel/cuenta", label: "Mis reservas" }]
       : []),
     ...(role === "TRAINER" || role === "ADMIN"
       ? [{ href: "/panel/entrenador", label: "Panel entrenador" }]

@@ -3,12 +3,15 @@ import type { ReservaStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getCityBySlug } from "@/data/cities";
 import { cancelReservaAsAdmin, createManualReserva } from "../actions";
+import { getCancelRefundDeadline } from "../refund-deadline";
+import CancelSesionForm from "./CancelSesionForm";
 
 const STATUS_LABEL: Record<ReservaStatus, string> = {
   PENDING: "Pago pendiente",
   PAID: "Pagada",
   CANCELLED: "Cancelada",
   EXPIRED: "Expirada",
+  REFUNDED: "Reembolsada",
 };
 
 const PAYMENT_METHOD_LABEL: Record<string, string> = {
@@ -49,7 +52,15 @@ export default async function AdminEntrenamientoDetailPage({
 
   const city = getCityBySlug(sesion.sede.citySlug);
   const paidCount = reservas.filter((r) => r.status === "PAID").length;
+  const stripeRefundablePaidCount = reservas.filter(
+    (r) => r.status === "PAID" && !!r.stripePaymentIntentId,
+  ).length;
+  const nonStripeRefundablePaidCount = paidCount - stripeRefundablePaidCount;
+  const refundedCount = reservas.filter((r) => r.status === "REFUNDED").length;
   const defaultAmount = sesion.priceCents ? sesion.priceCents / 100 : 0;
+  const isCancelled = sesion.cancelledAt != null;
+  const isPastRefundDeadline =
+    new Date() > getCancelRefundDeadline(sesion.startsAt);
 
   return (
     <div className="space-y-8">
@@ -80,7 +91,51 @@ export default async function AdminEntrenamientoDetailPage({
               })
             : "Sin precio"}
         </p>
+        {isCancelled ? (
+          <p className="mt-1 font-mono text-xs uppercase tracking-widest text-red-400">
+            Cancelado ·{" "}
+            {sesion.cancelledAt!.toLocaleString("es-MX", {
+              dateStyle: "medium",
+              timeStyle: "short",
+              timeZone: "America/Mexico_City",
+            })}{" "}
+            · {refundedCount} reembolsado{refundedCount === 1 ? "" : "s"}
+          </p>
+        ) : null}
       </div>
+
+      <section>
+        <h2 className="mb-4 font-display text-lg text-bone">
+          {isCancelled ? "Cancelar y reembolsar" : "Cancelar entrenamiento"}
+        </h2>
+        {isPastRefundDeadline ? (
+          <p className="max-w-lg rounded-sm border border-bone/20 bg-bone/5 px-4 py-3 text-sm text-bone/60">
+            Ya pasó el plazo de 7 días desde este entrenamiento para cancelar y
+            reembolsar automáticamente desde aquí. Hazlo manualmente desde el
+            dashboard de Stripe.
+          </p>
+        ) : !isCancelled ? (
+          <CancelSesionForm
+            sesionId={sesion.id}
+            paidCount={paidCount}
+            isRetry={false}
+          />
+        ) : stripeRefundablePaidCount > 0 ? (
+          <CancelSesionForm
+            sesionId={sesion.id}
+            paidCount={stripeRefundablePaidCount}
+            isRetry
+          />
+        ) : (
+          <p className="text-sm text-bone/60">
+            {nonStripeRefundablePaidCount > 0
+              ? `No hay reembolsos automáticos pendientes en Stripe. Quedan ${nonStripeRefundablePaidCount} pago${
+                  nonStripeRefundablePaidCount === 1 ? "" : "s"
+                } manual${nonStripeRefundablePaidCount === 1 ? "" : "es"} o de prueba (sin payment_intent).`
+              : "Todos los pagos de este entrenamiento ya fueron reembolsados."}
+          </p>
+        )}
+      </section>
 
       <section>
         <h2 className="mb-4 font-display text-lg text-bone">
@@ -109,9 +164,19 @@ export default async function AdminEntrenamientoDetailPage({
                       currency: "MXN",
                     })}{" "}
                     ·{" "}
-                    {PAYMENT_METHOD_LABEL[reserva.paymentMethod] ?? reserva.paymentMethod} ·{" "}
-                    <span className="uppercase text-bone/40">{STATUS_LABEL[reserva.status]}</span>
+                    {PAYMENT_METHOD_LABEL[reserva.paymentMethod] ??
+                      reserva.paymentMethod}{" "}
+                    ·{" "}
+                    <span className="uppercase text-bone/40">
+                      {STATUS_LABEL[reserva.status]}
+                    </span>
                   </p>
+                  {reserva.status === "PAID" &&
+                  !reserva.stripePaymentIntentId ? (
+                    <p className="mt-1 text-[11px] text-amber-300">
+                      Manual / prueba: sin payment_intent de Stripe
+                    </p>
+                  ) : null}
                 </div>
                 {reserva.status === "PENDING" || reserva.status === "PAID" ? (
                   <form
@@ -135,97 +200,108 @@ export default async function AdminEntrenamientoDetailPage({
       </section>
 
       <section>
-        <h2 className="mb-4 font-display text-lg text-bone">Agregar inscripción manual</h2>
-        <p className="mb-4 max-w-lg text-sm text-bone/60">
-          Para pagos que recibiste fuera de Stripe (efectivo, transferencia, en cancha). Se
-          registra directamente como pagada.
-        </p>
-
-        <form action={createManualReserva} className="grid max-w-md gap-4">
-          <input type="hidden" name="sesionId" value={sesion.id} />
-
-          <label className="flex flex-col gap-1 text-sm text-bone/80">
-            Jugador existente (opcional)
-            <select
-              name="userId"
-              defaultValue=""
-              className="rounded-sm border border-bone/20 bg-coal-deep px-3 py-2 text-bone"
-            >
-              <option value="">— Nuevo jugador —</option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.name ?? user.email ?? user.id}
-                  {user.email ? ` (${user.email})` : ""}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <p className="text-xs text-bone/40">
-            Si el jugador no tiene cuenta todavía, déjalo en “Nuevo jugador” y llena su nombre
-            (y correo, si lo tienes) abajo.
+        <h2 className="mb-4 font-display text-lg text-bone">
+          Agregar inscripción manual
+        </h2>
+        {isCancelled ? (
+          <p className="max-w-lg text-sm text-bone/60">
+            Este entrenamiento está cancelado — no se pueden agregar más
+            inscripciones.
           </p>
+        ) : (
+          <>
+            <p className="mb-4 max-w-lg text-sm text-bone/60">
+              Para pagos que recibiste fuera de Stripe (efectivo, transferencia,
+              en cancha). Se registra directamente como pagada.
+            </p>
 
-          <div className="flex gap-4">
-            <label className="flex flex-1 flex-col gap-1 text-sm text-bone/80">
-              Nombre (nuevo jugador)
-              <input
-                type="text"
-                name="name"
-                placeholder="Nombre y apellido"
-                className="rounded-sm border border-bone/20 bg-coal-deep px-3 py-2 text-bone placeholder:text-bone/30"
-              />
-            </label>
-            <label className="flex flex-1 flex-col gap-1 text-sm text-bone/80">
-              Correo (opcional)
-              <input
-                type="email"
-                name="email"
-                placeholder="jugador@correo.com"
-                className="rounded-sm border border-bone/20 bg-coal-deep px-3 py-2 text-bone placeholder:text-bone/30"
-              />
-            </label>
-          </div>
+            <form action={createManualReserva} className="grid max-w-md gap-4">
+              <input type="hidden" name="sesionId" value={sesion.id} />
 
-          <div className="flex gap-4">
-            <label className="flex flex-1 flex-col gap-1 text-sm text-bone/80">
-              Método de pago
-              <select
-                name="paymentMethod"
-                required
-                defaultValue=""
-                className="rounded-sm border border-bone/20 bg-coal-deep px-3 py-2 text-bone"
+              <label className="flex flex-col gap-1 text-sm text-bone/80">
+                Jugador existente (opcional)
+                <select
+                  name="userId"
+                  defaultValue=""
+                  className="rounded-sm border border-bone/20 bg-coal-deep px-3 py-2 text-bone"
+                >
+                  <option value="">— Nuevo jugador —</option>
+                  {users.map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.name ?? user.email ?? user.id}
+                      {user.email ? ` (${user.email})` : ""}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <p className="text-xs text-bone/40">
+                Si el jugador no tiene cuenta todavía, déjalo en “Nuevo jugador”
+                y llena su nombre (y correo, si lo tienes) abajo.
+              </p>
+
+              <div className="flex gap-4">
+                <label className="flex flex-1 flex-col gap-1 text-sm text-bone/80">
+                  Nombre (nuevo jugador)
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Nombre y apellido"
+                    className="rounded-sm border border-bone/20 bg-coal-deep px-3 py-2 text-bone placeholder:text-bone/30"
+                  />
+                </label>
+                <label className="flex flex-1 flex-col gap-1 text-sm text-bone/80">
+                  Correo (opcional)
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="jugador@correo.com"
+                    className="rounded-sm border border-bone/20 bg-coal-deep px-3 py-2 text-bone placeholder:text-bone/30"
+                  />
+                </label>
+              </div>
+
+              <div className="flex gap-4">
+                <label className="flex flex-1 flex-col gap-1 text-sm text-bone/80">
+                  Método de pago
+                  <select
+                    name="paymentMethod"
+                    required
+                    defaultValue=""
+                    className="rounded-sm border border-bone/20 bg-coal-deep px-3 py-2 text-bone"
+                  >
+                    <option value="" disabled>
+                      Elige uno
+                    </option>
+                    {MANUAL_PAYMENT_METHODS.map((method) => (
+                      <option key={method} value={method}>
+                        {PAYMENT_METHOD_LABEL[method] ?? method}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-1 flex-col gap-1 text-sm text-bone/80">
+                  Monto pagado (MXN)
+                  <input
+                    type="number"
+                    name="amount"
+                    min={0}
+                    step={0.01}
+                    defaultValue={defaultAmount || undefined}
+                    className="rounded-sm border border-bone/20 bg-coal-deep px-3 py-2 text-bone"
+                  />
+                </label>
+              </div>
+
+              <button
+                type="submit"
+                className="rounded-sm bg-volt px-4 py-2 text-sm font-semibold text-coal-deep transition hover:bg-bone"
               >
-                <option value="" disabled>
-                  Elige uno
-                </option>
-                {MANUAL_PAYMENT_METHODS.map((method) => (
-                  <option key={method} value={method}>
-                    {PAYMENT_METHOD_LABEL[method] ?? method}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="flex flex-1 flex-col gap-1 text-sm text-bone/80">
-              Monto pagado (MXN)
-              <input
-                type="number"
-                name="amount"
-                min={0}
-                step={0.01}
-                defaultValue={defaultAmount || undefined}
-                className="rounded-sm border border-bone/20 bg-coal-deep px-3 py-2 text-bone"
-              />
-            </label>
-          </div>
-
-          <button
-            type="submit"
-            className="rounded-sm bg-volt px-4 py-2 text-sm font-semibold text-coal-deep transition hover:bg-bone"
-          >
-            Registrar inscripción
-          </button>
-        </form>
+                Registrar inscripción
+              </button>
+            </form>
+          </>
+        )}
       </section>
     </div>
   );

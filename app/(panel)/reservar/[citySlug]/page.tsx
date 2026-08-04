@@ -49,16 +49,44 @@ export default async function ReservarCiudadPage({
     take: 200,
   });
 
-  const events = sesiones.map((sesion) => ({
-    id: sesion.id,
-    title: sesion.title,
-    startsAt: sesion.startsAt.toISOString(),
-    levelLabel: sesion.levelLabel,
-    sedeName: sesion.sede.name,
-    trainerName:
-      sesion.trainer.name ?? sesion.trainer.email ?? "Entrenador Once FC",
-    isReserved: reservedSesionIds.includes(sesion.id),
-  }));
+  // Reservation counts per session, so the day list can show spots-left
+  // urgency the same way the individual entrenamiento page does.
+  const reservationCounts = await prisma.reserva.groupBy({
+    by: ["sesionId"],
+    where: {
+      sesionId: { in: sesiones.map((sesion) => sesion.id) },
+      status: { in: ["PENDING", "PAID"] },
+    },
+    _count: { _all: true },
+  });
+  const reservationCountBySesionId = new Map(
+    reservationCounts.map((row) => [row.sesionId, row._count._all]),
+  );
+
+  const events = sesiones.map((sesion) => {
+    const reservationCount = reservationCountBySesionId.get(sesion.id) ?? 0;
+    return {
+      id: sesion.id,
+      title: sesion.title,
+      startsAt: sesion.startsAt.toISOString(),
+      levelLabel: sesion.levelLabel,
+      sedeName: sesion.sede.name,
+      trainerName:
+        sesion.trainer.name ?? sesion.trainer.email ?? "Entrenador Once FC",
+      isReserved: reservedSesionIds.includes(sesion.id),
+      price:
+        sesion.priceCents && sesion.priceCents > 0
+          ? (sesion.priceCents / 100).toLocaleString("es-MX", {
+              style: "currency",
+              currency: "MXN",
+            })
+          : null,
+      spotsLeft:
+        sesion.capacity != null
+          ? Math.max(sesion.capacity - reservationCount, 0)
+          : null,
+    };
+  });
 
   return (
     <div className="space-y-6">

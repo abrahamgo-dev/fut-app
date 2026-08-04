@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { buildWhatsAppUrl } from "@/lib/contact";
 
 export default function Prueba({
   cityName,
@@ -10,6 +11,12 @@ export default function Prueba({
   comingSoon?: boolean;
 }) {
   const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle");
+
+  const whatsappUrl = buildWhatsAppUrl(
+    comingSoon
+      ? `Hola, quiero que me avisen cuando abran entrenamientos${cityName ? ` en ${cityName}` : ""}.`
+      : `Hola, quiero saber más sobre los planes de entrenamiento${cityName ? ` en ${cityName}` : ""}.`,
+  );
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -55,6 +62,23 @@ export default function Prueba({
               ? `Déjanos tus datos y te avisamos en cuanto abramos sesiones en ${cityName ?? "tu ciudad"}.`
               : "Déjanos tus datos y te contactamos en menos de 24 horas para revisar promociones, horarios y encontrar la sesión que mejor te acomode."}
           </p>
+
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-flex w-fit items-center gap-2.5 rounded-sm bg-coal-deep px-5 py-3 font-body text-sm font-semibold text-bone transition hover:bg-coal"
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="h-5 w-5 flex-shrink-0"
+            >
+              <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2.05 22l5.25-1.38a9.87 9.87 0 0 0 4.74 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2zm5.8 14.17c-.24.68-1.4 1.33-1.93 1.4-.5.07-1.12.1-1.8-.11-.42-.13-.95-.31-1.64-.6-2.87-1.24-4.75-4.15-4.9-4.34-.14-.2-1.17-1.56-1.17-2.97 0-1.42.74-2.11 1-2.4.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.58.81 2 .88 2.14.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.37-.42.5-.14.14-.28.29-.12.57.16.28.7 1.16 1.51 1.88 1.04.93 1.91 1.22 2.19 1.36.28.14.44.12.6-.07.17-.19.7-.81.89-1.09.19-.28.38-.23.63-.14.26.09 1.63.77 1.91.91.28.14.47.21.53.33.07.12.07.68-.17 1.36z" />
+            </svg>
+            Escríbenos por WhatsApp
+          </a>
         </div>
 
         <form
@@ -139,8 +163,16 @@ export default function Prueba({
               </label>
               {status === "error" ? (
                 <p role="alert" className="font-body text-sm text-red-700">
-                  No se pudo enviar tu solicitud. Intenta de nuevo o escríbenos directo por
-                  WhatsApp.
+                  No se pudo enviar tu solicitud. Intenta de nuevo o{" "}
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold underline"
+                  >
+                    escríbenos directo por WhatsApp
+                  </a>
+                  .
                 </p>
               ) : null}
               <button

@@ -29,7 +29,24 @@ export async function POST(req: NextRequest) {
       const session = event.data.object as Stripe.Checkout.Session;
       const reservaId = session.metadata?.reservaId;
       if (reservaId) {
-        await prisma.reserva.update({ where: { id: reservaId }, data: { status: "PAID" } });
+        // Capture the payment_intent id now — refunding later needs it, and
+        // it's only available once payment actually completes.
+        const paymentIntentId =
+          typeof session.payment_intent === "string"
+            ? session.payment_intent
+            : (session.payment_intent?.id ?? null);
+
+        // Only PENDING -> PAID. updateMany instead of update so a stale/unknown
+        // reservaId (replayed webhook, wiped dev DB) is a no-op instead of a
+        // throw — an uncaught throw here returns 500, and Stripe retrying a
+        // permanently-failing webhook for days can end with it auto-disabling
+        // the endpoint, silently breaking every future payment confirmation.
+        // Restricting to `status: "PENDING"` also stops a delayed webhook from
+        // resurrecting a reserva an admin already cancelled in the meantime.
+        await prisma.reserva.updateMany({
+          where: { id: reservaId, status: "PENDING" },
+          data: { status: "PAID", stripePaymentIntentId: paymentIntentId },
+        });
       }
       break;
     }
@@ -38,7 +55,12 @@ export async function POST(req: NextRequest) {
       const session = event.data.object as Stripe.Checkout.Session;
       const reservaId = session.metadata?.reservaId;
       if (reservaId) {
-        await prisma.reserva.update({ where: { id: reservaId }, data: { status: "EXPIRED" } });
+        // Only PENDING -> EXPIRED, so an out-of-order/duplicate delivery can
+        // never downgrade an already-PAID reserva.
+        await prisma.reserva.updateMany({
+          where: { id: reservaId, status: "PENDING" },
+          data: { status: "EXPIRED" },
+        });
       }
       break;
     }

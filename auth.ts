@@ -36,6 +36,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
   events: {
+    async signIn({ user, profile }) {
+      // Keep the user's image in sync with their current Google profile picture
+      // on every login, so a stale URL in the DB never shows a broken avatar.
+      if (user.id && profile?.picture) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { image: profile.picture },
+        });
+      }
+    },
     // Fires once, right after the Prisma adapter persists a brand-new User row
     // (this person's first-ever sign-in). Whoever's email is in ADMIN_EMAILS at
     // that moment becomes ADMIN automatically. If an email is added to

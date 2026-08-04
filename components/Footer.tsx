@@ -1,7 +1,6 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { PRELAUNCH_MODE } from "@/lib/launchFlags";
 
 type FooterProps = {
   cityLabel?: string;
@@ -101,16 +100,14 @@ export default function Footer({
                   Todas las ciudades
                 </a>
               </li>
-              {!PRELAUNCH_MODE ? (
-                <li>
-                  <a
-                    href={isAuthenticated ? "/panel/cuenta" : "/login"}
-                    className="hover:text-volt"
-                  >
-                    {isAuthenticated ? "Mi cuenta" : "Iniciar sesión"}
-                  </a>
-                </li>
-              ) : null}
+              <li>
+                <a
+                  href={isAuthenticated ? "/panel/cuenta" : "/login"}
+                  className="hover:text-volt"
+                >
+                  {isAuthenticated ? "Mis reservas" : "Iniciar sesión"}
+                </a>
+              </li>
               <li>
                 <a href="/bolsa-de-trabajo" className="hover:text-volt">
                   Bolsa de trabajo
@@ -122,9 +119,20 @@ export default function Footer({
       </div>
 
       <div className="mx-auto mt-10 flex max-w-6xl flex-col-reverse items-center gap-6 border-t border-bone/10 px-6 pt-6 sm:flex-row sm:justify-between">
-        <p className="font-mono text-xs text-bone/60">
-          © {new Date().getFullYear()} Once FC. Todos los derechos reservados.
-        </p>
+        <div className="flex flex-col items-center gap-2 sm:flex-row sm:gap-6">
+          <p className="font-mono text-xs text-bone/60">
+            © {new Date().getFullYear()} Once FC. Todos los derechos
+            reservados.
+          </p>
+          <div className="flex items-center gap-4 font-mono text-xs text-bone/60">
+            <a href="/terminos" className="hover:text-volt">
+              Términos y condiciones
+            </a>
+            <a href="/privacidad" className="hover:text-volt">
+              Aviso de privacidad
+            </a>
+          </div>
+        </div>
 
         <a
           href="https://fenwebstudio.com"

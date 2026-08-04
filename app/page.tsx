@@ -8,7 +8,6 @@ import ProximasSesiones from "@/components/ProximasSesiones";
 import Footer from "@/components/Footer";
 import CityPicker from "@/components/CityPicker";
 import { getActiveCities } from "@/data/cities";
-import { PRELAUNCH_MODE } from "@/lib/launchFlags";
 
 export const revalidate = 60;
 
@@ -27,7 +26,7 @@ export default function Home() {
     <main id="main">
       <Nav />
       <Hero />
-      {!PRELAUNCH_MODE ? <ProximasSesiones /> : null}
+      <ProximasSesiones />
       <Method />
       <Showcase />
 
