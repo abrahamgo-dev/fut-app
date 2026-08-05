@@ -15,8 +15,10 @@ export default function Nav({
   citySlug?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [citiesOpen, setCitiesOpen] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
   const cities = getActiveCities();
+  const currentCity = cities.find((city) => city.slug === citySlug);
   const { data: session, status } = useSession();
   const isAuthenticated = status === "authenticated" && !!session?.user;
   const userLabel = session?.user?.name ?? session?.user?.email ?? "";
@@ -197,52 +199,81 @@ export default function Nav({
           </ul>
 
           <div className="mt-6 border-t border-bone/10 pt-6">
-            <p className="font-mono text-xs uppercase tracking-widest text-bone/50">
-              Ciudades
-            </p>
-            <ul className="mt-3 flex flex-col gap-3">
-              {cities.map((city) => (
-                <li key={city.slug}>
-                  <Link
-                    href={`/ciudades/${city.slug}`}
-                    onClick={() => setOpen(false)}
-                    className={`block font-body text-base transition hover:text-volt ${
-                      city.slug === citySlug ? "text-volt" : "text-bone/80"
-                    }`}
-                  >
-                    {city.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <button
+              type="button"
+              onClick={() => setCitiesOpen((v) => !v)}
+              aria-expanded={citiesOpen}
+              aria-controls="mobile-cities"
+              className="flex w-full items-center justify-between font-mono text-xs uppercase tracking-widest text-bone/50"
+            >
+              <span>
+                Ciudad
+                {currentCity ? (
+                  <span className="ml-1 text-volt">{currentCity.name}</span>
+                ) : null}
+              </span>
+              <svg
+                width="10"
+                height="6"
+                viewBox="0 0 10 6"
+                fill="none"
+                aria-hidden="true"
+                className={`transition-transform ${citiesOpen ? "rotate-180" : ""}`}
+              >
+                <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" />
+              </svg>
+            </button>
+            {citiesOpen ? (
+              <ul id="mobile-cities" className="mt-3 flex flex-col gap-3">
+                {cities.map((city) => (
+                  <li key={city.slug}>
+                    <Link
+                      href={`/ciudades/${city.slug}`}
+                      onClick={() => {
+                        setOpen(false);
+                        setCitiesOpen(false);
+                      }}
+                      className={`flex items-center justify-between gap-2 font-body text-base transition hover:text-volt ${
+                        city.slug === citySlug ? "text-volt" : "text-bone/80"
+                      }`}
+                    >
+                      {city.name}
+                      {city.status === "comingSoon" ? (
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-bone/40">
+                          Próx.
+                        </span>
+                      ) : null}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </div>
 
           {isAuthenticated ? (
-            pathname === "/" ? (
-              <a
-                href="/panel/cuenta"
-                onClick={() => setOpen(false)}
-                className="mt-3 flex items-center gap-3 rounded-sm border border-bone/20 px-4 py-3 text-left font-body text-sm font-semibold text-bone/80 transition hover:border-volt hover:text-volt"
-              >
-                <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-bone/10 font-mono text-[10px] font-semibold text-bone">
-                  {showAvatarImage ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={session!.user!.image!}
-                      alt=""
-                      referrerPolicy="no-referrer"
-                      onError={() => setAvatarError(true)}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    userInitial
-                  )}
-                </span>
-                <span className="truncate font-mono text-[10px] uppercase tracking-[0.2em] text-bone/50">
-                  {session?.user?.email ?? ""}
-                </span>
-              </a>
-            ) : null
+            <a
+              href="/panel/cuenta"
+              onClick={() => setOpen(false)}
+              className="mt-3 flex items-center gap-3 rounded-sm border border-bone/20 px-4 py-3 text-left font-body text-sm font-semibold text-bone/80 transition hover:border-volt hover:text-volt"
+            >
+              <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-bone/10 font-mono text-[10px] font-semibold text-bone">
+                {showAvatarImage ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={session!.user!.image!}
+                    alt=""
+                    referrerPolicy="no-referrer"
+                    onError={() => setAvatarError(true)}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  userInitial
+                )}
+              </span>
+              <span className="truncate font-body text-sm font-medium text-bone">
+                Mis reservas
+              </span>
+            </a>
           ) : (
             <a
               href="/login"

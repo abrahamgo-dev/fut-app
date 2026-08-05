@@ -38,6 +38,15 @@ model User {
   image         String?
   /// Short public bio, shown on the "Entrenadores" / "Próximas sesiones" cards for TRAINER-role users.
   bio           String?   @db.Text
+  /// Contact phone, collected via the mandatory profile step. Null means the
+  /// profile isn't complete yet — see isProfileComplete in
+  /// lib/auth-guards.ts, which gates every /panel and /reservar route on
+  /// name + phone + municipio all being set (retroactively catches accounts
+  /// created before this field existed, since they're null too).
+  phone         String?
+  /// Municipality/city of residence, distinct from the City (data/cities.ts)
+  /// a session takes place in. See `phone` doc above for the completeness gate.
+  municipio     String?
   role          Role      @default(USER)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
