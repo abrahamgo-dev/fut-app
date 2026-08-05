@@ -16,6 +16,9 @@ export default async function AdminUsuariosPage() {
             <div>
               <p className="text-sm font-medium text-bone">{user.name ?? "Sin nombre"}</p>
               <p className="text-xs text-bone/50">{user.email}</p>
+              <p className="mt-1 text-xs text-bone/50">
+                {user.phone ?? "Sin teléfono"} · {user.municipio ?? "Sin municipio"}
+              </p>
             </div>
             <form action={setUserRole} className="flex items-center gap-2">
               <input type="hidden" name="userId" value={user.id} />
