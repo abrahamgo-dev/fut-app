@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { requireSession } from "@/lib/auth-guards";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import {
+  requireSession,
+  isProfileComplete,
+  PROFILE_COMPLETION_PATH,
+} from "@/lib/auth-guards";
 import LogoutButton from "@/components/LogoutButton";
 
 export const metadata: Metadata = {
@@ -13,6 +19,19 @@ export default async function PanelLayout({
 }) {
   const session = await requireSession();
   const role = session.user.role;
+
+  // Block every /panel and /reservar route behind the mandatory profile
+  // step (name + phone + municipio) until it's filled in — for brand-new
+  // accounts on their first login, and for existing accounts that predate
+  // this field on their next one. The pathname header comes from
+  // middleware.ts; without it we'd redirect the completion page to itself.
+  const pathname = headers().get("x-pathname") ?? "";
+  if (
+    pathname !== PROFILE_COMPLETION_PATH &&
+    !(await isProfileComplete(session.user.id))
+  ) {
+    redirect(`${PROFILE_COMPLETION_PATH}?onboarding=1`);
+  }
 
   const links = [
     ...(role === "TRAINER" || role === "ADMIN"
