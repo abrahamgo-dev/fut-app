@@ -17,7 +17,8 @@
   --color-ink: 10 10 10;
 }
 
-/* Light theme for the admin panel only (toggled by AdminThemeShell). Every
+/* Light theme for the admin panel only (toggled by AdminThemeToggle in the
+   panel header, next to "Panel admin"). Every
    other page keeps the dark palette above — this selector never matches
    outside app/(panel)/panel/admin. Backgrounds and text swap, and volt gets a
    darker shade so it stays legible against a light surface. */
