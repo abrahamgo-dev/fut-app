@@ -47,7 +47,7 @@ export default function ReservasActivasList({
   if (items.length === 0) {
     return (
       <div className="rounded-sm border border-bone/10 bg-bone/5 p-4 text-sm text-bone/70">
-        Aun no tienes clases reservadas. Ve al calendario y aparta tu lugar.
+        Aún no tienes clases reservadas. Ve al calendario y aparta tu lugar.
       </div>
     );
   }

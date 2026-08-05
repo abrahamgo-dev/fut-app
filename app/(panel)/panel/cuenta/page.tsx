@@ -274,7 +274,7 @@ export default async function CuentaPage({
         <div>
           <h1 className="font-display text-2xl text-bone">Mis reservas</h1>
           <p className="mt-1 text-sm text-bone/70">
-            Revisa tus proximas clases, agrega recordatorios y consulta tu
+            Revisa tus próximas clases, agrega recordatorios y consulta tu
             historial.
           </p>
         </div>
@@ -292,7 +292,7 @@ export default async function CuentaPage({
           className="rounded-sm border border-bone/10 bg-coal-deep/40 px-4 py-3 transition hover:border-volt/40 hover:bg-volt/5"
         >
           <p className="text-xs uppercase tracking-wider text-bone/50">
-            Proximas
+            Próximas
           </p>
           <p className="mt-1 font-display text-2xl text-bone">
             {upcomingCount}
@@ -323,7 +323,7 @@ export default async function CuentaPage({
       {nextUpcomingReserva ? (
         <section className="rounded-sm border border-volt/30 bg-volt/10 p-4">
           <p className="text-xs uppercase tracking-wider text-volt">
-            Tu proxima clase
+            Tu próxima clase
           </p>
           <p className="mt-1 font-display text-xl text-bone">
             {nextUpcomingReserva.sesion.title}
@@ -347,8 +347,8 @@ export default async function CuentaPage({
 
       <section className="rounded-sm border border-bone/10 bg-bone/5 p-4">
         <p className="text-sm text-bone/80">
-          ¿Necesitas ayuda con un cambio o una cancelacion? Escribenos y te
-          ayudamos rapido.
+          ¿Necesitas ayuda con un cambio o una cancelación? Escríbenos y te
+          ayudamos rápido.
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <a
@@ -367,9 +367,9 @@ export default async function CuentaPage({
       </section>
 
       <section id="proximas-clases">
-        <h2 className="mb-1 font-display text-lg text-bone">Proximas clases</h2>
+        <h2 className="mb-1 font-display text-lg text-bone">Próximas clases</h2>
         <p className="mb-4 text-sm text-bone/60">
-          Aqui veras tus entrenamientos confirmados y accesos rapidos para
+          Aquí verás tus entrenamientos confirmados y accesos rápidos para
           agendarlos.
         </p>
         <ReservasActivasList

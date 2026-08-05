@@ -11,11 +11,11 @@ const ERROR_MESSAGES: Record<string, string> = {
     "Ese correo ya está registrado con otro método. Intenta con la cuenta de Google original.",
   AccessDenied: "No se pudo completar el acceso. Intenta de nuevo.",
   Configuration:
-    "Error de configuracion en autenticacion. Revisa AUTH_URL, AUTH_SECRET y credenciales de Google en produccion.",
+    "Error de configuración en autenticación. Revisa AUTH_URL, AUTH_SECRET y credenciales de Google en producción.",
   OAuthSignin:
-    "No se pudo iniciar la autenticacion con Google. Revisa el client ID/secret y los redirect URI autorizados.",
+    "No se pudo iniciar la autenticación con Google. Revisa el client ID/secret y los redirect URI autorizados.",
   CallbackRouteError:
-    "Error al volver desde Google. Revisa AUTH_URL y que el redirect URI coincida exactamente con el dominio de produccion.",
+    "Error al volver desde Google. Revisa AUTH_URL y que el redirect URI coincida exactamente con el dominio de producción.",
   Default: "Algo salió mal al iniciar sesión. Intenta de nuevo.",
 };
 
@@ -38,7 +38,7 @@ export default function LoginPage({
   const callbackUrl = sanitizeCallbackUrl(searchParams.callbackUrl);
   const errorMessage = searchParams.error
     ? (ERROR_MESSAGES[searchParams.error] ??
-      `${ERROR_MESSAGES.Default} (codigo: ${searchParams.error})`)
+      `${ERROR_MESSAGES.Default} (código: ${searchParams.error})`)
     : null;
 
   return (
