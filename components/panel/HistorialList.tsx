@@ -75,7 +75,7 @@ export default function HistorialList({
   if (items.length === 0) {
     return (
       <div className="rounded-sm border border-bone/10 bg-bone/5 p-4 text-sm text-bone/70">
-        Aun no hay clases en tu historial.
+        Aún no hay clases en tu historial.
       </div>
     );
   }

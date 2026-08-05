@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
 
   const title = `Entrenamiento Once FC: ${reserva.sesion.title}`;
   const descriptionLines = [
-    `Sesion: ${reserva.sesion.title}`,
+    `Sesión: ${reserva.sesion.title}`,
     reserva.sesion.description
       ? `Detalles: ${reserva.sesion.description}`
       : null,

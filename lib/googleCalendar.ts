@@ -27,7 +27,7 @@ export function buildGoogleCalendarUrl({
     text: `Entrenamiento Once FC: ${title}`,
     dates: `${toGoogleCalendarDate(startsAt)}/${toGoogleCalendarDate(endsAt)}`,
     details: [
-      `Sesion: ${title}`,
+      `Sesión: ${title}`,
       description ? `Detalles: ${description}` : null,
       "Nos vemos en cancha. Llega 10 minutos antes.",
     ]

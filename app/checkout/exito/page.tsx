@@ -40,7 +40,7 @@ export default async function CheckoutExitoPage({
           text: `Entrenamiento Once FC: ${reserva.sesion.title}`,
           dates: `${toGoogleCalendarDate(startsAt)}/${toGoogleCalendarDate(endsAt)}`,
           details: [
-            `Sesion: ${reserva.sesion.title}`,
+            `Sesión: ${reserva.sesion.title}`,
             reserva.sesion.description
               ? `Detalles: ${reserva.sesion.description}`
               : null,
