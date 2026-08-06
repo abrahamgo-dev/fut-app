@@ -28,6 +28,44 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: "/login",
   },
   callbacks: {
+    // Lets someone whose User row was created ahead of time without a Google
+    // login (e.g. an admin manually registering them for a training via
+    // createManualReserva) sign in with Google on first attempt instead of
+    // hitting OAuthAccountNotLinked. Google verifies the email itself, so
+    // linking on a matching, verified email is safe without resorting to the
+    // provider-wide allowDangerousEmailAccountLinking flag.
+    async signIn({ user, account, profile }) {
+      if (account?.provider !== "google" || !user.email) return true;
+      if (profile && "email_verified" in profile && !profile.email_verified) {
+        return true;
+      }
+
+      const email = user.email.toLowerCase();
+      const existingUser = await prisma.user.findUnique({
+        where: { email },
+        include: { accounts: { where: { provider: "google" } } },
+      });
+
+      if (existingUser && existingUser.accounts.length === 0) {
+        await prisma.account.create({
+          data: {
+            userId: existingUser.id,
+            type: account.type,
+            provider: account.provider,
+            providerAccountId: account.providerAccountId,
+            access_token: account.access_token,
+            refresh_token: account.refresh_token,
+            expires_at: account.expires_at,
+            token_type: account.token_type,
+            scope: account.scope,
+            id_token: account.id_token,
+            session_state: account.session_state as string | undefined,
+          },
+        });
+      }
+
+      return true;
+    },
     async session({ session, user }) {
       const dbUser = user as unknown as { id: string; role: Role };
       session.user.id = dbUser.id;
