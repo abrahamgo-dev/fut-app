@@ -7,6 +7,8 @@ import { requireRole } from "@/lib/auth-guards";
 import { getStripe } from "@/lib/stripe";
 import { getCancelRefundDeadline } from "./refund-deadline";
 
+const PHONE_PATTERN = /^[0-9+()\-\s]{7,20}$/;
+
 export async function cancelReservaAsAdmin(reservaId: string) {
   await requireRole(["ADMIN"]);
 
@@ -30,6 +32,8 @@ export async function createManualReserva(formData: FormData) {
   const existingUserId = String(formData.get("userId") ?? "").trim();
   const name = String(formData.get("name") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim();
+  const phone = String(formData.get("phone") ?? "").trim();
+  const municipio = String(formData.get("municipio") ?? "").trim();
   const paymentMethod = String(formData.get("paymentMethod") ?? "").trim();
   const amountRaw = String(formData.get("amount") ?? "").trim();
 
@@ -37,14 +41,18 @@ export async function createManualReserva(formData: FormData) {
 
   let userId = existingUserId;
   if (!userId) {
-    if (!name) return;
+    // A brand-new player registered here never goes through the mandatory
+    // profile step (/panel/cuenta/perfil), so require the same fields here
+    // too — otherwise they end up "subscribed" with no phone/municipio,
+    // same bug as the Stripe checkout bypass this mirrors.
+    if (!name || !phone || !municipio || !PHONE_PATTERN.test(phone)) return;
     const user = email
       ? await prisma.user.upsert({
           where: { email },
-          update: { name },
-          create: { email, name, role: "USER" },
+          update: { name, phone, municipio },
+          create: { email, name, phone, municipio, role: "USER" },
         })
-      : await prisma.user.create({ data: { name, role: "USER" } });
+      : await prisma.user.create({ data: { name, phone, municipio, role: "USER" } });
     userId = user.id;
   }
 

@@ -28,7 +28,7 @@ export default async function AdminEntrenamientosPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl text-bone">Sesiones</h1>
+        <h1 className="font-display text-2xl text-bone">Entrenamientos</h1>
         <p className="mt-1 text-sm text-bone/60">
           Elige una sesión para ver quién pagó y se anotó, o para agregar una inscripción
           manual.

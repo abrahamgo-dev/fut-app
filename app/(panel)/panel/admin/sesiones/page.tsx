@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { getCityBySlug } from "@/data/cities";
-import { createSesion, deleteSesion, toggleSesionActive } from "./actions";
+import { createSesion, toggleSesionActive } from "./actions";
+import DeleteSesionButton from "./DeleteSesionButton";
 
 export default async function AdminSesionesPage() {
   const [sesiones, sedes, trainers] = await Promise.all([
@@ -19,7 +20,7 @@ export default async function AdminSesionesPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-2xl text-bone">Entrenamientos</h1>
+        <h1 className="font-display text-2xl text-bone">Sesiones</h1>
         <p className="mt-1 text-sm text-bone/60">
           Combina una sede y un entrenador en una sesión pública. Aparecen en el sitio ordenadas
           por fecha, mientras estén activas y en el futuro.
@@ -84,19 +85,7 @@ export default async function AdminSesionesPage() {
                       {sesion.active ? "Desactivar" : "Activar"}
                     </button>
                   </form>
-                  <form
-                    action={async () => {
-                      "use server";
-                      await deleteSesion(sesion.id);
-                    }}
-                  >
-                    <button
-                      type="submit"
-                      className="rounded-sm border border-bone/20 px-3 py-1.5 text-xs font-medium text-bone/70 transition hover:border-red-400 hover:text-red-400"
-                    >
-                      Eliminar
-                    </button>
-                  </form>
+                  <DeleteSesionButton sesionId={sesion.id} title={sesion.title} />
                 </div>
               </li>
             );

@@ -4,10 +4,10 @@ import AdminThemeShell from "@/components/AdminThemeShell";
 const TABS = [
   { href: "/panel/admin", label: "Resumen" },
   { href: "/panel/admin/usuarios", label: "Usuarios" },
-  { href: "/panel/admin/sesiones", label: "Entrenamientos" },
+  { href: "/panel/admin/sesiones", label: "Sesiones" },
   { href: "/panel/admin/sedes", label: "Sedes" },
   { href: "/panel/admin/entrenadores", label: "Entrenadores" },
-  { href: "/panel/admin/entrenamientos", label: "Sesiones" },
+  { href: "/panel/admin/entrenamientos", label: "Entrenamientos" },
   { href: "/panel/admin/leads", label: "Leads" },
   { href: "/panel/admin/postulaciones", label: "Bolsa de trabajo" },
 ];
