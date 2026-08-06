@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { requireSession } from "@/lib/auth-guards";
+import {
+  requireSession,
+  isProfileComplete,
+  PROFILE_COMPLETION_PATH,
+} from "@/lib/auth-guards";
 import { getStripe } from "@/lib/stripe";
 
 export const metadata: Metadata = {
@@ -36,6 +40,17 @@ function getCheckoutOrigin(): string {
 // continue into Stripe Checkout, instead of bouncing back to the event page.
 export default async function CheckoutPage({ params }: Props) {
   const session = await requireSession(`/checkout/${params.sesionId}`);
+
+  // Checkout lives outside the (panel) route group, so it doesn't get the
+  // mandatory-profile gate from app/(panel)/layout.tsx for free — enforce it
+  // here too, otherwise someone can pay without ever giving us phone/municipio.
+  if (!(await isProfileComplete(session.user.id))) {
+    redirect(
+      `${PROFILE_COMPLETION_PATH}?onboarding=1&callbackUrl=${encodeURIComponent(
+        `/checkout/${params.sesionId}`,
+      )}`,
+    );
+  }
 
   const sesion = await prisma.sesion.findUnique({
     where: { id: params.sesionId },

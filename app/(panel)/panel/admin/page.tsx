@@ -37,7 +37,7 @@ export default async function AdminDashboardPage() {
       label: "Operación",
       items: [
         {
-          label: "Entrenamientos próximos",
+          label: "Sesiones próximas",
           value: upcomingSesionCount,
           href: "/panel/admin/sesiones",
         },

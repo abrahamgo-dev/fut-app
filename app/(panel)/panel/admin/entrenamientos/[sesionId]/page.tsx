@@ -2,9 +2,10 @@ import { notFound } from "next/navigation";
 import type { ReservaStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getCityBySlug } from "@/data/cities";
-import { cancelReservaAsAdmin, createManualReserva } from "../actions";
+import { cancelReservaAsAdmin } from "../actions";
 import { getCancelRefundDeadline } from "../refund-deadline";
 import CancelSesionForm from "./CancelSesionForm";
+import ManualReservaForm from "./ManualReservaForm";
 
 const STATUS_LABEL: Record<ReservaStatus, string> = {
   PENDING: "Pago pendiente",
@@ -21,8 +22,6 @@ const PAYMENT_METHOD_LABEL: Record<string, string> = {
   Tarjeta: "Tarjeta (en cancha)",
   Otro: "Otro",
 };
-
-const MANUAL_PAYMENT_METHODS = ["Efectivo", "Transferencia", "Tarjeta", "Otro"];
 
 export default async function AdminEntrenamientoDetailPage({
   params,
@@ -69,7 +68,7 @@ export default async function AdminEntrenamientoDetailPage({
           href="/panel/admin/entrenamientos"
           className="text-xs text-bone/50 transition hover:text-volt"
         >
-          ← Sesiones
+          ← Entrenamientos
         </a>
         <h1 className="mt-2 font-display text-2xl text-bone">{sesion.title}</h1>
         <p className="mt-1 text-sm text-bone/60">
@@ -215,91 +214,11 @@ export default async function AdminEntrenamientoDetailPage({
               en cancha). Se registra directamente como pagada.
             </p>
 
-            <form action={createManualReserva} className="grid max-w-md gap-4">
-              <input type="hidden" name="sesionId" value={sesion.id} />
-
-              <label className="flex flex-col gap-1 text-sm text-bone/80">
-                Jugador existente (opcional)
-                <select
-                  name="userId"
-                  defaultValue=""
-                  className="rounded-sm border border-bone/20 bg-coal-deep px-3 py-2 text-bone"
-                >
-                  <option value="">— Nuevo jugador —</option>
-                  {users.map((user) => (
-                    <option key={user.id} value={user.id}>
-                      {user.name ?? user.email ?? user.id}
-                      {user.email ? ` (${user.email})` : ""}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <p className="text-xs text-bone/40">
-                Si el jugador no tiene cuenta todavía, déjalo en “Nuevo jugador”
-                y llena su nombre (y correo, si lo tienes) abajo.
-              </p>
-
-              <div className="flex gap-4">
-                <label className="flex flex-1 flex-col gap-1 text-sm text-bone/80">
-                  Nombre (nuevo jugador)
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Nombre y apellido"
-                    className="rounded-sm border border-bone/20 bg-coal-deep px-3 py-2 text-bone placeholder:text-bone/30"
-                  />
-                </label>
-                <label className="flex flex-1 flex-col gap-1 text-sm text-bone/80">
-                  Correo (opcional)
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="jugador@correo.com"
-                    className="rounded-sm border border-bone/20 bg-coal-deep px-3 py-2 text-bone placeholder:text-bone/30"
-                  />
-                </label>
-              </div>
-
-              <div className="flex gap-4">
-                <label className="flex flex-1 flex-col gap-1 text-sm text-bone/80">
-                  Método de pago
-                  <select
-                    name="paymentMethod"
-                    required
-                    defaultValue=""
-                    className="rounded-sm border border-bone/20 bg-coal-deep px-3 py-2 text-bone"
-                  >
-                    <option value="" disabled>
-                      Elige uno
-                    </option>
-                    {MANUAL_PAYMENT_METHODS.map((method) => (
-                      <option key={method} value={method}>
-                        {PAYMENT_METHOD_LABEL[method] ?? method}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="flex flex-1 flex-col gap-1 text-sm text-bone/80">
-                  Monto pagado (MXN)
-                  <input
-                    type="number"
-                    name="amount"
-                    min={0}
-                    step={0.01}
-                    defaultValue={defaultAmount || undefined}
-                    className="rounded-sm border border-bone/20 bg-coal-deep px-3 py-2 text-bone"
-                  />
-                </label>
-              </div>
-
-              <button
-                type="submit"
-                className="rounded-sm bg-volt px-4 py-2 text-sm font-semibold text-coal-deep transition hover:bg-bone"
-              >
-                Registrar inscripción
-              </button>
-            </form>
+            <ManualReservaForm
+              sesionId={sesion.id}
+              users={users}
+              defaultAmount={defaultAmount}
+            />
           </>
         )}
       </section>

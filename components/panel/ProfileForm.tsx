@@ -28,6 +28,7 @@ export default function ProfileForm({
   defaultValues,
   onboarding,
   justSaved,
+  callbackUrl,
 }: {
   defaultValues: {
     name: string;
@@ -37,12 +38,14 @@ export default function ProfileForm({
   };
   onboarding: boolean;
   justSaved: boolean;
+  callbackUrl?: string;
 }) {
   const [state, formAction] = useFormState(updateProfile, initialState);
 
   return (
     <form action={formAction} className="flex max-w-md flex-col gap-4">
       <input type="hidden" name="onboarding" value={onboarding ? "1" : "0"} />
+      <input type="hidden" name="callbackUrl" value={callbackUrl ?? ""} />
 
       <label className="flex flex-col gap-1 text-sm font-medium text-bone">
         Nombre

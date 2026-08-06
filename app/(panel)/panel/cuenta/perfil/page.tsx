@@ -10,6 +10,8 @@ export default async function PerfilPage({
   const session = await requireSession();
   const isOnboarding = searchParams?.onboarding === "1";
   const justSaved = searchParams?.guardado === "1";
+  const callbackUrlParam = searchParams?.callbackUrl;
+  const callbackUrl = typeof callbackUrlParam === "string" ? callbackUrlParam : "";
 
   const user = await prisma.user.findUniqueOrThrow({
     where: { id: session.user.id },
@@ -36,6 +38,7 @@ export default async function PerfilPage({
         }}
         onboarding={isOnboarding}
         justSaved={justSaved}
+        callbackUrl={callbackUrl}
       />
     </div>
   );

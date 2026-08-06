@@ -70,10 +70,35 @@ export async function toggleSesionActive(sesionId: string, active: boolean) {
   revalidatePublicPages();
 }
 
-export async function deleteSesion(sesionId: string) {
+export type DeleteSesionState = {
+  error?: string;
+};
+
+// Sesion.reservas cascades on delete (see prisma/schema.prisma), so deleting
+// a session that already has signups — paid or not — would silently wipe
+// those Reserva rows with no Stripe refund and no trace left behind. Force
+// admins through "Cancelar entrenamiento" in /panel/admin/entrenamientos
+// instead, which refunds via Stripe and keeps the records around as history.
+export async function deleteSesion(
+  _prevState: DeleteSesionState,
+  formData: FormData,
+): Promise<DeleteSesionState> {
   await requireRole(["ADMIN"]);
+
+  const sesionId = String(formData.get("sesionId") ?? "").trim();
+  if (!sesionId) return { error: "Sesión inválida." };
+
+  const reservaCount = await prisma.reserva.count({ where: { sesionId } });
+  if (reservaCount > 0) {
+    return {
+      error: `Esta sesión ya tiene ${reservaCount} inscripción${
+        reservaCount === 1 ? "" : "es"
+      } — no se puede eliminar. Usa "Cancelar entrenamiento" en el panel de Entrenamientos para cancelarla y reembolsar en su lugar.`,
+    };
+  }
 
   await prisma.sesion.delete({ where: { id: sesionId } });
 
   revalidatePublicPages();
+  return {};
 }
